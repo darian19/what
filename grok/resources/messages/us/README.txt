@@ -1,0 +1,1 @@
+The messages file in this directory contains messages to be injected into templates stored in /static/js/program/templates. The structure of the messages.json object mimics the directory structure of the templates.

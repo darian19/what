@@ -1,0 +1,58 @@
+/* view */
+.YOMP-embed-charts-tabs {
+  background-color: #000;
+  border-radius: 0.25em;
+  margin-top: 0.5em;
+  padding-top: 0.8em;
+}
+/* logo for non-widget view */
+.YOMP-embed-charts-tabs.embed {
+  background-color: #000;
+  background-image: url('/static/img/logo-white.svg');
+  border-radius: 0;
+  background-repeat: no-repeat;
+  background-size: 125px auto;
+  background-position: 1.2em 0.95em;
+}
+
+/* all tabs */
+.YOMP-embed-charts-tabs ul.nav-tabs {
+  border-bottom: 0.66em solid #29aae2;
+  padding-left: 1.2em;
+}
+/* all tabs for non-widget view */
+.YOMP-embed-charts-tabs.embed ul.nav-tabs {
+  padding-left: 12em;
+}
+
+/* single tab */
+.YOMP-embed-charts-tabs ul.nav-tabs > li > a {
+  background-color: #0076a4;
+  border: 0;
+  border-bottom: 1px solid #29aae2;
+  border-right: 1px solid #098ac2;
+  color: #013b4f;
+  font-family: 'roboto_regular', Arial, sans-serif;
+  font-size: 120%;
+  padding: 0.5em 1.5em;
+  margin: 0;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+/* single tab hover */
+.YOMP-embed-charts-tabs ul.nav-tabs > li > a:hover {
+  border: 0;
+  border-bottom: 1px solid #29aae2;
+  border-right: 1px solid #098ac2;
+  text-decoration: underline;
+}
+/* single active tab */
+.YOMP-embed-charts-tabs ul.nav-tabs > li.active > a {
+  background-color: #29aae2;
+  color: #fff;
+}
+/* single tab - last in list */
+.YOMP-embed-charts-tabs ul.nav-tabs > li:last-child > a {
+  border-right: 0;
+}
+

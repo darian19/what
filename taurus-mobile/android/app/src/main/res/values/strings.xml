@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources>
+
+    <!-- Application -->
+    <string name="app_name">YOMP for Stocks</string>
+
+    <!-- Action Bar -->
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_feedback">Feedback</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_tutorial">Tutorial</string>
+    <string name="action_bar_favorite">FAVORITES</string>
+    <string name="action_bar_all">ALL</string>
+    <string name="search_hint">Search</string>
+
+    <!-- Settings Activity -->
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_about">About</string>
+
+    <!-- About Activity -->
+    <string name="about_message">
+        YOMP for Stocks monitors stock price, stock volume and Twitter volume for about 200 large
+        cap, U.S. companies and alerts you if something unusual is happening.  Results are ranked by
+        the most anomalous to enable you to quickly determine what is important.
+        \n\n
+        This application is a demonstration of Numenta Hierarchical Temporal Memory (HTM)
+        technology. The HTM technology automatically learns models for each metric and each stock.
+        The models then predict the next data point and, when the next input arrives, highlight
+        anomalies.  Numenta is making the source code for YOMP for Stocks available via the NuPIC
+        open source project (www.numenta.org) to encourage others to create new and derivative
+        products.
+        \n\n
+        Contact us at YOMPbeta@numenta.com with comments or feedback.
+    </string>
+
+    <!-- Preferences -->
+    <string name="pref_version_category">Version</string>
+
+    <string name="pref_general_category">General</string>
+    <string name="pref_data_refresh_rate">Refresh Rate</string>
+
+    <string name="pref_title_enable_notifications">Enable Android Notifications</string>
+    <string name="pref_notification_category">Notifications</string>
+    <string name="pref_title_notifications_frequency">Max Notifications Per Company</string>
+    <string name="pref_summary_notifications_frequency">Max Notifications Per Company</string>
+    <string name="pref_notification_frequency_default">3600</string>
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="pref_data_sources">Data Sources</string>
+    <string name="pref_title_stock_data_source">Market Data by Xignite</string>
+
+    <!-- Main Activity -->
+    <string name="title_share">Share</string>
+    <string name="title_feedback">Feedback</string>
+    <string name="feedback_email_subject">Feedback</string>
+    <string name="refresh_dialog_title">Unable to connect</string>
+    <string name="feedback_dialog_message">A current screen shot and log file may be attached to your feedback, bug report or feature request.</string>
+    <string name="title_feedback_dialog">Email Numenta Support</string>
+    <string name="loading_metrics_title_hours">Device not connected for %d hours\nData download in progress</string>
+    <string name="loading_metrics_title_hours_minutes">Device not connected for %1$d hours and %2$d minutes\nData download in progress</string>
+    <string name="header_stock_twitter">Stock &amp; Twitter</string>
+    <string name="header_stock">Stock</string>
+    <string name="header_twitter">Twitter</string>
+    <string name="header_no_anomalies">No anomalies</string>
+    <string name="error_network_unavailable">Network connection unavailable. Please try again later.</string>
+
+    <!-- OS Notifications -->
+    <string name="title_os_notification_grouped">new anomaly notifications.</string>
+
+    <!-- Notification Service -->
+    <!-- Formatted Notification description: $1=metric.instance, $2=metric.name, $3=metric_data.value, $4=metric.unit, $5=timestamp -->
+    <string name="notification_description_template">%1$s: %2$s: %3$.2f: %4$s: %5$s</string>
+    <!-- Formatted Notification description: $1=metric.instance, $2=timestamp, $3= anomaly types -->
+    <string name="taurus_notification_description_template">%1$s (%3$s): %2$s</string>
+
+    <!-- Chart -->
+    <string name="chart_empty">No Data</string>
+    <string name="market_closed">Market closed</string>
+
+    <!-- Favorite -->
+    <string name="menu_add_favorite">Add Favorite</string>
+    <string name="menu_remove_favorite">Remove Favorite</string>
+
+    <!-- Twitter -->
+    <string name="title_activity_twitter_list">Twitter</string>
+    <string name="open_twitter_title">Open Twitter</string>
+    <string name="open_twitter_message">Are you sure you want to open this message using twitter?</string>
+
+    <!-- Detail Activity -->
+    <string name="show_market_hours_only">Show Market Hours Only</string>
+    <string name="show_twitter_details">tap for details</string>
+
+    <!-- Tutorial -->
+    <string name="tutorial_start">START</string>
+    <string name="tutorial_next">NEXT</string>
+    <string name="tutorial_skip">SKIP</string>
+    <string name="tutorial_done">END</string>
+    <string name="title_activity_tutorial">Tutorial</string>
+    <string name="loading_tweets_message">Retrieving all tweets</string>
+    <string name="show_condensed_tweets">Show condensed Tweets</string>
+    <string name="twitter_links">link</string>
+
+</resources>

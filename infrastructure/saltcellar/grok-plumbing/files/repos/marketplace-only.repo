@@ -1,0 +1,5 @@
+[marketplace-only]
+name=YOMP Marketplace RPMs
+baseurl=http://public.numenta.com/yum/marketplace-only
+gpgcheck=0
+priority=1

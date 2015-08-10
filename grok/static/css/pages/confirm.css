@@ -1,0 +1,16 @@
+.YOMP-confirm h1 {
+    margin-bottom: 0.66em;
+}
+
+.YOMP-confirm label {
+    padding-bottom: 0.33em;
+}
+.YOMP-confirm label:after {
+    content: '';
+}
+
+.YOMP-confirm .form-group div strong {
+    font-size: 110%;
+    position: relative;
+    top: 0.45em;
+}

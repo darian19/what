@@ -1,0 +1,19 @@
+<div class="YOMP-setup-progress-bar YOMP-panel panel panel-success">
+    <div class="panel-body row">
+        <div class="col-sm-4 lead text-success"><%= msgs.title %></div>
+        <div class="col-sm-7 progress-bar-container">
+            <div class="text-muted">
+                <span>
+                    <% if(current > total) { %>
+                        All steps complete.
+                    <% } else { %>
+                        Step <%= current %> of <%= total %>
+                    <% } %>
+                </span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar progress-bar-success"></div>
+            </div>
+        </div>
+    </div>
+</div>

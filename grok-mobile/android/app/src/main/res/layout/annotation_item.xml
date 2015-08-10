@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txt_annotation_date"
+        android:layout_width="wrap_content"
+        style="@style/AnnotationList.ListItem.Header"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/layout_list_item"
+        style="@style/AnnotationList.ListItem"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/txt_annotation_message"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="@style/AnnotationList.ListItem.Message"/>
+
+        <TextView
+            android:id="@+id/txt_annotation_footer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AnnotationList.ListItem.User"
+            android:layout_below="@id/txt_annotation_message"
+            android:layout_toLeftOf="@+id/buttons_container"
+            android:textIsSelectable="true"
+            android:singleLine="true"
+            android:layout_alignParentRight="false"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/txt_annotation_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttons_container">
+
+            <ImageButton
+                android:layout_width="18dp"
+                android:layout_height="24dp"
+                android:id="@+id/btn_annotation_delete"
+                android:src="@android:drawable/ic_delete"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:onClick="deleteAnnotation"
+                android:scaleType="centerInside"/>
+
+            <ImageButton
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:id="@+id/btn_annotation_add"
+                android:src="@android:drawable/ic_input_add"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:onClick="addAnnotation"
+                android:scaleType="centerInside"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

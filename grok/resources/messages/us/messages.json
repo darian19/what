@@ -1,0 +1,545 @@
+{
+
+    "site": {
+        "name": "YOMP",
+        "company": {
+            "name": "Numenta",
+            "url": "http://www.numenta.com"
+        },
+        "paths": {
+            "welcome":          "/YOMP/welcome",
+            "auth":             "/YOMP/auth",
+            "register":         "/YOMP/register",
+            "confirm":          "/YOMP/confirm",
+            "instances-auto":   "/YOMP/instances/auto",
+            "instances-manual": "/YOMP/instances/manual",
+            "instances-import": "/YOMP/instances/import",
+            "autostack":        "/YOMP/instances/autostack",
+            "manage-custom-metrics": "/YOMP/custom",
+            "notify":           "/YOMP/notify",
+            "complete":         "/YOMP/complete",
+            "manage":           "/YOMP",
+            "charts":           "/YOMP/embed/charts",
+            "update":           "/static/maintenance.html"
+        },
+        "resources": {
+            "help": "http://www.numenta.com/assets/pdf/YOMP/resources/%version%/YOMP-%version%-MasterGuide.pdf"
+        },
+        "buttons": {
+            "agree":    "Agree",
+            "back":     "Back",
+            "cancel":   "Cancel",
+            "close":    "Close",
+            "create":   "Create",
+            "done":     "Done",
+            "export":   "Export All",
+            "find":     "Find",
+            "import":   "Import",
+            "manage":   "Manage Monitored Instances",
+            "next":     "Next",
+            "removeAll":"Remove All",
+            "deleteAll":"Delete All",
+            "save":     "Save",
+            "skip":     "Skip",
+            "start":    "Start"
+        },
+        "icons": {
+            "close": "×"
+        },
+        "nav": {
+            "setup": {
+                "manage": "Manage Monitored Instances",
+                "method": {
+                    "title":        "Select Instances to Monitor",
+                    "auto":         "Search for Instances by Name Tag",
+                    "manual":       "Browse Instances",
+                    "import":       "Import Selections",
+                    "autostack":    "Select Autostacks",
+                    "custom":       "Manage Custom Metrics"
+                },
+                "complete":   "Install Mobile App",
+                "auth":     "AWS Credentials",
+                "register": "Registration and Terms",
+                "notify":   "Notification Settings",
+                "support": {
+                    "enable": "Allow Tech Support Access",
+                    "disable": "Revoke Tech Support Access"
+                }
+            }
+        },
+        "setup": {
+            "steps": {
+                "label": "Step ",
+                "normal": 4,
+                "expert": 3
+            }
+        },
+        "state": {
+            "auth": "Authenticating",
+            "import": "Importing instance selections",
+            "instance": {
+                "find":     "Finding instances to monitor",
+                "start":    "Selecting instance for monitoring",
+                "starts":   "Selecting instances for monitoring",
+                "stop":     "Removing instance(s) from monitoring"
+            },
+            "loading": "Loading",
+            "metric": {
+                "load": "Loading instance metrics",
+                "start": "Selecting metric for monitoring",
+                "stop": "Removing metric from monitoring",
+                "remove": "Deleting metric(s) from YOMP"
+            },
+            "save": "Saving",
+            "update": "Updating"
+        },
+        "regions": {
+            "type": {
+                "aws":  "AWS",
+                "YOMP": "Custom"
+            },
+            "YOMP": {
+                "custom": "Custom Metrics"
+            }
+        },
+        "namespaces": {
+            "aws": {
+                "real":     "AWS/"
+            },
+            "YOMP": {
+                "custom":   "Custom YOMP"
+            }
+        },
+        "instances": {
+            "types": {
+                "autoscale": "AutoScalingGroup",
+                "autostack": "Autostack"
+            }
+        },
+        "urltag": {
+            "from": "&from=",
+            "setup": "?setup=1",
+            "expert": "&expert=1",
+            "region": "&region="
+        },
+        "charts": {
+            "instance": {
+                "anomaly": {
+                    "index": {
+                        "timestamp":  0,
+                        "value":      1,
+                        "anomaly":    2,
+                        "rowId":      3
+                    },
+                    "minutesPerBar": {
+                        "hours":    5,
+                        "days":     60,
+                        "weeks":    480
+                    }
+                }
+            }
+        }
+    },
+
+    "pages": {
+
+        "welcome": {
+            "title": "Welcome to YOMP",
+            "options": {
+                "novice": {
+                    "text": "First time user",
+                    "subtext": "YOMP will automatically select an initial set of your instances to monitor from this region:"
+                },
+                "expert": {
+                    "text": "Advanced YOMP user",
+                    "subtext": "Manually select regions and instances."
+                }
+            }
+        },
+
+        "register": {
+            "title": "Registration and Terms",
+            "lead": "Please register (optional):",
+            "notes": [
+                "We will use your email to send you release updates or product info.",
+                "We do not sell or share email addresses."
+            ],
+            "form": {
+                "labels": {
+                    "name":     "Your Name",
+                    "company":  "Company",
+                    "email":    "Work Email",
+                    "usage":    "I authorize the collection of anonymous usage statistics to improve YOMP.",
+                    "sla":      "I accept the YOMP Software License Agreement."
+                },
+                "placeholder": {
+                    "name":     "First Last",
+                    "company":  "Company, Inc.",
+                    "email":    "name@company.com"
+                }
+            }
+        },
+
+        "auth": {
+            "title": "Enter AWS Credentials",
+            "info": [
+                "Your credentials will be used to access read-only Cloudwatch metric data.",
+                "<a href=\"http://www.numenta.com/assets/pdf/YOMP/resources/1.3/Generate-Restrictive-Credentials.pdf\" target=\"_new\">Follow these directions</a> to create a new AWS IAM user with read-only permissions.",
+                "Alternatively, you can use an existing AWS IAM user with read-access premissions.",
+                "Your credentials are private and safe, and will not be stored outside of your server instance."
+            ],
+            "form": {
+                "authorized": "Authorized",
+                "labels": {
+                    "key": "Access Key ID",
+                    "secret": "Secret Key"
+                }
+            }
+        },
+
+        "confirm": {
+            "title": "Select Instances to Monitor",
+            "info": [
+                "To get you started quickly, YOMP has automatically selected some of the largest and longest running instances from your AWS environment and suggested 8 of these for YOMP to monitor.",
+                "You can change - or simply confirm these selections.",
+                "You can also change these selections after installation, including adding additional instances or regions to support monitoring of your entire AWS environment. "
+            ],
+            "errors": {
+                "free": "If you have received this error, something has gone wrong with your YOMP instance. You can try restarting the YOMP machine to correct this problem. If that does not solve your problem, please contact support@numenta.com",
+                "standard": "YOMP is limited to monitoring <%= capacity %> instances and AutoStacks on an AWS EC2 server of the current size. Please upgrade to a bigger AWS EC2 instance type in order to increase the monitoring capacity of YOMP."
+            },
+            "form": {
+                "defaults": {
+                    "region":   "Select AWS Region"
+                },
+                "labels": {
+                    "region":       "AWS Region"
+                },
+                "help": {
+                    "region": "foo"
+                }
+            }
+        },
+
+        "instances-auto": {
+            "title": "Search for Instances by Name Tag",
+            "errors": {
+                "empty": "No instances were found during this search, adjust your settings and try again.",
+                "selectRegion" : "You must select a specific AWS Region"
+            },
+            "notes": [
+                "Enter an AWS Region and AWS Name Tag to search by.",
+                "Click the <strong>Find Members</strong> button to begin."
+            ],
+            "form": {
+                "defaults": {
+                    "region": "Filter by a specific AWS Region",
+                    "tags": "Filter by AWS Name Tags"
+                },
+                "labels": {
+                    "region": "AWS Region",
+                    "tags": "AWS Name Tags"
+                },
+                "help": {
+                    "tags": "Separate tags by spaces or commas. Wildcards are recommended. Case sensitive. Only AWS/EC2 is supported.",
+                    "example": "<strong>Example:</strong><br/><code>*web* *api*</code>This will match all instances whose AWS Name Tag contains 'web' or 'api' in the AWS Region you selected. If your tag name or values contain colons (\":\") or ampersands (\"&\"), you must prefix with a backslash (\"\\\"). Please see documentation for more details."
+                }
+            },
+            "button": "Find Members"
+        },
+
+        "instances-manual": {
+            "title": "Browse Instances",
+            "notes": [
+                "On the left, expand regions and services and click on an instance name to select.",
+                "Instances that have been selected for monitoring will be listed on the right, where they can be edited or removed."
+            ],
+            "explore": {
+                "title": "Explore and Choose Instances",
+                "crumb": "Region &gt; Service &gt; Instance"
+            }
+        },
+
+        "instances-import": {
+            "title": "Upload Previously Saved Configuration File",
+            "notes": [
+                "Click the <strong>Choose File</strong> button to select a previously-exported file from your computer to import.",
+                "New instances will be selected for monitoring, duplicates will be ignored.",
+                "This process can take several minutes to complete."
+            ],
+            "form": {
+                "label":        "File to Import",
+                "placeholder":  "YOMP-export-date.json",
+                "button":       "Choose File",
+                "filename":     "No file selected"
+            }
+        },
+
+        "autostack": {
+            "title": "Create a Group by AWS Tag and Monitor the Group",
+            "errors": {
+                "empty": "No instances were found during this search, adjust your settings and try again."
+            },
+            "notes": [
+                "Create a group of logically related EC2 instances that will be monitored as a single \"Instance\" within YOMP",
+                "Servers within this logical group need to <ul><li>Be in the same AWS Region</li><li>Have been previously tagged in AWS</li></ul>",
+                "You must give this group a unique name"
+            ],
+            "form": {
+                "defaults": {
+                    "name":     "Autostack Name",
+                    "region":   "Select AWS Region",
+                    "tags":     "Filter by AWS Tags"
+                },
+                "labels": {
+                    "name":         "Unique Name for Group",
+                    "region":       "AWS Region",
+                    "tags":         "AWS Tag Filters",
+                    "instances":    "AWS EC2 Instances"
+                },
+                "help": {
+                    "tags": "Enter up to ten Tag:Value filters. Separate tag pairs with a logical AND operator (\"&amp;&amp;\"). <a target=\"_new\" href=\"http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Filtering.html#Filtering_Resources_CLI\">Wildcards</a> (\"*\" and \"?\") encouraged. <strong>Example:</strong><br/><code>Name:*web*,*api* && Env:production*</code><br/>This will match all instances whose Name contains 'web' or 'api' and whose Environment tag contains 'production'. If your tag name or values contain colons (\":\") or ampersands (\"&amp;\"), you must prefix with a backslash (\"\\\"). Please see documentation for more details."
+                },
+                "buttons": {
+                    "find": "Find Members"
+                }
+            }
+        },
+
+        "notify": {
+            "title": "Notification Settings",
+            "lead": "You will be able to control Notifications you receive on the YOMP Application on your mobile phone. By default, these are sent from a standard, unmonitored Numenta account. If you change the settings below, YOMP will use AWS Simple Email Service (SES) to send emails from your account. Additional AWS charges may apply.",
+            "notes": [
+                "Enter an email address and select a region from which notifications will be sent.",
+                "<a target=\"_new\" href=\"http://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses.html\">Verify your selected email address</a> with the AWS Simple Email Service.",
+                "Verify AWS Identity and Access Management (IAM) Credentials used to launch this YOMP server have 'ses:SendEmail' permissions.",
+                "If you are not using SES in 'Production' mode, you will only be able to send email to verified email addresses and domains.",
+                "SES is region specific, so ensure that the region you enter below is the same as that of the sender email/domain."
+            ],
+            "form": {
+                "labels": {
+                    "sender": "Notification Email",
+                    "region": "AWS Region"
+                },
+                "defaults": {
+                    "region": "Select AWS Region for sending notifications"
+                },
+                "placeholder": {
+                    "sender": "from@company.com"
+                }
+            }
+        },
+
+        "complete": {
+            "title": "Install YOMP Mobile App"
+        },
+
+        "manage": {
+            "title": "Manage Monitored Instances",
+            "button": "Monitor Additional Instances"
+        },
+
+        "manage-custom-metrics": {
+            "title": "Manage Custom Metrics",
+            "table": {
+                "name": "Custom Metrics Recorded by YOMP",
+                "empty": "No custom metrics exist.",
+                "headers": {
+                    "metric": "Metric",
+                    "delete": "Delete"
+                }
+            }
+        },
+
+        "charts": {
+            "title": "Charts Dashboard Widget",
+            "empty": "<h3>No data found yet!</h3><p>It can take several minutes for the server to load initial data.<br/>Monitor some instances if you haven't already, and try again soon.</p>"
+        },
+
+        "debug": {
+            "title": "Debug"
+        },
+
+        "notFound": {
+            "title": "Page Not Found",
+            "lead": "Sorry, the page you were looking for could not be found."
+        }
+
+    },
+
+    "panels": {
+
+        "alertUpdate": {
+            "title": "Update Available",
+            "desc": "A new version of YOMP is ready to be installed:",
+            "button": "Update Now",
+            "list": [
+                "Click the <strong>Update Now</strong> button to begin a server update.",
+                "The Web and Mobile interfaces will not be accessible during the update.",
+                "Updates can take up to 20 minutes to complete."
+            ]
+        },
+
+        "annotationList": {
+            "title": "Annotations",
+            "table": {
+                "empty": "No annotations.",
+                "headers": {
+                    "time": "Time",
+                    "from": "From",
+                    "message": "Message"
+                }
+            }
+        },
+
+        "instanceList": {
+            "title": "Instances Currently Monitored by YOMP",
+            "table": {
+                "empty": "No instances have been selected for monitoring.",
+                "headers": {
+                    "instance": "Instance",
+                    "namespace": "Service",
+                    "region": "Region",
+                    "status": "Status",
+                    "remove": "Remove"
+                }
+            }
+        },
+
+        "embedChartsRow": {
+            "units": {
+                 "AWS/AutoScaling/GroupTotalInstances": "Count",
+                 "AWS/DynamoDB/ConsumedReadCapacityUnits": "Count",
+                 "AWS/DynamoDB/ConsumedWriteCapacityUnits": "Count",
+                 "AWS/DynamoDB/ReturnedItemCount": "Count",
+                 "AWS/DynamoDB/SuccessfulRequestLatency": "Milliseconds",
+                 "AWS/EBS/VolumeQueueLength": "Bytes",
+                 "AWS/EBS/VolumeReadBytes": "Bytes",
+                 "AWS/EBS/VolumeTotalReadTime": "Seconds",
+                 "AWS/EBS/VolumeTotalWriteTime": "Seconds",
+                 "AWS/EBS/VolumeWriteBytes": "Bytes",
+                 "AWS/EC2/CPUUtilization": "Percent",
+                 "AWS/EC2/DiskReadBytes": "Bytes",
+                 "AWS/EC2/DiskWriteBytes": "Bytes",
+                 "AWS/EC2/NetworkIn": "Bytes",
+                 "AWS/EC2/NetworkOut": "Bytes",
+                 "AWS/ElastiCache/CPUUtilization": "Percent",
+                 "AWS/ElastiCache/NetworkBytesIn": "Bytes",
+                 "AWS/ElastiCache/NetworkBytesOut": "Bytes",
+                 "AWS/ELB/Latency": "Seconds",
+                 "AWS/ELB/RequestCount": "Count",
+                 "AWS/OpsWorks/cpu_idle": "Percent",
+                 "AWS/OpsWorks/cpu_nice": "Percent",
+                 "AWS/OpsWorks/cpu_system": "Percent",
+                 "AWS/OpsWorks/cpu_user": "Percent",
+                 "AWS/OpsWorks/cpu_waitio": "Percent",
+                 "AWS/OpsWorks/load_5": "None",
+                 "AWS/OpsWorks/memory_buffers": "Percent",
+                 "AWS/OpsWorks/memory_cached": "Percent",
+                 "AWS/OpsWorks/memory_free": "Percent",
+                 "AWS/OpsWorks/memory_swap": "Percent",
+                 "AWS/OpsWorks/memory_total": "Percent",
+                 "AWS/OpsWorks/memory_used": "Percent",
+                 "AWS/OpsWorks/procs": "None",
+                 "AWS/RDS/CPUUtilization": "Percent",
+                 "AWS/RDS/DatabaseConnections": "Count",
+                 "AWS/RDS/DiskQueueDepth": "Count",
+                 "AWS/RDS/FreeableMemory": "Bytes",
+                 "AWS/RDS/ReadIOPS": "Count/Second",
+                 "AWS/RDS/ReadLatency": "Seconds",
+                 "AWS/RDS/ReadThroughput": "Bytes/Second",
+                 "AWS/RDS/SwapUsage": "Bytes",
+                 "AWS/RDS/WriteIOPS": "Count/Second",
+                 "AWS/RDS/WriteLatency": "Seconds",
+                 "AWS/RDS/WriteThroughput": "Bytes/Second",
+                 "AWS/Redshift/DatabaseConnections": "Count",
+                 "AWS/SNS/NumberOfMessagesPublished": "Count",
+                 "AWS/SQS/NumberOfEmptyReceives": "Count",
+                 "AWS/SQS/NumberOfMessagesDeleted": "Count",
+                 "AWS/SQS/NumberOfMessagesSent": "Count",
+                 "AWS/SQS/NumberOfMessagesReceived": "Count",
+                 "AWS/SQS/SentMessageSize": "Bytes"
+            }
+        },
+
+        "embedChartsRows": {
+            "empty": "<h3>No data found yet!</h3><p>It can take several minutes for the server to load initial data.<br/>Monitor some instances if you haven't already, and try again soon.</p>"
+        },
+
+        "embedChartsSort": {
+            "label": "Sort By",
+            "titles": {
+                "hours":    "Last 2 Hours",
+                "days":     "Last Day",
+                "weeks":    "Last Week"
+            },
+            "options": [
+                "Most Recent",
+                "Entire Screen",
+                "Name"
+            ]
+        },
+
+        "embedChartsTabs": {
+            "tabs": {
+                "hours": {
+                    "label": "Hours"
+                },
+                "days": {
+                    "label": "Days"
+                },
+                "weeks": {
+                    "label": "Weeks"
+                }
+            }
+        },
+
+        "embedForm": {
+            "title": "Add YOMP to Any Web Page",
+            "subtitle": "To place a YOMP Charts dashboard widget on your web page:",
+            "notes": [
+                "Enter the hostname where you will embed the widget, and the width and height.",
+                "Copy the Embed Code, and place it in the HTML source code of your website."
+            ],
+            "form": {
+                "defaults": {
+                    "domain":    "example.com",
+                    "width":     "720",
+                    "height":    "480"
+                },
+                "labels": {
+                    "domain":    "Destination Hostname",
+                    "width":     "Width",
+                    "height":    "Height",
+                    "code":      "Embed Code",
+                    "copied":    "Code copied to clipboard."
+                },
+                "buttons": {
+                    "copy":      "Copy Code to Clipboard"
+                }
+            }
+        },
+
+        "instanceSelect": {
+        },
+
+        "modalMetricList": {
+            "lead":  "Select the metrics you would like to monitor:",
+            "note": "Common metrics were selected by default, feel free to customize these settings.",
+            "autostack": {
+                "title": "Autostack Details",
+                "name": "Autostack Name",
+                "region": "AWS Region",
+                "filters": "AWS Tag Filters",
+                "numMembers": "Number of Members",
+                "members": "Members (AWS EC2 Instances)"
+            }
+        },
+
+        "setupProgressBar": {
+            "title": "Setup Progress:"
+        }
+
+    }
+
+}

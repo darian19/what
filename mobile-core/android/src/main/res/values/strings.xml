@@ -1,0 +1,42 @@
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources>
+    <!-- Application -->
+    <string name="app_name">Numenta Core Libs</string>
+    <string name="app_data_service_name">Numenta Data Services</string>
+
+    <!-- OS Notifications -->
+    <string name="title_os_notification_grouped">new anomaly notifications.</string>
+    <!-- Notification Service -->
+    <!-- Formatted Notification description: $1=metric.instance, $2=metric.name, $3=metric_data.value, $4=metric.unit, $5=timestamp -->
+    <string name="notification_description_template">%1$s: %2$s: %3$.2f: %4$s: %5$s</string>
+    <!-- Formatted Notification description: $1=metric.instance, $2=timestamp -->
+    <string name="simple_notification_description_template">%1$s: %2$s</string>
+    <!-- Error Messages -->
+    <string name="refresh_update_error">Last updated %s\nWill try again in a few minutes</string>
+    <string name="refresh_server_unreachable">Last updated %s\nWill try again in a few minutes</string>
+    <!-- Chart -->
+    <string name="chart_empty">No Data</string>
+    <string name="date_format_chart">c M/d</string>
+
+</resources>

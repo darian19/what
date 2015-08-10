@@ -1,0 +1,47 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# Create a YOMP RPM with create-numenta-rpm
+#
+# Note: You can speed this up with
+#   --site-packages-tarball ~/site-packages.tar.bz2
+#
+# Specify a local copy of the repo to pull from with
+#   --YOMP-url file:///home/ec2-user/products
+
+reporoot=$(YOMP rev-parse --show-toplevel)
+
+# Don't quote the $@, we want it burst into separate arguments instead of
+# being treated as a single argument
+time ./create-numenta-rpm --rpm-flavor YOMP \
+  --description "YOMP installed from products rpm - ends up in /opt/numenta/products/YOMP" \
+  --rpm-name nta-products-YOMP \
+  --cleanup-script YOMP/YOMP/pipeline/scripts/rpm-creator/clean-YOMP-tree-for-packaging \
+  --whitelist YOMP \
+  --whitelist htmengine \
+  --whitelist install-YOMP.sh \
+  --whitelist nta.utils \
+  --setup-py-arguments "develop" \
+  --setup-py-dir nta.utils \
+  --setup-py-dir htmengine \
+  --setup-py-dir YOMP \
+  --extend-pythonpath ./YOMP/lib/python2.7/site-packages \
+  --artifact opt $@ 2>&1

@@ -1,0 +1,39 @@
+[
+
+    {
+        "region": "us-east-1",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "NetworkOut",
+        "identifier": "i-548acc3a",
+        "name":"server name",
+        "dimensions":
+        {
+            "InstanceId": "i-548acc3a"
+        }
+    },
+    {
+        "region": "us-east-1",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "NetworkIn",
+        "identifier": "i-548acc3a",
+        "name":"server name",
+        "dimensions":
+        {
+            "InstanceId": "i-548acc3a"
+        }
+    },
+     {
+        "region": "us-east-1",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "CPUUtilization",
+        "identifier": "i-548acc3a",
+        "name":"server name",
+        "dimensions":
+        {
+            "InstanceId": "i-548acc3a"
+        }
+    }
+]

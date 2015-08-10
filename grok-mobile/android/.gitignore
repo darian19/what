@@ -1,0 +1,38 @@
+# Mac OS X hidden files
+.DS_Store
+
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+out/
+
+# Local configuration file (sdk path, etc)
+local.properties
+build
+.gradle
+
+# Eclipse project files
+#.classpath
+#.project
+libs/android-support-v4.jar.properties
+libs/achartengine-1.1.0.jar.properties
+libs/msgpack-0.6.9.jar.properties
+password.properties
+YOMP.keystore
+.metadata
+
+# Idea project files
+*.iml
+.idea
+robotium-solo-5.0.1.jar.properties
+.pmd

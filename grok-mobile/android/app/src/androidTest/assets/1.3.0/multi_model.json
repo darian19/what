@@ -1,0 +1,522 @@
+[
+  {
+    "status": 1,
+    "last_rowid": 4289,
+    "display_name": "testN.domain.tld - 2014-03-20 (us-east-1/AWS/EC2/i-d9e211f6)",
+    "description": "CPUUtilization on EC2 instance i-d9e211f6 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-d9e211f6",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:15:00",
+    "name": "AWS/EC2/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-d9e211f6",
+    "tag_name": "testN.domain.tld - 2014-03-20",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "3654d3972c1742a0bef5e0022f210544",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "us-west-2/AWS/RDS/jiradbinstance",
+    "description": "DatabaseConnections for jiradbinstance in us-west-2",
+    "parameters": {
+      "region": "us-west-2",
+      "DBInstanceIdentifier": "jiradbinstance"
+    },
+    "last_timestamp": "2014-07-08 16:19:00",
+    "name": "AWS/RDS/DatabaseConnections",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/RDS/jiradbinstance",
+    "tag_name": null,
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "3f4d6ec0e77e4d859c6648881c976556",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4302,
+    "display_name": "testN.domain.tld - 2014-05-16 (us-east-1/AWS/EC2/i-109a3643)",
+    "description": "NetworkIn on EC2 instance i-109a3643 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-109a3643",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:15:00",
+    "name": "AWS/EC2/NetworkIn",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-109a3643",
+    "tag_name": "testN.domain.tld - 2014-05-16",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "426f2d413e1f49e7b6ba85281fd5e3a0",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4302,
+    "display_name": "testN.domain.tld - 2014-05-16 (us-east-1/AWS/EC2/i-109a3643)",
+    "description": "CPUUtilization on EC2 instance i-109a3643 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-109a3643",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:15:00",
+    "name": "AWS/EC2/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-109a3643",
+    "tag_name": "testN.domain.tld - 2014-05-16",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "4450a3254397437a82e5208c140a4da6",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4230,
+    "display_name": "testN.domain.tld 2014-04-16 (us-east-1/AWS/EC2/i-b5a6a1e5)",
+    "description": "CPUUtilization on EC2 instance i-b5a6a1e5 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-b5a6a1e5",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:14:00",
+    "name": "AWS/EC2/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-b5a6a1e5",
+    "tag_name": "testN.domain.tld 2014-04-16",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "52ca954781324fc08c0fd13c2c1f963a",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4289,
+    "display_name": "testN.domain.tld - 2014-03-20 (us-east-1/AWS/EC2/i-d9e211f6)",
+    "description": "NetworkIn on EC2 instance i-d9e211f6 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-d9e211f6",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:16:00",
+    "name": "AWS/EC2/NetworkIn",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-d9e211f6",
+    "tag_name": "testN.domain.tld - 2014-03-20",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "71bbcbf4c5c34907b864f584ab479dfc",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "jenkins-master.domain.tld (us-west-2/AWS/EC2/i-ab15a19d)",
+    "description": "NetworkIn on EC2 instance i-ab15a19d in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-ab15a19d",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:17:00",
+    "name": "AWS/EC2/NetworkIn",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-ab15a19d",
+    "tag_name": "jenkins-master.domain.tld",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "75e96b3074964de18023c5d129f870a7",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 3696,
+    "display_name": "1.5.domain.tld (2014-06-25) (us-east-1/AWS/EC2/i-3a831711)",
+    "description": "CPUUtilization on EC2 instance i-3a831711 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-3a831711",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:14:00",
+    "name": "AWS/EC2/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-3a831711",
+    "tag_name": "1.5.domain.tld (2014-06-25)",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "812675b138394973995574047ca24e2e",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "subdomain.domain.tld (us-west-2/AWS/EC2/i-12d67826)",
+    "description": "DiskWriteBytes on EC2 instance i-12d67826 in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-12d67826",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:16:00",
+    "name": "AWS/EC2/DiskWriteBytes",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-12d67826",
+    "tag_name": "subdomain.domain.tld",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "8203f702a50c4501bab3ce054a181895",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "subdomain.domain.tld (us-west-2/AWS/EC2/i-12d67826)",
+    "description": "NetworkIn on EC2 instance i-12d67826 in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-12d67826",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:16:00",
+    "name": "AWS/EC2/NetworkIn",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-12d67826",
+    "tag_name": "subdomain.domain.tld",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "83269fcf77204bb388a18462e0548017",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4302,
+    "display_name": "testN.domain.tld - 2014-05-16 (us-east-1/AWS/EC2/i-109a3643)",
+    "description": "DiskWriteBytes on EC2 instance i-109a3643 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-109a3643",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:15:00",
+    "name": "AWS/EC2/DiskWriteBytes",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-109a3643",
+    "tag_name": "testN.domain.tld - 2014-05-16",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "87c66290504a4f9b87fcf88b5de9b464",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4302,
+    "display_name": "gdoctest (us-west-2/AWS/EC2/i-546bff60)",
+    "description": "DiskWriteBytes on EC2 instance i-546bff60 in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-546bff60",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:16:00",
+    "name": "AWS/EC2/DiskWriteBytes",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-546bff60",
+    "tag_name": "gdoctest",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "9bc6cf968c8f4cbfb2f15f1dc3a93fac",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "jira.domain.tld (us-west-2/AWS/EC2/i-88ca4981)",
+    "description": "DiskWriteBytes on EC2 instance i-88ca4981 in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-88ca4981",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:16:00",
+    "name": "AWS/EC2/DiskWriteBytes",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-88ca4981",
+    "tag_name": "jira.domain.tld",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "9e66abc242fd4d2f82c7f41764abc586",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4230,
+    "display_name": "testN.domain.tld 2014-04-16 (us-east-1/AWS/EC2/i-b5a6a1e5)",
+    "description": "NetworkIn on EC2 instance i-b5a6a1e5 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-b5a6a1e5",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:15:00",
+    "name": "AWS/EC2/NetworkIn",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-b5a6a1e5",
+    "tag_name": "testN.domain.tld 2014-04-16",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "ac72b4e9af774472a43565867fa9bff3",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 3696,
+    "display_name": "1.5.domain.tld (2014-06-25) (us-east-1/AWS/EC2/i-3a831711)",
+    "description": "NetworkIn on EC2 instance i-3a831711 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-3a831711",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:14:00",
+    "name": "AWS/EC2/NetworkIn",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-3a831711",
+    "tag_name": "1.5.domain.tld (2014-06-25)",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "b18b68e1426e4e34a780c7631cca996e",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4302,
+    "display_name": "gdoctest (us-west-2/AWS/EC2/i-546bff60)",
+    "description": "CPUUtilization on EC2 instance i-546bff60 in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-546bff60",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:16:00",
+    "name": "AWS/EC2/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-546bff60",
+    "tag_name": "gdoctest",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "b908b4e60fdf4d4ebbf62d25fad726ec",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "us-west-2/AWS/RDS/jiradbinstance",
+    "description": "CPUUtilization on Database jiradbinstance in us-west-2",
+    "parameters": {
+      "region": "us-west-2",
+      "DBInstanceIdentifier": "jiradbinstance"
+    },
+    "last_timestamp": "2014-07-08 16:19:00",
+    "name": "AWS/RDS/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/RDS/jiradbinstance",
+    "tag_name": null,
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "ca9b09c862234202a9ac87be204448e0",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 3696,
+    "display_name": "1.5.domain.tld (2014-06-25) (us-east-1/AWS/EC2/i-3a831711)",
+    "description": "DiskWriteBytes on EC2 instance i-3a831711 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-3a831711",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:14:00",
+    "name": "AWS/EC2/DiskWriteBytes",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-3a831711",
+    "tag_name": "1.5.domain.tld (2014-06-25)",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "cd43bd575294418eafdf49d1ec76bb8d",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "subdomain.domain.tld (us-west-2/AWS/EC2/i-12d67826)",
+    "description": "CPUUtilization on EC2 instance i-12d67826 in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-12d67826",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:16:00",
+    "name": "AWS/EC2/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-12d67826",
+    "tag_name": "subdomain.domain.tld",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "cf8cc383d1c24b578c45c66b63891fb7",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "jira.domain.tld (us-west-2/AWS/EC2/i-88ca4981)",
+    "description": "CPUUtilization on EC2 instance i-88ca4981 in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-88ca4981",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:16:00",
+    "name": "AWS/EC2/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-88ca4981",
+    "tag_name": "jira.domain.tld",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "cfd7807e9a684c1ba999d5c976df7c36",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "jenkins-master.domain.tld (us-west-2/AWS/EC2/i-ab15a19d)",
+    "description": "DiskWriteBytes on EC2 instance i-ab15a19d in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-ab15a19d",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:17:00",
+    "name": "AWS/EC2/DiskWriteBytes",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-ab15a19d",
+    "tag_name": "jenkins-master.domain.tld",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "d188dee776c34e6b998dce6213bcb391",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4303,
+    "display_name": "jira.domain.tld (us-west-2/AWS/EC2/i-88ca4981)",
+    "description": "NetworkIn on EC2 instance i-88ca4981 in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-88ca4981",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:16:00",
+    "name": "AWS/EC2/NetworkIn",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-88ca4981",
+    "tag_name": "jira.domain.tld",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "e21849e736aa4976bff166f6ab064cd6",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4289,
+    "display_name": "testN.domain.tld - 2014-03-20 (us-east-1/AWS/EC2/i-d9e211f6)",
+    "description": "DiskWriteBytes on EC2 instance i-d9e211f6 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-d9e211f6",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:15:00",
+    "name": "AWS/EC2/DiskWriteBytes",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-d9e211f6",
+    "tag_name": "testN.domain.tld - 2014-03-20",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "e37b5e4ee87f46a2bf80bad7ca25319e",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4230,
+    "display_name": "testN.domain.tld 2014-04-16 (us-east-1/AWS/EC2/i-b5a6a1e5)",
+    "description": "DiskWriteBytes on EC2 instance i-b5a6a1e5 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-b5a6a1e5",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:15:00",
+    "name": "AWS/EC2/DiskWriteBytes",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-b5a6a1e5",
+    "tag_name": "testN.domain.tld 2014-04-16",
+    "instance_status_history": [],
+    "location": "us-east-1",
+    "uid": "e40ecf9137ba47dbbc1cfbb2148767af",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4301,
+    "display_name": "gdoctest (us-west-2/AWS/EC2/i-546bff60)",
+    "description": "NetworkIn on EC2 instance i-546bff60 in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-546bff60",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:12:00",
+    "name": "AWS/EC2/NetworkIn",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-546bff60",
+    "tag_name": "gdoctest",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "eaf3816e686140cd90b42057f7f7a426",
+    "message": null,
+    "datasource": "cloudwatch"
+  },
+  {
+    "status": 1,
+    "last_rowid": 4302,
+    "display_name": "jenkins-master.domain.tld (us-west-2/AWS/EC2/i-ab15a19d)",
+    "description": "CPUUtilization on EC2 instance i-ab15a19d in us-west-2 region",
+    "parameters": {
+      "InstanceId": "i-ab15a19d",
+      "region": "us-west-2"
+    },
+    "last_timestamp": "2014-07-08 16:11:00",
+    "name": "AWS/EC2/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-west-2/AWS/EC2/i-ab15a19d",
+    "tag_name": "jenkins-master.domain.tld",
+    "instance_status_history": [],
+    "location": "us-west-2",
+    "uid": "f0e7145ae0844811bc2b3a83e1e899a8",
+    "message": null,
+    "datasource": "cloudwatch"
+  }
+]

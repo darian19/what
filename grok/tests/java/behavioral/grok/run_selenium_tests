@@ -1,0 +1,78 @@
+#!/bin/bash
+
+set -o pipefail
+set -o errexit
+
+print_help() {
+  echo "Please set the following environment variables : AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, SAUCE_USER_NAME, SAUCE_KEY"
+  echo "Please enter all parameters: YOMP_SERVER_URL, Browser, OS, Usertype."
+  echo "The available options for OS are: WINDOWS 7, WINODWS 8 and MAC."
+  echo "The available options for BROWSER are: i.e. CHROME and FIREFOX."
+  echo "The tests do not work for Safari Browser and IE."
+  echo "The available options for users are: FIRST_TIME and ADVANCED."
+  echo "Sample command :./run_selenium_tests -s|--server <YOMP-server-url> -o|--os "\"WINDOWS 8\"" -b|--browser FIREFOX -u|--usertype  FIRST_TIME"
+}
+
+if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ] || [ -z "$SAUCE_USER_NAME" ] || [ -z "$SAUCE_KEY" ]; then
+  print_help
+  exit 0
+fi
+
+if [ $# -ne 8 ]; then
+  print_help
+  exit 1
+fi
+
+while [[ $# -gt 1 ]]
+do
+  key="$1"
+  shift
+
+  case $key in
+    -s|--server)
+      SERVER="$1"
+      shift
+      ;;
+    -o|--os)
+      OS="$1"
+      shift
+      ;;
+    -b|--browser)
+      BROWSER="$1"
+      shift
+      ;;
+    -u|--user)
+      USERTYPE="$1"
+      shift
+      ;;
+  esac
+done
+
+if [ "${OS}" != "WINDOWS 7" ] && [ "${OS}" != "WINDOWS 8" ] && [ "${OS}" != "MAC" ] && [ "${OS}" != "LINUX" ]; then
+  echo "Invalid OS specified."
+  echo "Valid OS options are:  WINDOWS 7 or WINDOWS 8 or MAC or LINUX."
+  exit 1
+fi
+
+if [ "${BROWSER}" != "CHROME" ] && [ "${BROWSER}" != "FIREFOX" ]; then
+  echo "Invalid browser specified."
+  echo "Valid browser options are: CHROME or FIREFOX."
+  exit 1
+fi
+
+if [ "${USERTYPE}" != "FIRST_TIME" ] && [ "${USERTYPE}" != "ADVANCED" ]; then
+  echo "Invalid user specified"
+  echo "Valid user options are: FIRST_TIME or ADVANCED."
+  exit 1
+fi
+
+echo "Running tests : $1"
+
+ant -DserverURL=https://"${SERVER}" \
+  -Dos="${OS}" \
+  -Dbrowser="${BROWSER}" \
+  -DaccessKeyID="${AWS_ACCESS_KEY_ID}" \
+  -DsecretKey="${AWS_SECRET_ACCESS_KEY}" \
+  -Dsaucename="${SAUCE_USER_NAME}" \
+  -Dsaucekey="${SAUCE_KEY}" \
+  -Dusertype="${USERTYPE}" \

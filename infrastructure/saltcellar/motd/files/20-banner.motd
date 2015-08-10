@@ -1,0 +1,57 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# Include some useful information in /etc/motd.
+# Hostname, IP, various SHAs.
+
+echo "Host: $(hostname)"
+echo "External IP: $(dig +short myip.opendns.com @resolver1.opendns.com)"
+
+# Show product repo SHA if present
+if [ -f /etc/numenta/products.sha ]; then
+  products_sha=$(cat /etc/numenta/products.sha)
+  echo "Products SHA: ${products_sha}"
+fi
+
+# Show Salt configuration SHA if present
+if [ -f /srv/salt/salt.sha ]; then
+  salt_sha=$(cat /srv/salt/salt.sha)
+fi
+if [ -d /srv/salt/.YOMP ]; then
+  salt_sha=$(cd /srv/salt; YOMP rev-parse HEAD)
+fi
+if [ -n "${salt_sha}" ]; then
+  echo "Salt configuration SHA: ${salt_sha}"
+fi
+
+# Display Kernel version
+echo "Kernel version: $(uname -r)"
+
+# Display CentOS version
+centos_version=$(cat /etc/redhat-release)
+echo "CentOS version: ${centos_version}"
+
+# Display build time
+if [ -f /etc/numenta/centos/build.time ]; then
+  centos_ami_build_time=$(cat /etc/numenta/centos/build.time)
+  echo "CentOS AMI Build time: ${centos_ami_build_time}"
+fi

@@ -1,0 +1,85 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# chkconfig: 2345 30 20
+# processname: yum-housekeeping
+# description: yum-housekeeping ensures that the yum databases are regenerated \
+# every boot. Repository packages change often enough that we want to ensure \
+# have a current DB before we try to do any yum installs.
+
+# We explicitly DO NOT want yum to see anaconda python. Yum is written in
+# python and needs to run with system python to work.
+export PATH=:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
+
+# Source function library.
+source /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+[ -r /etc/sysconfig/network ] && . /etc/sysconfig/network
+
+# Check that networking is up.
+[ "${NETWORKING}" = "no" ] && exit 1
+
+apply_security_fixes() {
+  # Ensure we have the latest bash so we have shellshock fix installed
+  yum install -y bash
+}
+
+yum_housekeeping() {
+  # Force machine to update the yum databases since we don't know how long
+  # it has been since this AMI was baked.
+  echo "Cleaning yum expire-cache"
+
+  yum clean all
+  yum clean expire-cache
+
+  apply_security_fixes
+}
+
+start() {
+  yum_housekeeping
+}
+
+stop() {
+  echo "Stop is not applicable for yum-housekeeping."
+}
+
+restart() {
+  start
+}
+
+# See how we were called.
+case "${1}" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    echo $"Usage: ${0} {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

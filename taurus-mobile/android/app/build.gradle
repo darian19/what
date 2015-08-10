@@ -1,0 +1,142 @@
+/*
+ * Numenta Platform for Intelligent Computing (NuPIC)
+ * Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+ * Numenta, Inc. a separate commercial license for this software code, the
+ * following terms and conditions apply:
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses.
+ *
+ * http://numenta.org/licenses/
+ *
+ */
+
+
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.application'
+
+// Move build output to root
+buildDir = "${rootProject.buildDir}/taurus-mobile"
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
+    signingConfigs {
+        release {
+            keyAlias defaultKeyAlias
+            keyPassword askForKeystorePassword()
+            storeFile file(defaultKeystoreLocation)
+            storePassword keyPassword
+        }
+    }
+    defaultConfig {
+        applicationId 'com.numenta.taurus'
+        minSdkVersion 16
+        /******************************************************************************************
+        See https://code.google.com/p/android-developer-preview/issues/detail?id=1947
+        For now we keep the target SDK at 15 until we can test on all other versions of the SDK
+        *******************************************************************************************/
+        //noinspection OldTargetApi
+        targetSdkVersion 16
+        versionCode YOMPCommitCount + initialVersionCode
+        versionName project.version
+        // Email address to send user feedback
+        resValue "string", "feedback_email_address", System.getProperty('FEEDBACK_EMAIL')
+        // AWS Cognito Identity Pool
+        buildConfigField 'String', 'COGNITO_POOL_ID',  System.getProperty("COGNITO_POOL_ID")
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            // DynamoDB Server. Use 'http://10.0.2.2:8000' for local server or null for AWS
+            buildConfigField 'String', 'SERVER_URL', System.getProperty("SERVER_URL") != null ? "\"${System.getProperty("SERVER_URL")}\"" : 'null'
+            // Select DynamoDB tables to use. Use ".production" or your user name as suffix.
+            // Should match server configuration in "$/products/taurus/conf/application.conf"
+            buildConfigField 'String', 'TABLE_SUFFIX', '".staging"' //'".' + System.getProperty("user.name") + '"'
+            // AWS Region to connect
+            buildConfigField 'String', 'REGION', '"us-west-2"'
+            //testCoverageEnabled = true
+            versionNameSuffix '-' + defaultConfig.versionCode + '-' + YOMPCommitSHA + '-debug'
+        }
+        release {
+            buildConfigField 'String', 'SERVER_URL', 'null'
+            // Use production DynamoDB tables
+            // Should match server configuration in "$/products/taurus/conf/application.conf"
+            buildConfigField 'String', 'TABLE_SUFFIX', '".production"'
+            // AWS Region to connect
+            buildConfigField 'String', 'REGION', '"us-west-2"'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        qa.initWith(buildTypes.release)
+        qa {
+            versionNameSuffix '-' + defaultConfig.versionCode + '-' + YOMPCommitSHA
+        }
+        staging.initWith(buildTypes.qa)
+        staging {
+            // Use staging DynamoDB tables instead of production
+            // Should match server configuration in "$/products/taurus/conf/application.conf"
+            buildConfigField 'String', 'TABLE_SUFFIX', '".staging"'
+            versionNameSuffix '-' + defaultConfig.versionCode + '-' + YOMPCommitSHA + '-staging';
+        }
+        beta.initWith(buildTypes.release)
+        beta {
+            versionNameSuffix '-' + defaultConfig.versionCode + '-' + YOMPCommitSHA + '-beta';
+        }
+    }
+    lintOptions {
+        ignore 'RtlSymmetry'
+        ignore 'RtlHardcoded'
+        ignore 'RtlEnabled'
+        ignore 'ContentDescription'
+    }
+//    testOptions {
+//        unitTests.returnDefaultValues = true
+//    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
+}
+
+// Load libraries javadocs and sources
+apply plugin: 'idea'
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+dependencies {
+    compile project(':mobile-core')
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+
+    androidTestCompile 'com.android.support.test:runner:0.3'
+    androidTestCompile 'com.android.support.test:rules:0.3'
+    androidTestCompile "com.google.dexmaker:dexmaker:1.2"
+    androidTestCompile "com.google.dexmaker:dexmaker-mockito:1.2"
+
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'org.mockito:mockito-core:1.9.5'
+
+    compile('com.amazonaws:aws-android-sdk-core:2.2.2') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    compile('com.amazonaws:aws-android-sdk-ddb:2.2.2') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+}
+

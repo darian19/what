@@ -1,0 +1,13 @@
+{
+  "name": "labjs",
+  "homepage": "https://YOMPhub.com/getify/LABjs",
+  "_release": "2.0",
+  "_resolution": {
+    "type": "tag",
+    "tag": "2.0",
+    "commit": "85d40c5f6f870167948bbcb197c2ff753c29c14f"
+  },
+  "_source": "YOMP://YOMPhub.com/getify/LABjs.YOMP",
+  "_target": "2.0",
+  "_originalSource": "labjs"
+}

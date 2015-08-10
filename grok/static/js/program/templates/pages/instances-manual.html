@@ -1,0 +1,31 @@
+<div class="YOMP-instances-manual YOMP-page">
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <section id="progress-bar-container"></section>
+        </div>
+    </div>
+
+    <h1><%= msgs.title %></h1>
+    <ul>
+        <% msgs.notes.forEach(function(note) { %>
+            <li><%= note %></li>
+        <% }); %>
+    </ul>
+
+    <section class="row">
+        <div class="col-md-6 col-md-push-6">
+            <div id="instance-list"></div>
+        </div>
+        <div class="col-md-6 col-md-pull-6">
+            <h3><%= msgs.explore.title %></h3>
+            <p><%= msgs.explore.crumb %></p>
+            <div id="network-tree"></div>
+        </div>
+    </section>
+
+    <button id="done" type="submit" class="btn btn-primary">
+        <%= button.done %>
+    </button>
+
+</div>

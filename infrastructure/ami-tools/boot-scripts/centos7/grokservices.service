@@ -1,0 +1,15 @@
+[Unit]
+Description=YOMP services
+After=network.target
+After=syslog.target
+After=mysql.service
+
+[Install]
+Alias=YOMPservices.service
+WantedBy=multi-user.target
+
+[Service]
+Type=forking
+ExecStart=/etc/init.d/YOMPservices start
+ExecStop=/etc/init.d/YOMPservices stop
+Restart=on-abort

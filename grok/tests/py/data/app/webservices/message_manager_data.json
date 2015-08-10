@@ -1,0 +1,146 @@
+{
+    "terms-tmpl": {
+    },
+
+    "site": {
+        "name": "YOMP",
+        "company": {
+            "name": "Numenta",
+            "url": "http://www.numenta.com"
+        },
+        "paths": {
+            "welcome":          "/YOMP/welcome",
+            "auth":             "/YOMP/auth",
+            "register":         "/YOMP/register",
+            "confirm":          "/YOMP/confirm",
+            "instances-auto":   "/YOMP/instances/auto",
+            "instances-manual": "/YOMP/instances/manual",
+            "instances-import": "/YOMP/instances/import",
+            "autostack":        "/YOMP/instances/autostack",
+            "manage-custom-metrics": "/YOMP/custom",
+            "notify":           "/YOMP/notify",
+            "complete":         "/YOMP/complete",
+            "manage":           "/YOMP",
+            "charts":           "/YOMP/embed/charts",
+            "update":           "/static/maintenance.html"
+        },
+        "resources": {
+            "help": "http://www.numenta.com/assets/pdf/YOMP/resources/%version%/YOMP-%version%-MasterGuide.pdf"
+        },
+        "buttons": {
+            "agree":    "Agree",
+            "back":     "Back",
+            "cancel":   "Cancel",
+            "close":    "Close",
+            "create":   "Create",
+            "done":     "Done",
+            "export":   "Export All",
+            "find":     "Find",
+            "import":   "Import",
+            "manage":   "Manage Monitored Instances",
+            "next":     "Next",
+            "removeAll":"Remove All",
+            "deleteAll":"Delete All",
+            "save":     "Save",
+            "skip":     "Skip",
+            "start":    "Start"
+        },
+        "icons": {
+            "close": "×"
+        },
+        "nav": {
+            "setup": {
+                "manage": "Manage Monitored Instances",
+                "method": {
+                    "title":        "Select Instances to Monitor",
+                    "auto":         "Search for Instances by Name Tag",
+                    "manual":       "Browse Instances",
+                    "import":       "Import Selections",
+                    "autostack":    "Select Autostacks",
+                    "custom":       "Manage Custom Metrics"
+                },
+                "complete":   "Install Mobile App",
+                "auth":     "AWS Credentials",
+                "register": "Registration and Terms",
+                "notify":   "Notification Settings",
+                "support": {
+                    "enable": "Allow Tech Support Access",
+                    "disable": "Revoke Tech Support Access"
+                }
+            }
+        },
+        "setup": {
+            "steps": {
+                "label": "Step ",
+                "normal": 4,
+                "expert": 3
+            }
+        },
+        "state": {
+            "auth": "Authenticating",
+            "import": "Importing instance selections",
+            "instance": {
+                "find":     "Finding instances to monitor",
+                "start":    "Selecting instance for monitoring",
+                "starts":   "Selecting instances for monitoring",
+                "stop":     "Removing instance(s) from monitoring"
+            },
+            "loading": "Loading",
+            "metric": {
+                "load": "Loading instance metrics",
+                "start": "Selecting metric for monitoring",
+                "stop": "Removing metric from monitoring",
+                "remove": "Deleting metric(s) from YOMP"
+            },
+            "save": "Saving",
+            "update": "Updating"
+        },
+        "regions": {
+            "type": {
+                "aws":  "AWS",
+                "YOMP": "Custom"
+            },
+            "YOMP": {
+                "custom": "Custom Metrics"
+            }
+        },
+        "namespaces": {
+            "aws": {
+                "real":     "AWS/"
+            },
+            "YOMP": {
+                "custom":   "Custom YOMP"
+            }
+        },
+        "instances": {
+            "types": {
+                "autoscale": "AutoScalingGroup",
+                "autostack": "Autostack"
+            }
+        },
+        "urltag": {
+            "from": "&from=",
+            "setup": "?setup=1",
+            "expert": "&expert=1",
+            "region": "&region="
+        },
+        "charts": {
+            "instance": {
+                "anomaly": {
+                    "index": {
+                        "timestamp":  0,
+                        "value":      1,
+                        "anomaly":    2,
+                        "rowId":      3
+                    },
+                    "minutesPerBar": {
+                        "hours":    5,
+                        "days":     60,
+                        "weeks":    480
+                    }
+                }
+            }
+        }
+    }
+
+}

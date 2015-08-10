@@ -1,0 +1,47 @@
+/*
+ * Numenta Platform for Intelligent Computing (NuPIC)
+ * Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+ * Numenta, Inc. a separate commercial license for this software code, the
+ * following terms and conditions apply:
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses.
+ *
+ * http://numenta.org/licenses/
+ *
+ */
+
+ // Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        //noinspection GradleDynamicVersion
+        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    // Application version
+    version '1.6.1'
+
+    repositories {
+        jcenter()
+    }
+}
+apply from: '../../mobile-core/android/common.gradle'

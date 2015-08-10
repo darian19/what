@@ -1,0 +1,260 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+"""
+Package products repository into an RPM.
+
+Builds either saltcellar, infrastructure-common, or YOMP flavored RPMs.
+
+For saltcellar RPMs, unless --internal-only has been specified, only
+includes formulas that have explicitly been marked public by having a
+PUBLIC file at the top level of the formula directory.
+"""
+
+import argparse
+import os
+import signal
+import sys
+
+from infrastructure.utilities import logger as log
+from infrastructure.utilities.numenta_rpm import NumentaRPM
+
+# Set up our globals
+g_config = None
+g_logger = None
+g_cleanupDirectories = None
+
+
+def parseCLA():
+  """
+  Parse command line arguments, return a config
+
+  @returns parsed command line options in a configuration object
+  """
+  global g_config
+  global g_logger
+
+  parser = argparse.ArgumentParser(description="Create a products RPM")
+
+  defaultVersion = os.environ.get("RELEASE_VERSION", "1.7.1")
+
+  parser.add_argument("--artifact",
+                      action="append",
+                      dest="artifacts",
+                      required=True,
+                      help="Files/directories to pack in the fakeroot",
+                      default=[])
+
+  parser.add_argument("--architecture",
+                      dest="architecture",
+                      help="Architecture for the RPM",
+                      choices=["noarch", "x86_64"],
+                      default=None)
+
+  parser.add_argument("--base-version",
+                      dest="baseVersion",
+                      help="Base version number to use",
+                      default=defaultVersion)
+
+  parser.add_argument("--build-script",
+                      action="append",
+                      dest="buildScripts",
+                      help="buildscript to run in fakeroot before cleaning or packaging.",
+                      default=[])
+
+  parser.add_argument("--cleanup-script",
+                      action="append",
+                      dest="cleanupScripts",
+                      help="script to run in fakeroot before packaging.",
+                      default=[])
+
+  parser.add_argument("--debug",
+                      dest="debug",
+                      action="store_true",
+                      help="Debug mode. Spam up the console output.")
+
+  parser.add_argument("--description",
+                      help="RPM description",
+                      default=None)
+
+  parser.add_argument("--dryrun",
+                      action="store_true",
+                      help="Do a dry run without actually building an RPM")
+
+  parser.add_argument("--epoch",
+                      dest="epoch",
+                      help="RPM epoch",
+                      default="1")
+
+  parser.add_argument("--extend-pythonpath",
+                      action="append",
+                      dest="pythonpathExtensions",
+                      help="Add to PYTHONPATH, prepended with products",
+                      default=[])
+
+  parser.add_argument("--YOMP-url",
+                      dest="YOMPURL",
+                      help="YOMP repo to clone",
+                      default="YOMP@YOMPhub.com:Numenta/numenta-apps.YOMP")
+
+  parser.add_argument("--internal-only",
+                      action="store_true",
+                      dest="numenta_internal_only",
+                      help="A internal-only RPM. Don't sanitize /srv/salt")
+
+  parser.add_argument("--install-wheel",
+                      action="append",
+                      dest="wheels",
+                      help="wheel files to install before python setup.py run",
+                      default=[])
+
+  parser.add_argument("--log-level",
+                      dest="logLevel",
+                      type=str,
+                      default="warning",
+                      choices=["critical",
+                               "debug",
+                               "error",
+                               "info",
+                               "warning"
+                              ],
+                      help="Set the logging level")
+
+  parser.add_argument("--postinstall-script",
+                      dest="postinstallScript",
+                      help="RPM postinstall script",
+                      default=None)
+
+  parser.add_argument("--preserve-fakeroot",
+                      dest="preserveFakeroot",
+                      action="store_true",
+                      help="Don't scrub fakeroot after exit")
+
+  parser.add_argument("--rpm-flavor",
+                      dest="flavor",
+                      choices=["YOMP",
+                               "infrastructure",
+                               "saltcellar",
+                               "prebuiltYOMP"],
+                      help="Set the rpm type")
+
+  parser.add_argument("--rpm-name",
+                      dest="rpmName",
+                      help="Name of output RPM",
+                      required=True)
+
+  parser.add_argument("--setup-py-dir",
+                      action="append",
+                      dest="setupPyDirs",
+                      help="Run setup.py <parameter> in this directory",
+                      default=[])
+
+  parser.add_argument("--setup-py-arguments",
+                      dest="setupPyArguments",
+                      help="setup.py will be run with these arguments",
+                      default="develop")
+
+  parser.add_argument("--sha", "--SHA", "--commitish",
+                      dest="sha",
+                      help="SHA or commitish to check out",
+                      default=None)
+
+  parser.add_argument("--site-packages-tarball",
+                      dest="sitePackagesTarball",
+                      help="Explode a tarball into YOMP/lib/python2.7",
+                      default=None)
+
+  parser.add_argument("--tempdir",
+                      dest="tempdir",
+                      help="Where to write our temporary files",
+                      default="/tmp/")
+
+  parser.add_argument("--whitelist",
+                      action="append",
+                      dest="whitelisted",
+                      help="Add item in product directory to output RPM",
+                      default=[])
+  parser.add_argument("--products-dir",
+                      dest="productsDir",
+                      help="Path of products directory.")
+
+  g_config = parser.parse_args()
+
+  # Setup logging now that we know what loglevel to use
+  g_logger = log.initPipelineLogger(name="create-numenta-rpm",
+                                    logLevel=g_config.logLevel)
+
+  # Do some basic sanity checking
+
+  g_logger.debug("Configuration: %s", g_config)
+
+  if g_config.sitePackagesTarball:
+    if g_config.flavor != "YOMP":
+      failmsg = "--site-packages is only used for YOMP packages."
+      parser.error(failmsg)
+
+  if g_config.flavor == None:
+    failmsg = "You must set a type of rpm to create with --rpm-flavor"
+    g_logger.error(failmsg)
+
+  if g_config.artifacts == []:
+    failmsg = "You must specify artifacts in the fakeroot to package."
+    if g_config.flavor == "YOMP":
+      failmsg = failmsg + " YOMP rpms should specify opt"
+    if g_config.flavor == "infrastructure":
+      failmsg = failmsg + " Infrastructure rpms should specify opt"
+    if g_config.flavor == "saltcellar":
+      failmsg = failmsg + " Saltcellar rpms should specify srv"
+    parser.error(failmsg)
+
+
+
+
+def signalHandler(caughtSignal, frame):
+  """
+  Catch SIGINT & SIGTERM, then delete the fakeroot and exit non-zero.
+
+  @param caughtSignal - required by signal.signal interface, unused here except
+  to print what signal we received
+
+  @param frame - required by signal.signal interface, unused here except for
+  display
+  """
+  g_logger.error("Caught signal %s in frame %s, terminating...", caughtSignal,
+                 frame)
+  g_cleanupDirectories()
+  sys.exit(1)
+
+
+if __name__ == "__main__":
+  # Clean up after ourselves if we get a SIGINT or SIGTERM
+  signal.signal(signal.SIGINT, signalHandler)
+  signal.signal(signal.SIGTERM, signalHandler)
+
+  parseCLA()
+  numentaRPM = NumentaRPM(g_config)
+  g_cleanupDirectories = numentaRPM.cleanupDirectories
+  try:
+    numentaRPM.create()
+  except:
+    numentaRPM.cleanupDirectories()
+    raise

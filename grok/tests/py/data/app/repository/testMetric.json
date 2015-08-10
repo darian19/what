@@ -1,0 +1,21 @@
+{
+  "name" : "AWS/testNamespace/testMetric",
+  "description":"CPUUtilization on EC2 instance %(InstanceId)s in %(region)s region",
+  "server":"%(region)s/testNamespace/testMetric/%(InstanceId)s",
+  "location":"%(region)s",
+  "datasource": "cloudwatch",
+  "predicted": "CPUUtilization",
+  "query": {
+              "aws_region":"%(region)s",
+              "namespace":"testNamespace/testMetric",
+              "metric_name":"testMetric",
+              "statistics":"Average",
+              "unit":"Percent",
+              "dimensions":{"InstanceId":"%(InstanceId)s"},
+              "min":0,
+              "max":100
+            },
+  "queryParameters":["region", "InstanceId"],
+  "period":300,
+  "parameters" : {"region":"us-east-1", "InstanceId":"i-931a8fec"}
+}

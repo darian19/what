@@ -1,0 +1,8 @@
+alembic==0.6.7
+mysql-python==1.2.5
+nta.utils
+pytz==2015.2
+requests==2.0.1
+sqlalchemy==0.9.4
+tweepy==2.1
+supervisor==3.1.3

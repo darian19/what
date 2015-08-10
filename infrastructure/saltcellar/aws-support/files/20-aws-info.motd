@@ -1,0 +1,32 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+instance_data=169.254.169.254
+metadata="${instance_data}/latest/meta-data"
+
+AMI_ID=$(curl --silent http://${metadata}/ami-id)
+AZ=$(curl --silent http://${metadata}/placement/availability-zone 2>/dev/null)
+INSTANCE_ID=$(curl --silent http://${metadata}/instance-id)
+
+echo "AWS Availability Zone: ${AZ}"
+echo "AMI ID: ${AMI_ID}"
+echo "Instance ID: ${INSTANCE_ID}"

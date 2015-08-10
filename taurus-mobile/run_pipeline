@@ -1,0 +1,206 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+"""
+  This script is the single point of entry for the Taurus-Mobile pipeline.
+  It can be run either locally or from Jenkins, assuming all of the
+  dependencies, as defined in the `README.md` ("Running the Pipeline" section)
+  are followed.
+
+  NOTE: In order to execute this script locally, you must have the Android SDK
+  installed and configured on your machine. See the `README.md`.
+"""
+import argparse
+import os
+import signal
+import sys
+import shutil
+
+from infrastructure.utilities.logger import initPipelineLogger
+from infrastructure.utilities.cli import runWithOutput
+from infrastructure.utilities.jenkins import (createOrReplaceArtifactsDir,
+                                              getWorkspace)
+from infrastructure.utilities.saucelabs import uploadToSauceLab
+from infrastructure.utilities.path import changeToWorkingDir
+from infrastructure.utilities.exceptions import CommandFailedError
+
+JOB_NAME = "taurus-mobile-product-pipeline"
+PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
+ANDROID_PATH = "%s/android" % PROJECT_HOME
+TAURUS_MOBILE_HOME = os.path.join(getWorkspace(), "taurus-mobile")
+artifactsDir = createOrReplaceArtifactsDir()
+
+g_googleAnalyticsIdParam = "-DGA_TRACKING_ID=%s" % os.environ["GA_TRACKING_ID"]
+g_feedbackEmailParam = "-DFEEDBACK_EMAIL=%s" % os.environ["FEEDBACK_EMAIL"]
+g_cognitoPoolIdParam = '-DCOGNITO_POOL_ID="%s"' % os.environ["COGNITO_POOL_ID"]
+g_initialVersionCodeParam = ("-DINITIAL_VERSION_CODE=%s" %
+                             os.environ["INITIAL_VERSION_CODE"])
+
+
+
+def logEmulatorStatus(logger):
+  """
+    Get the status of the emulator and log it.
+    :param logger: An initialized logger.
+
+    :raises: re-raise CommandFailedError if failed to run the command.
+  """
+  try:
+    runWithOutput("adb devices",env=os.environ, logger=logger)
+  except CommandFailedError:
+    logger.exception("Failed to check logger status")
+    raise
+
+
+def runTests(taurusServerUrl, logger):
+  """
+    Run the taurus-mobile tests.
+
+    :param taurusServerUrl: The reachable DNS entry for the instance under test
+    :param logger: An initialized logger.
+
+    :raises: re-raise CommandFailedError if failed to run the command.
+  """
+  urlPrefix = "-DSERVER_URL=%s" % taurusServerUrl
+  command = ("./gradlew %s %s %s %s %s connectedCheck" %
+               (urlPrefix,
+                g_googleAnalyticsIdParam,
+                g_feedbackEmailParam,
+                g_cognitoPoolIdParam,
+                g_initialVersionCodeParam))
+  try:
+    with changeToWorkingDir(ANDROID_PATH):
+      runWithOutput(command, logger=logger)
+  except CommandFailedError:
+    logger.exception("Received error for gradle task connectedCheck")
+    raise
+
+
+def runFunctionalTests(deviceName, version, logger):
+  """
+    Run all the functional test after uploading the APK to saucelabs
+
+    :param deviceName: Name of the device
+    :param version: Android version
+    :param logger: An initialized logger.
+
+    :raises : re-raise CommandFailedError if there is failure in runWithOutput
+  """
+
+  mvnCmd = ["mvn", "install", "-D", "deviceName=%s" % deviceName,
+            "-D", "version=%s" % version,
+            "-D", "sauceUserName=%s" % os.environ["SAUCE_USER_NAME"],
+            "-D", "sauceAccessKey=%s" % os.environ["SAUCE_KEY"]]
+
+  pomXMLPath = os.path.join(TAURUS_MOBILE_HOME, "tests", "behavioral",
+                            "TaurusMobileApp")
+  try:
+    with changeToWorkingDir(pomXMLPath):
+      logger.info("---------------- Running Functional Tests ----------------")
+      runWithOutput(mvnCmd, logger=logger)
+  except CommandFailedError:
+    logger.exception("Failed to run %s", mvnCmd)
+    raise
+
+
+def parseArgs():
+  """
+    Parse the command line arguments
+    :returns: The Parsed arguments from command line.
+    :rtype: argparse.Namespace
+  """
+  parser = argparse.ArgumentParser(description=("Build the Taurus-Mobile APK  "
+                                                "and test against the given "
+                                                "taurus server."))
+  parser.add_argument("--server", dest="server", type=str,
+                      default="http://10.0.2.2:8000",
+                      help=("The dynamodb local server to run tests "
+                      "against. Default http://10.0.2.2:8000"))
+  parser.add_argument("--log", dest="logLevel", type=str, default="info",
+                      help="Logging level, optional parameter and defaulted "
+                      "to level info")
+  parser.add_argument("--deviceName", dest="deviceName", type=str,
+                      default="Android Emulator",
+                      help="Android device name, "
+                      "which defaults to Android Emulator")
+  parser.add_argument("--android-version", dest="androidVersion", type=str,
+                      default="4.4", help="android version, "
+                      "which defaults to 4.4")
+
+  args = parser.parse_args()
+  return args
+
+
+
+def main(args):
+  """
+    Main function for the taurus-mobile-product-pipeline, Executes all sub-tasks
+
+    :param args: Parsed command line arguments
+  """
+  logger = initPipelineLogger(JOB_NAME, logLevel=args.logLevel)
+
+  taurusServerUrl = args.server
+  logger.debug("Using %s as the server for testing", taurusServerUrl)
+
+  # The calls in this function are not signal-safe. However, the expectation is
+  # that making them signal safe would be overly burdensome at this time. If
+  # issues arise later, then we'll figure out what the right approach is at that
+  # time.
+  def handleSignalInterrupt(signal, _frame):
+    logger.error("Received interrupt signal %s", signal)
+    sys.exit(1)
+
+  signal.signal(signal.SIGINT, handleSignalInterrupt)
+  signal.signal(signal.SIGTERM, handleSignalInterrupt)
+
+  # Build mobile client
+  with changeToWorkingDir(ANDROID_PATH):
+    runWithOutput("./gradlew clean build %s %s %s %s" %
+                    (g_googleAnalyticsIdParam,
+                     g_feedbackEmailParam,
+                     g_cognitoPoolIdParam,
+                     g_initialVersionCodeParam),
+                  env=os.environ, logger=logger)
+
+  try:
+
+    apkHome = os.path.join(TAURUS_MOBILE_HOME, "android", "build",
+                           "taurus-mobile", "outputs", "apk")
+
+    apkPath = os.path.join(artifactsDir, "apk")
+    shutil.copytree(apkHome, apkPath)
+
+    runTests(taurusServerUrl, logger)
+
+    uploadToSauceLab(apkPath=apkPath, apkName="app-release.apk",
+                     uploadName="taur-app-release.apk", logger=logger)
+
+    runFunctionalTests(args.deviceName, args.androidVersion, logger)
+
+    logEmulatorStatus(logger)
+  except Exception:
+    logger.exception("Unknown error during execution")
+    raise
+
+
+if __name__ == "__main__":
+  main(parseArgs())

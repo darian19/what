@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/twitter_detail_page"
+    style="@style/TwitterDetail"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/twitter_header_layout"
+        style="@style/TwitterDetail.Header">
+
+        <com.numenta.taurus.chart.TimeSliderView
+            android:id="@+id/time_slider"
+            android:layout_width="fill_parent"
+            android:layout_height="70dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            app:backgroundColorDark="#F2F2F2"
+            app:backgroundColorLight="#FFFFFF"
+            app:labelHeight="24sp"
+            app:labelTextColor="#777777"
+            app:labelTextSize="14sp"
+            app:showLabel="top" />
+
+        <fragment
+            android:id="@+id/instance_anomaly_chart"
+            android:name="com.numenta.taurus.instance.InstanceAnomalyChartFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:showContextMenu="false"
+            tools:ignore="MissingId,MissingPrefix"
+            tools:layout="@layout/fragment_instance_anomaly_chart" />
+    </FrameLayout>
+
+    <include
+        layout="@layout/fragment_metric_anomaly_chart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ListView
+            android:id="@+id/twitter_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:clickable="true"
+            android:dividerHeight="2dp"
+            android:drawSelectorOnTop="true"
+            android:fastScrollEnabled="true"
+            android:focusable="false" />
+
+        <LinearLayout
+            android:id="@+id/group_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#e0e0e0"
+            android:baselineAligned="true"
+            android:orientation="horizontal"
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp">
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:layout_weight="0.1"
+                android:textAppearance="@android:style/TextAppearance.Holo.Small"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tweet_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:textAppearance="@android:style/TextAppearance.Holo.Small"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/loading_tweets_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:background="@android:drawable/toast_frame"
+            android:orientation="horizontal"
+            android:padding="15sp"
+            android:visibility="gone">
+
+            <ProgressBar
+                style="?android:attr/indeterminateProgressStyle"
+                android:layout_width="24sp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="#BB000000"
+                android:shadowRadius="2.75"
+                android:text="@string/loading_tweets_message"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@android:color/background_light" />
+
+        </LinearLayout>
+        <CheckBox
+            android:id="@+id/condensed_tweets_checkbox"
+            android:layout_width="match_parent"
+            android:background="@android:color/black"
+            android:layout_height="24dp"
+            android:button="@drawable/checkbox_selector"
+            android:textAppearance="@android:style/TextAppearance.Holo.Small"
+            android:textColor="#ffffff"
+            android:text="@string/show_condensed_tweets"
+            android:checked="true"
+            android:layout_gravity="bottom|left"/>
+    </FrameLayout>
+
+
+</LinearLayout>

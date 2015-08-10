@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<!--
+FIXME: MER-1766 : Currently YOMP API 1.1 does not return metric unit.
+For now, until  MER-1763 is implemented we will use hard-coded metric units for all known metrics
+-->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedResources">
+	 <string name="Unit_AWS_AutoScaling_GroupTotalInstances">Count</string>
+	 <string name="Unit_AWS_DynamoDB_ConsumedReadCapacityUnits">Count</string>
+	 <string name="Unit_AWS_DynamoDB_ConsumedWriteCapacityUnits">Count</string>
+	 <string name="Unit_AWS_DynamoDB_ReturnedItemCount">Count</string>
+	 <string name="Unit_AWS_DynamoDB_SuccessfulRequestLatency">Milliseconds</string>
+	 <string name="Unit_AWS_EBS_VolumeQueueLength">Bytes</string>
+	 <string name="Unit_AWS_EBS_VolumeReadBytes">Bytes</string>
+	 <string name="Unit_AWS_EBS_VolumeTotalReadTime">Seconds</string>
+	 <string name="Unit_AWS_EBS_VolumeTotalWriteTime">Seconds</string>
+	 <string name="Unit_AWS_EBS_VolumeWriteBytes">Bytes</string>
+	 <string name="Unit_AWS_EC2_CPUUtilization">Percent</string>
+	 <string name="Unit_AWS_EC2_DiskReadBytes">Bytes</string>
+	 <string name="Unit_AWS_EC2_DiskWriteBytes">Bytes</string>
+	 <string name="Unit_AWS_EC2_NetworkIn">Bytes</string>
+	 <string name="Unit_AWS_EC2_NetworkOut">Bytes</string>
+	 <string name="Unit_AWS_ElastiCache_CPUUtilization">Percent</string>
+	 <string name="Unit_AWS_ElastiCache_NetworkBytesIn">Bytes</string>
+	 <string name="Unit_AWS_ElastiCache_NetworkBytesOut">Bytes</string>
+	 <string name="Unit_AWS_ELB_Latency">Seconds</string>
+	 <string name="Unit_AWS_ELB_RequestCount">Count</string>
+	 <string name="Unit_AWS_OpsWorks_cpu_idle">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_cpu_nice">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_cpu_system">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_cpu_user">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_cpu_waitio">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_load_5">None</string>
+	 <string name="Unit_AWS_OpsWorks_memory_buffers">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_memory_cached">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_memory_free">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_memory_swap">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_memory_total">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_memory_used">Percent</string>
+	 <string name="Unit_AWS_OpsWorks_procs">None</string>
+	 <string name="Unit_AWS_RDS_CPUUtilization">Percent</string>
+	 <string name="Unit_AWS_RDS_DatabaseConnections">Count</string>
+	 <string name="Unit_AWS_RDS_DiskQueueDepth">Count</string>
+	 <string name="Unit_AWS_RDS_FreeableMemory">Bytes</string>
+	 <string name="Unit_AWS_RDS_ReadIOPS">Count/Second</string>
+	 <string name="Unit_AWS_RDS_ReadLatency">Seconds</string>
+	 <string name="Unit_AWS_RDS_ReadThroughput">Bytes/Second</string>
+	 <string name="Unit_AWS_RDS_SwapUsage">Bytes</string>
+	 <string name="Unit_AWS_RDS_WriteIOPS">Count/Second</string>
+	 <string name="Unit_AWS_RDS_WriteLatency">Seconds</string>
+	 <string name="Unit_AWS_RDS_WriteThroughput">Bytes/Second</string>
+	 <string name="Unit_AWS_Redshift_DatabaseConnections">Count</string>
+	 <string name="Unit_AWS_SNS_NumberOfMessagesPublished">Count</string>
+	 <string name="Unit_AWS_SQS_NumberOfEmptyReceives">Count</string>
+	 <string name="Unit_AWS_SQS_NumberOfMessagesDeleted">Count</string>
+	 <string name="Unit_AWS_SQS_NumberOfMessagesSent">Count</string>
+	 <string name="Unit_AWS_SQS_NumberOfMessagesReceived">Count</string>
+	 <string name="Unit_AWS_SQS_SentMessageSize">Bytes</string>
+</resources>

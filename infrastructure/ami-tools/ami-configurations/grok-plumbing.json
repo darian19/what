@@ -1,0 +1,115 @@
+{
+  "builders": [
+    {
+      "ami_description": "YOMP Plumbing - CentOS 6.5 + 32GB root + SaltStack solo",
+      "ami_name": "YOMP-plumbing-saltstack-32GB-{{isotime | clean_ami_name}}",
+      "instance_type": "m3.large",
+      "region": "us-west-2",
+      "source_ami": "ami-5b447f6b",
+      "ssh_port": 22,
+      "ssh_timeout": "5m",
+      "ssh_username": "root",
+      "tags": {
+        "OS_Version": "CentOS",
+        "Release": "6.5"
+      },
+      "ami_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "delete_on_termination" : true,
+          "volume_size": 32
+        }
+      ],
+      "type": "amazon-ebs"
+    }
+  ],
+  "provisioners": [
+    {
+      "destination": "/tmp/products.sha",
+      "source": "products.sha",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/YOMP-development.repo",
+      "source": "repos/YOMP-development.repo",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/YOMP-release-candidates.repo",
+      "source": "repos/YOMP-release-candidates.repo",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/YOMP-releases.repo",
+      "source": "repos/YOMP-releases.repo",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/nta-carbonite.repo",
+      "source": "repos/nta-carbonite.repo",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/nta-thirdparty.repo",
+      "source": "repos/nta-thirdparty.repo",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/bootstrap-salt.sh",
+      "source": "bootstrap-salt.sh",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/yum-s3-0.2.4-1.noarch.rpm",
+      "source": "yum-s3-0.2.4-1.noarch.rpm",
+      "type": "file"
+    },
+    {
+      "inline": [
+        "echo 'Sleeping for 30s, waiting for system to settle down.'",
+        "sleep 30",
+        "mkdir -p /etc/numenta",
+        "mkdir -p /srv/salt",
+        "echo",
+        "echo Engraving products SHA and build timestamp into AMI",
+        "echo",
+        "mv /tmp/products.sha /etc/numenta",
+        "date > /etc/numenta/build.time"
+      ],
+      "type": "shell"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/create-numenta-users"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/zap-centos-nonessentials"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/install-salt"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/set-salt-output-state-to-mixed"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/install-epel-repo-6.5"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/configure-YOMP-plumbing-ami"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/run-ami-tests"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/cleanup-image"
+    }
+  ]
+}
+

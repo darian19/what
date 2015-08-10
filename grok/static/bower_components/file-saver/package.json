@@ -1,0 +1,21 @@
+{
+  "name": "filesaver.js",
+  "version": "2013.1.24",
+  "description": "A saveAs() FileSaver implementation",
+  "author": "Eli Grey",
+  "license": "MIT/X11",
+  "main": "FileSaver.js",
+  "repository": {
+    "type": "YOMP",
+    "url": "https://YOMPhub.com/eligrey/FileSaver.js.YOMP"
+  },
+  "bugs": {
+    "url": "https://YOMPhub.com/eligrey/FileSaver.js/issues"
+  },
+  "homepage": "https://YOMPhub.com/eligrey/FileSaver.js",
+  "keywords": [
+    "filesaver",
+    "saveas",
+    "blob"
+  ]
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Colors -->
+    <color name="MetricDetail.MetricName">#6f6f6f</color>
+    <color name="MetricDetail.ServerName">#ffffff</color>
+    <color name="MetricDetail.MetricValuesChartBackground">#000000</color>
+    <color name="MetricDetail.MetricValuesChartStrokeColor">#2A99CE</color>
+    <color name="MetricDetail.MetricValuesChartAxisColor">#7FFFFFFF</color>
+    <color name="MetricDetail.MetricValuesChartTextColor">#FFFFFFFF</color>
+    <color name="MetricDetail.Background">#C7CACA</color>
+    <color name="MetricDetail.Header.Background">#ffffff</color>
+
+    <!-- Styles -->
+    <style name="MetricDetail" parent="@android:style/Theme.Panel">
+        <item name="android:background">@color/MetricDetail.Background</item>
+    </style>
+
+    <style name="MetricDetail.Header" parent="@android:style/Widget.DeviceDefault.Button.Borderless">
+        <item name="android:background">@color/MetricDetail.Header.Background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
+    <style name="MetricDetail.MetricName" parent="@android:style/TextAppearance.Small">
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">15sp</item>
+        <item name="android:textColor">@color/MetricDetail.ServerName</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MetricDetail.MetricValuesChart" parent="@android:style/Theme.Panel">
+        <item name="android:background">@color/MetricDetail.MetricValuesChartBackground</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:layout_height">150dp</item>
+    </style>
+
+</resources>

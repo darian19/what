@@ -1,0 +1,6 @@
+REGION : "us-west-2"
+INSTANCE_TYPE : "m3.medium"
+USER : "ec2-user"
+S3_MAPPING_BUCKET : "builds.numenta.com"
+NOARCH_REPO_PATH : "/opt/numenta/s3repo/s3/noarch"
+YUM_REPO: "/opt/numenta/s3repo/s3"

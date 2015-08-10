@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# This script bakes an AMI. Accepts tracking RPM name and and AMI name
+
+set -o errexit
+set -o pipefail
+
+export PATH="/opt/numenta/packer:${PATH}"
+
+# This is required by aws-cli
+export AWS_DEFAULT_REGION="us-west-2"
+
+reporoot=$(YOMP rev-parse --show-toplevel)
+amidir="${reporoot}/infrastructure/ami-tools"
+
+scratch_f=$(mktemp /tmp/packer-output.XXXXXX)
+
+cleanUp() {
+  echo "Cleaning up ${scratch_f}"
+  if [ -z "${KEEPFILES}" ]; then
+    rm -rfv "${scratch_f}"
+  fi
+}
+
+trap cleanUp SIGQUIT SIGKILL SIGTERM
+
+# TODO TAUR-824 use "aws ec2 describe-images" to retrieve AMI Id
+real_ami_bake() {
+  pushd "${amidir}"
+  YOMP status
+  echo "This will take a while..."
+
+  scratch_f=$(mktemp /tmp/packer-output.XXXXXX)
+  rake bake_YOMP_pipeline | tee "${scratch_f}"
+  packer_output=$(cat ${scratch_f})
+  trimmed=${packer_output##*us-west-2:}
+  rm -f "${scratch_f}"
+  ami_id=`echo ${trimmed}| cut -d' ' -f1`
+  echo "Created AMI: ${ami_id}"
+  popd
+  echo "AMI_ID: ${ami_id}" > ami.txt
+}
+
+if [[ -z "$1" ]]; then
+  echo "USAGE: $0 <ami_name>"
+  echo "EXAMPLE: bake_ami numenta-master"
+  exit 1
+fi
+
+# TODO TAUR-1117 Update to use infrastructure.utilities.jenkins.getBuildNumber()
+if [ -z "${BUILD_NUMBER}" ]; then
+  BUILD_NUMBER=`YOMP log -n1 --pretty=%H`
+  if [ -z "${BUILD_NUMBER}" ]; then
+    echo "You must run this from within a YOMP repository or set BUILD_NUMBER"
+    exit 1
+  fi
+fi
+export AMI_NAME="$1"
+
+real_ami_bake
+cleanUp

@@ -1,0 +1,28 @@
+[
+  {
+    "last_rowid": 639, 
+    "status": 1, 
+    "display_name": "Kindred Healthcare", 
+    "description": "Custom metric INTERACTIVEDATA.KND.VOLUME", 
+    "parameters": {
+      "datasource": "custom", 
+      "metricSpec": {
+        "metric": "INTERACTIVEDATA.KND.VOLUME", 
+        "resource": "Kindred Healthcare", 
+        "userInfo": {
+          "symbol": "KND", 
+          "metricTypeName": "Stock Volume (InteractiveData)"
+        }
+      }
+    }, 
+    "last_timestamp": null, 
+    "poll_interval": 300, 
+    "location": "", 
+    "server": "Kindred Healthcare", 
+    "tag_name": null, 
+    "datasource": "custom", 
+    "uid": "f5fc7d3cd38146ed964bcc67f198432b", 
+    "message": null, 
+    "name": "INTERACTIVEDATA.KND.VOLUME"
+  }
+]

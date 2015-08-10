@@ -1,0 +1,88 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# This scripts builds YOMP.
+# YOMPSHA : Accepts an optional argument, YOMP commit which you want to build
+# BUILD_DIR : BUILD_DIR that should be used by pip
+
+set -o errexit
+set -o pipefail
+
+export PATH=/opt/numenta/anaconda/bin:$PATH
+export PYTHONPATH=${BUILD_WORKSPACE}/products:${PYTHONPATH}
+
+
+if ! [ -r "${REPOSITORY}" ]; then
+  echo "Please make sure REPOSITORY dir configuration"
+  echo "Set REPOSITORY to NuPIC source root dir"
+  echo "${REPOSITORY}"
+  exit 1
+fi
+
+
+if ! [ -r "${YOMP_HOME}" ]; then
+  echo "Please make sure YOMP_HOME dir configuration"
+  echo "Set YOMP_HOME to YOMP source root dir"
+  echo "$YOMP_HOME"
+  exit 1
+fi
+
+
+# Rewrite the SHA where we can see it from the WebUI
+rm -f "${YOMP_HOME}"/static/YOMP.sha
+
+# $1 - YOMPSHA : Accepts an optional argument, YOMP commit which you want to build
+pushd "${YOMP_HOME}"
+  if [ $# -eq 1 ]; then
+    YOMP reset --hard $1
+    echo $1 > "${YOMP_HOME}"/static/YOMP.sha
+  fi
+popd
+
+
+# $2 - buildDir : So that pip uses a separate build dir.
+BUILD_DIR="${2}"
+
+if [ -z "${2}" ]; then
+  BUILD_DIR="$(mktemp -d /tmp/build_YOMP_py27.XXXX)"
+fi
+
+
+mkdir -p "${YOMP_HOME}"/wheels
+mkdir -p "${YOMP_HOME}"/lib/python2.7/site-packages/
+
+# pip doesn't always clean up well after itself, so clean the build folder
+# before proceeding. HACK
+rm -rf "${BUILD_DIR}"/*
+echo "Done with installing NuPIC."
+
+function build {
+  pushd "${BUILD_WORKSPACE}"/products/"${1}"
+    python setup.py develop --prefix="${YOMP_HOME}"
+    # pip doesn't always clean up well after itself, so clean the build folder
+    # before proceeding. HACK
+    rm -rf "${BUILD_DIR}"/*
+  popd
+}
+
+build nta.utils
+build htmengine
+build YOMP

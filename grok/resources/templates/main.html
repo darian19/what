@@ -1,0 +1,151 @@
+$def with (data)
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>| $data['site']['name']</title>
+        <link rel="shortcut icon" href="$data['baseUrl']/static/img/icon/favicon.ico?v=$data['product']['version']" />
+        <link rel="stylesheet" type="text/css" href="$data['baseUrl']/static/bower_components/bootstrap/dist/css/bootstrap.min.css?v=$data['product']['version']" />
+        <link rel="stylesheet" type="text/css" href="$data['baseUrl']/static/css/global.css?v=$data['product']['version']" />
+    </head>
+    <body>
+        <!-- header -->
+        <header class="navbar navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="$data['site']['paths']['manage']">$data['site']['name']</a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="manage hidden">
+                        <a href="$data['site']['paths']['manage']"><span class="glyphicon glyphicon-list"></span> Manage</a>
+                    </li>
+                    <li class="charts hidden">
+                        <a href="$data['site']['paths']['charts']"><span class="glyphicon glyphicon-stats"></span> Charts</a>
+                    </li>
+                    <li class="setup dropdown hidden">
+                        <a href="$data['site']['paths']['welcome']" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> Setup <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="text-muted">$data['site']['nav']['setup']['method']['title']</li>
+                            <li class="sub"><a href="$data['site']['paths']['instances-manual']">$data['site']['nav']['setup']['method']['manual']</a></li>
+                            <li class="sub"><a href="$data['site']['paths']['instances-auto']">$data['site']['nav']['setup']['method']['auto']</a></li>
+                            <li class="sub"><a href="$data['site']['paths']['instances-import']">$data['site']['nav']['setup']['method']['import']</a></li>
+                            <li class="sub"><a href="$data['site']['paths']['autostack']">$data['site']['nav']['setup']['method']['autostack']</a></li>
+                            <li class="sub"><a href="$data['site']['paths']['manage-custom-metrics']">$data['site']['nav']['setup']['method']['custom']</a></li>
+                            <li class="divider"></li>
+                            <li><a href="$data['site']['paths']['complete']">$data['site']['nav']['setup']['complete']</a></li>
+                            <li><a href="$data['site']['paths']['auth']">$data['site']['nav']['setup']['auth']</a></li>
+                            <li><a href="$data['site']['paths']['register']">$data['site']['nav']['setup']['register']</a></li>
+                            <li><a href="$data['site']['paths']['notify']">$data['site']['nav']['setup']['notify']</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#" id="support-access-enable" class="support-access">$data['site']['nav']['setup']['support']['enable']</a></li>
+                            <li class="off danger"><a href="#" id="support-access-disable" class="support-access">$data['site']['nav']['setup']['support']['disable']</a></li>
+                        </ul>
+                    </li>
+                    <li class="help">
+                        <a href="#"><span class="glyphicon glyphicon-question-sign"></span> Help</a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <!-- main content -->
+        <div class="content-wrap">
+
+            <!-- flash message box -->
+            <div id="alert" class="alert alert-dismissable container off">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                    $data['site']['icons']['close']
+                </button>
+                <span class="text"></span>
+            </div>
+
+            <!-- actual content -->
+            <section id="content" class="container"></section>
+
+        </div>
+
+        <!-- full screen loading indicator throbbing animation -->
+        <div class="loading-throbber off">
+            <img src="/static/img/mark.svg?v=$data['product']['version']" alt="$data['site']['name']" />
+            <div><span class="off"><!-- message --></span></div>
+        </div>
+
+        <!-- footer -->
+        <footer>
+            <div class="container text-muted text-center">
+                <ul class="list-inline">
+                    <li><a href="http://www.numenta.com/YOMP" target="_blank">About</a></li>
+                    <li><a href="http://www.numenta.com/support/" target="_blank">Help</a></li>
+                    <li>
+                        © $data['year']
+                        <a href="$data['site']['company']['url']" target="_blank">$data['site']['company']['name']</a>
+                    </li>
+                </ul>
+                <ul class="list-inline">
+                    <li>Version $data['product']['version']</li>
+                    <li>Build $data['product']['build']</li>
+                </ul>
+            </div>
+        </footer>
+
+        <!-- libs -->
+        <script src="$data['baseUrl']/static/bower_components/jquery/dist/jquery.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/underscore/underscore.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/backbone/backbone.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/labjs/LAB.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/bootstrap/dist/js/bootstrap.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/bootbox/bootbox.min.js?v=$data['product']['version']"></script>
+        <!-- YOMP Init -->
+        <script src="$data['baseUrl']/static/js/lib/YOMP/nta.js?v=$data['product']['version']"></script>
+        <script>
+            window.YOMPUI = {
+                _apiEndpoint: "$data['endpoint']",
+                embed: {
+                    height: "$data['embed']['height']",
+                    width:  "$data['embed']['width']"
+                },
+                hostname: "$data['hostname']",
+                instanceData: {
+                    region: "$data['instanceData']['region']"
+                },
+                msgs: {},
+                product: {
+                    version:    "$data['product']['version']",
+                    build:      "$data['product']['build']"
+                }
+            };
+            NTA.baseUrl = "$data['baseUrl']";
+        </script>
+        <!-- YOMP API -->
+        <script src="$data['baseUrl']/static/js/lib/YOMP/YOMPAPI.js?v=$data['product']['version']"></script>
+        <!-- Backbone.Model(s) -->
+        <script src="$data['baseUrl']/static/js/program/models/awsMetric.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/awsNamespace.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/awsRegion.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/YOMPAutostack.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/YOMPCustomMetric.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/annotation.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/instance.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/model.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/modelData.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/modelExport.js?v=$data['product']['version']"></script>
+        <!-- Backbone.Collection(s) -->
+        <script src="$data['baseUrl']/static/js/program/collections/awsMetrics.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/collections/awsNamespaces.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/collections/awsRegions.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/collections/YOMPAutostacks.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/collections/YOMPCustomMetrics.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/collections/annotations.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/collections/instances.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/collections/models.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/collections/modelExports.js?v=$data['product']['version']"></script>
+        <!-- YOMP Web UI -->
+        <script src="$data['baseUrl']/static/js/lib/YOMP/utils.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/lib/YOMP/loader.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/YOMP-routes.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/lib/YOMP/router.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/global.js?v=$data['product']['version']"></script>
+    </body>
+</html>

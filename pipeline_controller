@@ -1,0 +1,303 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+"""
+  This script represents the controller for a master Jenkins pipeline. There
+  will be a single Jenkins job that executes automatically whenever the repo is
+  modified. It is the resonsibility of this script to ensure that the correct
+  Jenkins jobs are subsequently called, based on which folders contain
+  modifications.  This script assumes that the `products` repo is in the correct
+  state for building and testing.
+
+  Each Jenkins job will call the relevant `Single Point of Entry` for the
+  folder. This allows us to take advantage of Jenkins for scheduling,
+  multi-threading, delegation to appropriate slaves, notification, etc. But, it
+  also allows us to ensure that only the relevant jobs are triggered with any
+  given commit.
+"""
+
+import argparse
+import os
+
+from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.custom_exceptions import UnknownJob
+
+from infrastructure.utilities.exceptions import (
+  CommandFailedError, InvalidParametersError)
+from infrastructure.utilities.logger import initPipelineLogger
+from infrastructure.utilities.YOMP import (
+  getActiveBranch,
+  getCurrentSha,
+  getModifiedFilesBetweenRevisions)
+
+
+g_logger = initPipelineLogger("product-master-pipeline")
+
+
+
+def getConnectionToJenkins():
+  """
+    Connects to Jenkins and returns the connection object.
+
+    :returns: Jenkins connection
+  """
+  return Jenkins(
+    os.environ["JENKINS_HOST"],
+    os.environ["JENKINS_USER"],
+    os.environ["JENKINS_PASSWORD"])
+
+
+def invokeBuild(jobName, buildParams):
+  """
+    This function executes a specified Jenkins job with the parameters provided.
+
+    :param jobName: Name of the job to be executed. Must be a literal match to a
+      Jenkins job
+
+    :param buildParams: a dict containing {key:value} pairs for use by Jenkins.
+      The Keys are defined by the Jenkins jobs and valid values will be
+      different per Job.
+
+    :raises jenkinsapi.custom_exceptions.UnknownJob: if Jenkins isn't able to
+      find the specified job.
+  """
+  getConnectionToJenkins()[jobName].invoke(build_params=buildParams,
+                                           cause="product-master-build")
+
+
+def invokeYOMPBuild(YOMPRemote, branch, buildSha):
+  """
+    TODO: Define params, flesh out implementation details, and uncomment the
+    actual `invokeBuild` command
+
+    This function will be used to invoke the Jenkins job related to YOMP builds
+    as appropriate.
+
+    :param YOMPRemote: The remote to be used when accessing YOMP (e.g.:
+      YOMP@YOMPhub.com:Numenta/numenta-apps.YOMP)
+
+    :param branch: The YOMP branch to use.
+
+    :param buildSha: The commit SHA to set the YOMP repo to before building.
+  """
+  params = {"GIT_REMOTE": YOMPRemote,
+            "BRANCH": branch,
+            "COMMIT_SHA": buildSha}
+  invokeBuild("YOMP-product-pipeline", params)
+  g_logger.info("Invoking YOMP Build")
+
+
+def invokeYOMPMobileBuild(YOMPRemote, branch, buildSha):
+  """
+    This function invokes the Jenkins job related to YOMP-Mobile builds.
+
+    :param YOMPRemote: The remote to be used when accessing YOMP (e.g.:
+      YOMP@YOMPhub.com:Numenta/numenta-apps.YOMP)
+
+    :param branch: The YOMP branch to use.
+
+    :param buildSha: The commit SHA to set the YOMP repo to before building.
+  """
+  g_logger.info("Invoking YOMP Mobile Build")
+  params = {"GIT_REMOTE": YOMPRemote,
+            "BRANCH": branch,
+            "COMMIT_SHA": buildSha,
+            "PIPELINE": "product-master-build"}
+  invokeBuild("YOMP-mobile-product-pipeline", params)
+
+
+def invokeTaurusBuild(YOMPRemote, branch, buildSha):
+  """
+    Invoke `refresh-taurus-servers` pipeline, overriding USER_GIT_URL,
+    USER_GIT_BRANCH_NAME, and USER_GIT_COMMIT environment variable defaults.
+
+    :param YOMPRemote: The remote to be used when accessing YOMP (e.g.:
+      YOMP@YOMPhub.com:Numenta/numenta-apps.YOMP)
+
+    :param branch: The YOMP branch to use.
+
+    :param buildSha: The commit SHA to set the YOMP repo to before building.
+  """
+  params = {"USER_GIT_URL": YOMPRemote,
+            "USER_GIT_BRANCH_NAME": branch,
+            "USER_GIT_COMMIT": buildSha}
+  invokeBuild("refresh-taurus-servers", params)
+  g_logger.info("Invoking Taurus Build")
+
+
+def invokeTaurusMobileBuild(YOMPRemote, branch, buildSha):
+  """
+    TODO: Define params, flesh out implementation details, and uncomment the
+    actual `invokeBuild` command
+
+    This function will be used to invoke the Jenkins job related to
+    Taurus-Mobile builds as appropriate.
+
+    :param YOMPRemote: The remote to be used when accessing YOMP (e.g.:
+      YOMP@YOMPhub.com:Numenta/numenta-apps.YOMP)
+
+    :param branch: The YOMP branch to use.
+
+    :param buildSha: The commit SHA to set the YOMP repo to before building.
+  """
+  params = {"GIT_REMOTE": YOMPRemote,
+            "BRANCH": branch,
+            "COMMIT_SHA": buildSha}
+  invokeBuild("taurus-mobile-product-pipeline", params)
+  g_logger.info("Invoking Taurus Mobile Build")
+
+
+def invokeRpmBuild(YOMPRemote, branch, buildSha):
+  """
+    This function will be used to invoke the Jenkins job related to
+    infrastruture-rpm-pipeline builds as appropriate.
+
+    :param YOMPRemote: The remote to be used when accessing YOMP (e.g.:
+      YOMP@YOMPhub.com:Numenta/numenta-apps.YOMP)
+
+    :param branch: The YOMP branch to use.
+
+    :param buildSha: The commit SHA to set the YOMP repo to before building.
+  """
+  params = {"GIT_REMOTE": YOMPRemote,
+            "BRANCH": branch,
+            "COMMIT_SHA": buildSha}
+  invokeBuild("infrastruture-rpm-pipeline", params)
+  g_logger.info("Invoking infrastruture-rpm-pipeline Build")
+
+
+
+def getLatestGreenRevision(jobName):
+  """
+    Returns the SHA of the latest green build of the specified pipeline
+
+    :param jobName: Name of the job to be executed. Must be a literal match to a
+      Jenkins job
+
+    :returns: Commit SHA of the latest passing Green build of the given Job.
+  """
+  return getConnectionToJenkins()[jobName].get_last_good_build().get_revision()
+
+
+def getChangedFoldersBetweenRevisions(startSha, endSha):
+  """
+    This function returns a list of the root folders that contain changes from
+    one commit SHA to another. This allows us to take, for example, the latest
+    green build of this pipeline and compare it to the current commit SHA being
+    executed and determine which downstream Jenkins jobs to execute.
+
+    :param startSha: The first commit SHA to use in a revision history to see
+      what has changed
+
+    :param endSha: The last commit SHA to use in a revision history to see what
+      has changed
+
+    :returns: A `set` of folders that have any modified files in them between
+      the commit SHAs specified.
+    :rtype: set
+
+  """
+  files = getModifiedFilesBetweenRevisions(startSha, endSha)
+  rootFolders = []
+  for name in files:
+    if not name.split("/")[0] in rootFolders:
+      rootFolders.append(name.split("/")[0])
+  return set(rootFolders)
+
+
+def parseArgs():
+  """
+    Parse the command line arguments
+  """
+  parser = argparse.ArgumentParser(description="Jenkins pipeline controller")
+  parser.add_argument("--YOMPRemote", dest="YOMPRemote", type=str,
+                      default="YOMP@YOMPhub.com:Numenta/numenta-apps.YOMP",
+                      help="Specifies which YOMP remote to use")
+  parser.add_argument("--startSha", dest="startSha", type=str,
+                      help=("**OPTIONAL** If specified, this determines which "
+                            "SHA to start with for comparing which folders "
+                            "have changed. If unspecified, the script will use "
+                            "the latest green build commit SHA from the "
+                            "product-master-build Jenkins job."))
+  parser.add_argument("--branch", dest="branch", type=str,
+                      help=("**OPTIONAL** If specified, this determines which "
+                            "branch to work off of. Otherwise, this will be "
+                            "set to the active branch."))
+  return parser.parse_args()
+
+
+def main(args):
+  """
+    Main function for the pipeline. Executes all sub-tasks.
+
+    :param args: Parsed command line arguments
+  """
+
+  try:
+    if (not os.environ["JENKINS_HOST"] or not os.environ["JENKINS_USER"] or
+        not os.environ["JENKINS_PASSWORD"]):
+      raise InvalidParametersError("You must set the JENKINS_HOST, JENKINS_USER"
+                                   " and JENKINS_PASSWORD env vars to proceed")
+  except KeyError:
+    raise InvalidParametersError("You must set the JENKINS_HOST, JENKINS_USER"
+                                 " and JENKINS_PASSWORD env vars to proceed")
+
+  try:
+    #STEP 1: Determine which folders have been modified
+    startSha = args.startSha or getLatestGreenRevision("product-master-build")
+    currentSha = getCurrentSha()
+    branch = args.branch or getActiveBranch()
+
+    rootFolders = getChangedFoldersBetweenRevisions(startSha, currentSha)
+    g_logger.info("Folders with modifications: %s", rootFolders)
+
+    #STEP 2: Execute the appropriate sub-pipelines as needed
+    if set(["YOMP", "htmengine", "nta.utils"]) & rootFolders:
+      invokeYOMPBuild(args.YOMPRemote, branch, currentSha)
+    if (set(["taurus", "taurus.metric_collectors", "htmengine", "nta.utils"]) &
+        rootFolders):
+      invokeTaurusBuild(args.YOMPRemote, branch, currentSha)
+    if (set(["YOMP", "htmengine", "YOMP-mobile", "mobile-core", "nta.utils"]) &
+        rootFolders):
+      invokeYOMPMobileBuild(args.YOMPRemote, branch, currentSha)
+    if set(["taurus", "taurus.metric_collectors", "nta.utils", "htmengine",
+            "taurus-mobile", "mobile-core"]) & rootFolders:
+      invokeTaurusMobileBuild(args.YOMPRemote, branch, currentSha)
+
+    if (set(["infrastructure/utilities", "infrastructure/saltcellar"]) &
+        rootFolders):
+      invokeRpmBuild(args.YOMPRemote, branch, currentSha)
+
+  except CommandFailedError:
+    g_logger.exception("Not running from a YOMP repo or other YOMP related error")
+    raise
+  except UnknownJob:
+    g_logger.exception("Could not find the Jenkins job specified; aborting")
+    raise
+  except:
+    #TODO add better error handling
+    g_logger.exception("Script execution failed")
+    raise
+
+
+if __name__ == "__main__":
+  main(parseArgs())

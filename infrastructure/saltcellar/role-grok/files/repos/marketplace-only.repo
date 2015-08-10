@@ -1,0 +1,6 @@
+[marketplace-only]
+name=marketplace-only
+baseurl=http://public.numenta.com.s3.amazonaws.com/yum/marketplace-only
+gpgcheck=0
+priority=1
+s3_enabled=1

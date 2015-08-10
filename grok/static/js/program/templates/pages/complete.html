@@ -1,0 +1,73 @@
+<div class="YOMP-complete YOMP-page row">
+    <div class="col-md-8 col-md-offset-2">
+        <section id="progress-bar-container"></section>
+
+        <h1><% if(isSetup) { %><%= site.setup.steps.label %> <%= step %>: <% } %><%= msgs.title %></h1>
+
+        <p>
+            Your server set up is now complete. You need to install the Mobile
+            App to begin using YOMP.
+        </p>
+        <div class="well">
+            <strong>Requirements:</strong>
+            <ul>
+                <li>
+                    Ensure that you are running Android 4.0.3 or later.
+                </li>
+                <li>
+                    Ensure that you can access
+                    <a href="<%= clientUrl %>"><%= clientUrl %></a>
+                    from your mobile browser (requires port 443 be open in
+                    your security group).
+                </li>
+            </ul>
+        </div>
+
+        <ol class="steps">
+            <li>
+                Install the YOMP app via the Play Store by clicking:
+                <br/>
+                <div class="playstore">
+                    <a href="https://play.google.com/store/apps/details?id=com.YOMPsolutions.YOMP.mobile" target="_blank"><img alt="Android app on Google Play" src="/static/img/mobile/play-store-button.png" /></a>
+                </div>
+            </li>
+            <li>
+                Once installed, open the YOMP app:
+                <ol>
+                    <li>
+                        When prompted, enter the following settings:
+                        <br/>
+                        <dl>
+                            <dt>Server URL</dt>
+                                <dd><code><%= serverUrl %></code></dd>
+                            <dt>Password (case sensitive)</dt>
+                                <dd><code><%= apiKey %></code></dd>
+                        </dl>
+                    </li>
+                    <li>
+                        Tap the <strong>Sign In</strong> button.
+                    </li>
+                </ol>
+            </li>
+            <li>
+                <strong>Finished!</strong>
+                <br/>
+                Please note that the mobile app may take 5-10 minutes per
+                monitored instance to load initial data.
+            </li>
+        </ol>
+
+        <% if(isSetup) { %>
+            <p>
+                You can modify your YOMP server settings by clicking the Setup link
+                located in the upper-right corner of the screen, or by clicking the
+                <strong>Manage Monitored Instances</strong> button below.
+            </p>
+
+            <button id="next" type="submit" class="btn btn-primary">
+                <%= site.buttons.manage %>
+            </button>
+        <% } %>
+        
+    </div>
+</div>

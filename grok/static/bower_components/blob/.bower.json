@@ -1,0 +1,14 @@
+{
+  "name": "Blob",
+  "main": "./Blob.js",
+  "dependencies": {},
+  "homepage": "https://YOMPhub.com/eligrey/Blob.js",
+  "_release": "ae8dda658a",
+  "_resolution": {
+    "type": "commit",
+    "commit": "ae8dda658acb983a3165bffa27cb184186927306"
+  },
+  "_source": "YOMP://YOMPhub.com/eligrey/Blob.js.YOMP",
+  "_target": "ae8dda658acb983a3165bffa27cb184186927306",
+  "_originalSource": "eligrey/Blob.js"
+}

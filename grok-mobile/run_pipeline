@@ -1,0 +1,381 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+"""
+  This script is the single point of entry for the YOMP-Mobile pipeline. It can
+  be run either locally or from Jenkins, assuming all of the dependencies, as
+  defined in the `README.md` ("Running the Pipeline" section) are followed.
+
+  NOTE: In order to execute this script locally, you must have the Android SDK
+  installed on your machine.
+"""
+import argparse
+import os
+import shutil
+import signal
+import sys
+import yaml
+
+from distutils.dir_util import copy_tree
+from pkg_resources import resource_stream
+from infrastructure.utilities.exceptions import CommandFailedError
+
+from infrastructure.utilities.ec2 import (
+  launchInstance,
+  stopInstance,
+  terminateInstance)
+from infrastructure.utilities.exceptions import (
+  YOMPConfigError,
+  InstanceLaunchError,
+  InstanceNotReadyError,
+  InvalidParametersError,
+  TestsFailed)
+
+from infrastructure.utilities.cli import runWithOutput
+from infrastructure.utilities.YOMP_server import (waitForYOMPServerToBeReady,
+  getApiKey)
+from infrastructure.utilities import jenkins
+from infrastructure.utilities.logger import initPipelineLogger
+from infrastructure.utilities.saucelabs import uploadToSauceLab
+from infrastructure.utilities.s3 import getLastStableAmi
+from infrastructure.utilities.path import changeToWorkingDir
+
+g_config = yaml.load(resource_stream(__name__, "pipeline/config.yaml"))
+g_config["AWS_ACCESS_KEY_ID"] = os.environ.get("AWS_ACCESS_KEY_ID")
+g_config["AWS_SECRET_ACCESS_KEY"] = os.environ.get("AWS_SECRET_ACCESS_KEY")
+g_config["JOB_NAME"] = "YOMP-mobile-product-pipeline"
+g_config["BUILD_NUMBER"] = jenkins.getBuildNumber()
+YOMP_MOBILE_HOME = os.path.join(jenkins.getWorkspace(), "YOMP-mobile")
+ANDROID_PATH = "%s/android" % YOMP_MOBILE_HOME
+S3_MAPPING_BUCKET = os.environ.get("S3_MAPPING_BUCKET")
+YOMP_AWS_CREDENTIALS_SETUP_TRIES = 30
+SLEEP_DELAY = 10
+
+g_googleAnalyticsIdParameter = ("-DGA_TRACKING_ID=%s" %
+                                os.environ["GA_TRACKING_ID"])
+g_feedbackEmailParameter = ("-DFEEDBACK_EMAIL=%s" %
+                            os.environ["FEEDBACK_EMAIL"])
+g_initialVersionCodeParameter = ("-DINITIAL_VERSION_CODE=%s" %
+                                 os.environ["INITIAL_VERSION_CODE"])
+
+
+def setupArtifactsDir():
+  """
+    If the artifactsDir already exists, then remove it and recreate. Otherwise,
+    just create a new folder to store the artifacts in. Then, return the path to
+    the artifactsDir.
+  """
+  artifactsDir = os.path.join(jenkins.getWorkspace(), "artifacts")
+  if os.path.exists(artifactsDir):
+    shutil.rmtree(artifactsDir)
+  os.makedirs(artifactsDir)
+  return artifactsDir
+
+
+def logEmulatorStatus(logger):
+  """
+    Get the status of the emulator and log it.
+
+    :param logger: An initialized logger.
+  """
+  logger.debug("-------Current Emulator Status--------")
+  runWithOutput("adb devices", env=os.environ, logger=logger)
+
+
+def runTests(publicDnsName, apiKey, buildDir, reportsDir, artifactsDir, logger):
+  """
+    Run the YOMP-mobile tests and copy the results to the artifacts folder.
+
+    :param publicDnsName: The reachable DNS entry for the instance under test
+
+    :param apiKey: The API Key to connect to the server
+
+    :param buildDir: The build directory from which to copy artifacts
+    
+    :param reportsDir: The reports directory from which to copy artifacts
+
+    :param artifactsDir: The artifactsDir to which test results should be saved
+
+    :param logger: An initialized logger
+
+    :raises: Exception If an unknown error occurs during execution.
+  """
+  try:
+    with changeToWorkingDir(ANDROID_PATH):
+      serverUrlPrefix = "-DSERVER_URL=https://"
+      serverPassPrefix = "-DSERVER_PASS="
+
+      command = ("./gradlew %s%s %s%s %s %s %s connectedCheck" %
+                    (serverUrlPrefix,
+                     publicDnsName,
+                     serverPassPrefix,
+                     apiKey,
+                     g_googleAnalyticsIdParameter,
+                     g_feedbackEmailParameter,
+                     g_initialVersionCodeParameter))
+      runWithOutput(command, env=os.environ, logger=logger)
+    # copy test results to the artifacts folder
+    os.makedirs(os.path.join(artifactsDir, "reports"))
+    copy_tree(reportsDir, os.path.join(artifactsDir, "reports"))
+    with changeToWorkingDir(buildDir):
+      os.makedirs(os.path.join(artifactsDir, "apk"))
+      copy_tree("apk", os.path.join(artifactsDir, "apk"))
+  except CommandFailedError:
+    logger.exception("Received error for gradle task connectedCheck")
+    raise
+  except Exception:
+    logger.exception("Unknown error occured in runTests")
+    raise
+
+
+def runFunctionalTests(server, apiKey, logger, deviceName, version):
+  """
+    Run all the functional test after uploading the APK to saucelabs
+
+    :param server: Server url
+    :param apiKey: Password for YOMP-mobile app
+    :param logger: An initialized logger.
+    :param deviceName: Name of the device
+    :param version: Android version
+
+  """
+
+  sauceUser = "%s" % (os.environ["SAUCE_USER_NAME"])
+  sauceKey = "%s" % (os.environ["SAUCE_KEY"])
+
+  mvnCmd = ["mvn", "install", "-D", "url=%s" % server, "-D", "pwd=%s" % apiKey,
+            "-D", "deviceName=%s" % deviceName, "-D", "version=%s" % version,
+            "-D", "sauceUserName=%s" % sauceUser,
+            "-D", "sauceAccessKey=%s" % sauceKey]
+
+  pomXMLPath = os.path.join(YOMP_MOBILE_HOME, "tests",
+                            "behavioral", "YOMPMobileApp")
+
+  with changeToWorkingDir(pomXMLPath):
+    logger.info("---------------- Running Functional Test ----------------")
+    runWithOutput(mvnCmd)
+
+
+def parseArgs():
+  """
+    Parse the command line arguments
+  """
+  parser = argparse.ArgumentParser(description=("Build the YOMP-Mobile APK and "
+                                                "test against the given server,"
+                                                " specified AMI, or latest YOMP"
+                                                " AMI if not otherwise set."))
+  parser.add_argument("--ami-id", dest="amiId", type=str,
+                      help=("OPTIONAL: AMI ID to test against. If this is set "
+                            "launch an instance of the AMI in the region "
+                            "specified and run the tests. If this is not set, "
+                            "a running `server` must be specified to run tests "
+                            "against"))
+  parser.add_argument("--region", dest="region", type=str, default="us-west-2",
+                      help=("Which region to launch the AMI in. Must be "
+                            "specified when using the `ami-id` option. IGNORED "
+                            "if specified along with the `server` option."))
+  parser.add_argument("--server", dest="server", type=str,
+                      help=("OPTIONAL: A running instance to run tests against."
+                            " This is mutually exclusive with `ami-id`. Valid "
+                            "values are reachable server DNS entries / IP "
+                            "addresses. e.g.: 1.6.numenta.com or 10.0.2.2."))
+  parser.add_argument("--apiKey", dest="apiKey", type=str,
+                      help=("Specify the API Key for a running instance so "
+                            "that the tests can run. Must be specified if "
+                            "using the `server` option."))
+  parser.add_argument("--log", dest="logLevel", type=str, default="info",
+                      help="Logging level, optional parameter and defaulted to"
+                           "level warning")
+  parser.add_argument("--deviceName", dest="deviceName", type=str,
+                      default="Android Emulator",
+                      help="Android device name, "
+                      "which defaults to Android Emulator")
+  parser.add_argument("--android-version", dest="androidVersion", type=str,
+                      default="4.4", help="android version, "
+                      "which defaults to 4.4")
+
+  args = parser.parse_args()
+
+  supportedRegions = {"us-east-1": "chef-knife",
+                      "us-west-2": "chef_west"}
+
+  if args.server and args.amiId:
+    parser.error("Server and AMI-ID are mutually exclusive options. "
+                 "Either specify an `ami-id` and `region` or a `server` and "
+                 "`apiKey`API Key. You can also leave all args empty to launch "
+                 "the latest stable AMI in `us-west-2`.")
+
+  if args.region in supportedRegions:
+    g_config["KEY"] = supportedRegions[args.region]
+    g_config["REGION"] = args.region
+  elif args.amiId:
+    parser.error("You must launch with one of the supported regions: %s" %
+                 supportedRegions.keys())
+
+  if args.server and not args.apiKey:
+    parser.error("If using `server`, you must also specify an `apiKey`")
+  elif args.apiKey and not args.server:
+    parser.error("If using `apiKey`, you must also specify a `server`")
+
+  if args.amiId and args.apiKey:
+    parser.error("`ami-id` and `apiKey` are incompatible arguments; aborting.")
+
+  return args
+
+
+def main(args):
+  """
+    Main function for the pipeline. Executes all sub-tasks. It also sets:
+    - g_config["REGION"] based on the command line arg
+    - g_config["USER"] as a derivative value of REGION
+
+    :param args: Parsed command line arguments
+  """
+  logger = initPipelineLogger(g_config["JOB_NAME"], logLevel=args.logLevel)
+
+  # use a subset of config options for aws functions.
+  awsConfig = {}
+  awsConfig["REGION"] = g_config["REGION"]
+  awsConfig["AWS_ACCESS_KEY_ID"] = g_config["AWS_ACCESS_KEY_ID"]
+  awsConfig["AWS_SECRET_ACCESS_KEY"] = g_config["AWS_SECRET_ACCESS_KEY"]
+  awsConfig["JOB_NAME"] = g_config["JOB_NAME"]
+  awsConfig["BUILD_NUMBER"] = g_config["BUILD_NUMBER"]
+  awsConfig["INSTANCE_TYPE"] = g_config["INSTANCE_TYPE"]
+  awsConfig["KEY"] = g_config["KEY"]
+
+  if not S3_MAPPING_BUCKET:
+    logger.error("You must set the S3_MAPPING_BUCKET environment variable to "
+                 "run this script. It should be set to the bucket that contains"
+                 " the AMI ID of your most recently passing YOMP build.")
+
+  amiId = None
+  if args.amiId:
+    amiId = args.amiId
+  elif not args.server:
+    amiId = getLastStableAmi(S3_MAPPING_BUCKET, logger)
+
+  if not amiId and not args.server:
+    logger.error("Failed to find stable ami id and no server specified")
+    raise InvalidParametersError(
+      "Failed to find stable ami id and no server specified")
+
+  if amiId:
+    try:
+      publicDnsName, instanceId = launchInstance(amiId, awsConfig, logger)
+    except InstanceLaunchError:
+      logger.exception("Failed to launch instance from %s; aborting", amiId)
+      raise
+  else:
+    publicDnsName = args.server
+    instanceId = None
+  logger.debug("Using %s as the server for testing (%s)", publicDnsName,
+               instanceId)
+
+  # The calls in this function are not signal-safe. However, the expectation is
+  # that making them signal safe would be overly burdensome at this time. If
+  # issues arise later, then we'll figure out what the right approach is at that
+  # time.
+  def handleSignalInterrupt(signal, _frame):
+    logger.error("Received interrupt signal %s", signal)
+    if instanceId:
+      logger.error("Terminating instance %s", instanceId)
+      terminateInstance(instanceId, awsConfig, logger)
+    sys.exit(1)
+  signal.signal(signal.SIGINT, handleSignalInterrupt)
+  signal.signal(signal.SIGTERM, handleSignalInterrupt)
+
+  try:
+    # In order to build the YOMP-Mobile APK, we need to have the `YOMP.keystore`
+    # file stored at the root of the android project.
+    shutil.copy2("/etc/numenta/products/keys/YOMP.keystore",
+                 os.path.join(YOMP_MOBILE_HOME, "android"))
+
+    artifactsDir = setupArtifactsDir()
+
+    # Build mobile client
+    with changeToWorkingDir(ANDROID_PATH):
+      runWithOutput("./gradlew clean build %s %s %s" %
+                      (g_googleAnalyticsIdParameter,
+                       g_feedbackEmailParameter,
+                       g_initialVersionCodeParameter),
+                    env=os.environ, logger=logger)
+
+    rootBuildDir = os.path.join(YOMP_MOBILE_HOME, "android", "build")
+    YOMPBuildDir = os.path.join(rootBuildDir, "YOMP-mobile", "outputs")
+    reportsDir = os.path.join(rootBuildDir, "YOMP-mobile", "reports")
+    coreBuildDir = os.path.join(rootBuildDir, "mobile-core", "outputs")
+
+    shutil.copy2(os.path.join(YOMPBuildDir, "lint-results.xml"),
+                 os.path.join(artifactsDir, "YOMP-mobile-lint-results.xml"))
+    shutil.copy2(os.path.join(coreBuildDir, "lint-results.xml"),
+                 os.path.join(artifactsDir, "mobile-core-lint-results.xml"))
+
+    serverKey = os.path.join("~", ".ssh", g_config["KEY"] + ".pem")
+
+    waitForYOMPServerToBeReady(publicDnsName, serverKey, g_config["USER"],
+                               logger)
+    apiKey = args.apiKey or getApiKey(instanceId, publicDnsName, awsConfig,
+                                      logger)
+    logEmulatorStatus(logger)
+    runTests(publicDnsName, apiKey, YOMPBuildDir, reportsDir, artifactsDir, 
+            logger)
+    apkPath = os.path.join(artifactsDir, "apk")
+
+    uploadToSauceLab(apkPath=apkPath, apkName="app-release.apk",
+                     uploadName="YOMP-mobile-app-release.apk", logger=logger)
+    runFunctionalTests(publicDnsName, apiKey, logger, args.deviceName,
+                       args.androidVersion)
+
+    logEmulatorStatus(logger)
+  except (InstanceNotReadyError, YOMPConfigError):
+    logger.exception("Failure to setup instance properly")
+    if instanceId:
+      # terminate the instance because it didn't start properly
+      terminateInstance(instanceId, awsConfig, logger)
+    raise
+  except InstanceLaunchError:
+    logger.exception("Instance didn't startup properly; leaving it stopped for "
+                     "debugging.")
+    if instanceId:
+      # stop the instance so we can understand what the startup error was
+      stopInstance(instanceId, awsConfig, logger)
+    raise
+  except TestsFailed:
+    logger.info("Functional test failed.")
+    if instanceId:
+      # stop the instance so we can understand what the startup error was
+      stopInstance(instanceId, awsConfig, logger)
+    raise
+  except Exception:
+    logger.exception("Unknown error during execution")
+    if instanceId:
+      # stop the instance so we can understand what the unknown error was
+      stopInstance(instanceId, awsConfig, logger)
+    raise
+  else:
+    if instanceId:
+      # Terminate our test instance on success
+      terminateInstance(instanceId, awsConfig, logger)
+
+
+
+if __name__ == "__main__":
+  main(parseArgs())

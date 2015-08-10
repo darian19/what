@@ -1,0 +1,13 @@
+[YOMP-thirdparty]
+name=YOMP-thirdparty
+baseurl=http://public.numenta.com.s3.amazonaws.com/yum/thirdparty
+gpgcheck=0
+priority=1
+s3_enabled=1
+
+[YOMP-releases]
+name=YOMP-releases
+baseurl=http://public.numenta.com.s3.amazonaws.com/yum/releases
+gpgcheck=0
+priority=1
+s3_enabled=1

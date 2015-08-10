@@ -1,0 +1,48 @@
+.YOMP-embed-form h3 {
+  margin: 0 0 1em;
+}
+
+.YOMP-embed-form ul {
+  margin-bottom: 2em;
+}
+
+.YOMP-embed-form form {
+  margin-bottom: 0;
+}
+
+.YOMP-embed-form fieldset {
+  background-image: url('/static/img/embed/charts/thumb.png');
+  background-position: 95% 95%;
+  background-repeat: no-repeat;
+  margin-bottom: 0;
+}
+
+.YOMP-embed-form .form-group {
+  margin-bottom: 1em;
+}
+.YOMP-embed-form .form-group:last-of-type {
+  margin-bottom: 0.5em;
+}
+
+.YOMP-embed-form label:after {
+  content: ':';
+}
+.YOMP-embed-form label:last-of-type:after {
+  content: '';
+}
+.YOMP-embed-form label.code {
+  margin: 1em 0 0.25em 0;
+}
+.YOMP-embed-form label.copied {
+	display: none;
+  padding-top: 0.5em;
+}
+
+.YOMP-embed-form #width,
+.YOMP-embed-form #height {
+  width: 5em;
+}
+
+.YOMP-embed-form textarea {
+  margin-bottom: -0.5em;
+}

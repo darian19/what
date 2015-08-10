@@ -1,0 +1,44 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# Install the EPEL repo
+
+complain() {
+  echo "$@"
+  logger -t ami-bake "$@"
+}
+
+if [ -f /etc/yum.repos.d/epel.repo ]; then
+  rm -f /etc/yum.repos.d/epel.repo
+fi
+yum remove -y epel-release
+
+# Make sure the ca-certificates on the machine are current
+yum install -y ca-certificates
+
+# Now that our certificates are current, we can reinstall epel
+yum install -y http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+# We don't want testing rpms on YOMP servers
+rm -f /etc/yum.repos.d/epel-testing.repo
+
+# Confirm our repo list
+yum repolist

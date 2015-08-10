@@ -1,0 +1,64 @@
+$def with (data)
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>| $data['site']['name']</title>
+        <link rel="shortcut icon" href="$data['baseUrl']/static/img/icon/favicon.ico?v=$data['product']['version']" />
+        <link rel="stylesheet" type="text/css" href="$data['baseUrl']/static/bower_components/bootstrap/dist/css/bootstrap.min.css?v=$data['product']['version']" />
+        <link rel="stylesheet" type="text/css" href="$data['baseUrl']/static/css/global.css?v=$data['product']['version']" />
+    </head>
+    <body class="YOMP-embed">
+        <!-- actual content -->
+        <section id="content" class="container-fluid"></section>
+
+        <!-- full screen loading indicator throbbing animation -->
+        <div class="loading-throbber off">
+            <img src="/static/img/mark.svg?v=$data['product']['version']" alt="$data['site']['name']" />
+            <div><span class="off"><!-- message --></span></div>
+        </div>
+
+        <!-- libs -->
+        <script src="$data['baseUrl']/static/bower_components/jquery/dist/jquery.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/underscore/underscore.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/backbone/backbone.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/labjs/LAB.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/bootstrap/dist/js/bootstrap.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/bower_components/bootbox/bootbox.min.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/lib/YOMP/nta.js?v=$data['product']['version']"></script>
+        <script>
+            window.YOMPUI = {
+                _apiEndpoint: "$data['endpoint']",
+                apiKey: "$data['apiKey']",
+                embed: {
+                    height: "$data['embed']['height']",
+                    width:  "$data['embed']['width']"
+                },
+                hostname: "$data['hostname']",
+                msgs: {},
+                product: {
+                    version:    "$data['product']['version']",
+                    build:      "$data['product']['build']"
+                }
+            };
+            NTA.baseUrl = "$data['baseUrl']";
+        </script>
+        <!-- YOMP API -->
+        <script src="$data['baseUrl']/static/js/lib/YOMP/YOMPAPI.js?v=$data['product']['version']"></script>
+        <!-- Backbone.Model(s) -->
+        <script src="$data['baseUrl']/static/js/program/models/annotation.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/model.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/models/modelData.js?v=$data['product']['version']"></script>
+        <!-- Backbone.Collection(s) -->
+        <script src="$data['baseUrl']/static/js/program/collections/annotations.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/collections/models.js?v=$data['product']['version']"></script>
+        <!-- YOMP Web UI -->
+        <script src="$data['baseUrl']/static/js/lib/YOMP/utils.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/lib/YOMP/loader.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/program/YOMP-routes.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/lib/YOMP/router.js?v=$data['product']['version']"></script>
+        <script src="$data['baseUrl']/static/js/global.js?v=$data['product']['version']"></script>
+    </body>
+</html>

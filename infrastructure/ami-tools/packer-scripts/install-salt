@@ -1,0 +1,81 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# DO NOT MAKE THIS SCRIPT RUN SALT! It will be run on all AMIs, it should
+# never contain specific changes for different AMI builds
+#
+# It is only to install the tooling and salt binaries. The packer configuration
+# calling this will almost certainly need to set some parameters before it
+# kicks off a salt run.
+#
+# If we run salt here, we'll end up having to run it again once the real
+# configuration is in place.
+
+bootstrap_salt(){
+  echo "Bootstrapping salt..."
+  chmod +x /tmp/bootstrap-salt.sh
+
+  if [ -f /tmp/infrastructure_minion_id ]; then
+    echo "Setting minion id.."
+    cat /tmp/infrastructure_minion_id > /etc/salt/minion_id
+  fi
+
+  time /tmp/bootstrap-salt.sh -A salt.numenta.com
+}
+
+prep_instance_for_salt(){
+  echo "Remove stale YOMP repo files"
+  rm -fv /etc/yum.repos.d/YOMP*repo
+
+  echo "Updating yum cache..."
+  yum clean all
+
+  echo "Ensure we have the latest YOMP, wget & curl"
+  echo "before installing salt"
+
+  # Do this as one yum command so we only have to wait for yum
+  # initialization once
+  yum install -y \
+    curl \
+    YOMP \
+    glibc \
+    wget
+
+  echo "Installing S3 support for yum..."
+  yum install -y /tmp/yum-s3-0.2.4-1.noarch.rpm
+
+  if [ ! -x /usr/bin/pip ]; then
+    echo "We need pip in system python, or Salt won't find the pip in anaconda."
+    echo "See https://YOMPhub.com/saltstack/salt/issues/7659"
+    yum install -y python-pip
+  fi
+}
+
+setup_directories(){
+  mkdir -p /etc/salt
+  mkdir -p /usr/local/bin
+  mkdir -p /usr/local/sbin
+}
+
+prep_instance_for_salt
+setup_directories
+bootstrap_salt

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# Shuffle YOMP logs, then run log uploader
+
+export NUMENTA=/opt/numenta
+export NUPIC="${NUMENTA}/nupic"
+
+# Set PATH & PYTHONPATH from supervisord.vars so upload_logs.py doesn't
+# choke when run as root by cron
+source /etc/YOMP/supervisord.vars
+
+LOG_D="${NUMENTA}/YOMP/logs"
+UPLOADER="${NUMENTA}/YOMP/bin/upload_logs.py"
+STAMPFILE=/etc/YOMP/firstboot.run
+
+if [ -f "${STAMPFILE}" ]; then
+  YOMPlog_rotator "${LOG_D}"
+  rotate_result=$?
+  if [ "${rotate_result}" != 0 ]; then
+    logger -t YOMP "YOMPlog_rotator exited abnormally with [${rotate_result}]"
+  fi
+fi
+
+# Run log upload script
+if [ -f "${STAMPFILE}" ]; then
+  "${UPLOADER}" "${LOG_D}"
+  upload_result=$?
+  if [ ${upload_result} != 0  ]; then
+    logger -t YOMP "${UPLOADER}: YOMP log upload exited abnormally with [${upload_result}]"
+  fi
+fi

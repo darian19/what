@@ -1,0 +1,37 @@
+{
+  "description" : "Model specification shared by all datasource adapters for `monitorMetric` input; also what is stored in a metric row's properties field",
+  "type": "object",
+  "additionalProperties":false,
+  "properties": {
+    "datasource": {
+      "description" : "datasource adapter identifier; e.g., custom, cloudwatch",
+      "required": true,
+      "type": "string"
+    },
+    "metricSpec": {
+      "description" : "Datasource-adapter-specific metric specification; e.g., for custom datasource adapter, the metricSpec schema is defined in custom_metric_spec_schema.json",
+      "required": true,
+      "type": "object"
+    },
+    "modelParams": {
+      "description" : "Model-creation parameter overrides",
+      "required": false,
+      "type": "object",
+      "additionalProperties":false,
+      "properties": {
+        "min": {
+          "required": false,
+          "type": "number"
+        },
+        "max": {
+          "required": false,
+          "type": "number"
+        },
+        "minResolution": {
+          "required": false,
+          "type": "number"
+        }
+      }
+    }
+  }
+}

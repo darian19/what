@@ -1,0 +1,10 @@
+#!/usr/bin/env perl
+#
+# Strip ANSI colors from the input stream so we can clean up the jenkins
+# console output.
+local $| = 1;
+
+while (<>) {
+  s/\e\[[\d;]*[a-zA-Z]//g;
+  print;
+}

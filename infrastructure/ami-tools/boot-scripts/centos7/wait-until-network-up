@@ -1,0 +1,93 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# TODO: Refactor to be importable by other python scripts - TAUR-654
+
+"""This program waits for the network to come up and be useful. Unfortunately
+the system will sometimes claim the network is up before we can actually
+send packets.
+
+Among other programs, YOMP doesn't cope well with that, so we need a way
+to confirm that the network is really up before we do YOMP operations, such
+as during document root creation on a freshly booted webserver."""
+
+import argparse
+import subprocess
+import sys
+import time
+
+
+
+def parseArguments():
+  parser = argparse.ArgumentParser(description="Check if the network is up")
+  parser.add_argument("-d", "--delay",
+                      help="Number of seconds between ping attempts",
+                      type=int,
+                      default=10)
+  parser.add_argument("-p", "--pinghost",
+                      help="Host to ping.",
+                      required=True)
+  parser.add_argument("-t", "--tries",
+                      help="Number of tries before network considered dead",
+                      type=int,
+                      default=10)
+  parser.add_argument("-v", "--verbose",
+                      help="Verbose output",
+                      type=bool,
+                      default=False)
+  return parser.parse_args()
+
+
+
+def checkNetwork(config):
+  """Ping config.pinghost up to config.tries times, with config.delay seconds
+     between attempts. We use ping to ensure that the network is actually up
+     and talking to the outside world, not just trusting the OS' assurances
+     that if it is configured it is working, since that has bitten us in
+     the past."""
+
+  attempts = 0
+  while attempts < config.tries:
+    attempts = attempts + 1
+    try:
+      output = subprocess.check_output(["ping", "-c", "1", config.pinghost])
+      if config.verbose:
+        print output
+        print "Network up after %s attempts" % attempts
+      return True
+    except subprocess.CalledProcessError:
+      if config.verbose:
+        print "Attempt %s to ping %s failed, retrying in %s seconds..." % \
+          (attempts, config.pinghost, config.delay)
+      time.sleep(config.delay)
+  return False
+
+
+
+if __name__ == "__main__":
+  config = parseArguments()
+  status = checkNetwork(config)
+  if status:
+    print "True"
+    sys.exit(0)
+  else:
+    print "False"
+    sys.exit(1)

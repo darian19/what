@@ -1,0 +1,101 @@
+{
+  "description" : "Message representing model inference results that Anomaly Service publishes to the results exchange",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+
+    "metric": {
+      "required": true,
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+
+        "uid": {
+          "description" : "Unique id of the metric",
+          "required": true,
+          "type": "string"
+        },
+    
+        "name": {
+          "description" : "Name of the metric; for custom metrics, also servers the role of alternate unique identifier",
+          "required": true,
+          "type": ["string", "null"]
+        },
+    
+        "description": {
+          "description" : "Human-readable description of the metric",
+          "required": true,
+          "type": ["string", "null"]
+        },
+    
+        "resource": {
+          "description" : "Identifier of resource that this metric applies to",
+          "required": true,
+          "type": ["string", "null"]
+        },
+    
+        "location": {
+          "description" : "Location of the metric; metric-specific",
+          "required": true,
+          "type": ["string", "null"]
+        },
+
+        "datasource": {
+          "description" : "Datasource adapter identifier",
+          "required": true,
+          "type": "string"
+        },
+
+        "spec": {
+          "description" : "Datasource-adapter-specific metric specification; e.g., for custom datasource adapter, the metricSpec schema is defined via custom_metric_spec_schema.json",
+          "required": true,
+          "type": "object"
+        }
+      }
+    },
+
+    "results": {
+      "description": "Result data rows",
+      "required": true,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties":false,
+        "properties": {
+
+          "rowid": {
+            "required": true,
+            "type": "integer"
+          },
+
+          "ts": {
+            "description": "Unix epoch timestamp of the data sample",
+            "required": true,
+            "type": "number"
+          },
+
+          "value": {
+            "description": "Metric scalar value",
+            "required": true,
+            "type": "number"
+          },
+
+          "rawAnomaly": {
+            "description": "Raw anomaly score",
+            "required": true,
+            "type": "number"
+          },
+
+          "anomaly": {
+            "description": "Anomaly score computed by anomaly-likelihood algorithm",
+            "required": true,
+            "type": "number"
+          }
+
+        }
+      }
+    }
+
+  }
+
+}

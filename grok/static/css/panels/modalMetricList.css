@@ -1,0 +1,43 @@
+.YOMP-modal-metric-list div.text-muted {
+    margin: 1em 0 0 1em;
+}
+
+.YOMP-modal-metric-list ol {
+    list-style-type: none;
+    margin-top: 1em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0.25em;
+}
+.YOMP-modal-metric-list ol > li {
+    border-bottom: 1px solid #eee;
+    margin: 0 3em 0 2em;
+    padding: 1em;
+}
+.YOMP-modal-metric-list ol > li:last-child {
+    border-bottom: 0;
+}
+.YOMP-modal-metric-list ol > li label {
+    position: relative;
+    top: 0.25em;
+}
+
+.YOMP-modal-metric-list .has-switch {
+    border-radius: 0.25em;
+}
+.YOMP-modal-metric-list .has-switch span.switch-primary,
+.YOMP-modal-metric-list .has-switch span.switch-left {
+    background-color: #29aae2;
+    background-image: none;
+    font-family: 'roboto_regular', Arial, sans-serif;
+}
+.YOMP-modal-metric-list .has-switch span.switch-default {
+    background: #eee;
+    font-family: 'roboto_regular', Arial, sans-serif;
+}
+
+.YOMP-modal-metric-list .autostack {
+    border-top: 1px solid #eee;
+    margin-top: 1em;
+    padding-top: 0.5em;
+}

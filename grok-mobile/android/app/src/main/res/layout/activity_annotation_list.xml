@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+<RelativeLayout
+    style="@style/AnnotationList"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context="com.YOMPsolutions.YOMP.mobile.annotation.AnnotationListActivity">
+
+    <FrameLayout
+        android:id="@+id/header"
+        style="@style/AnnotationList.Header">
+
+        <fragment
+            android:id="@+id/instance_anomaly_chart"
+            android:name="com.YOMPsolutions.YOMP.mobile.instance.InstanceAnomalyChartFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:showAnnotationList="false"
+            app:showAnnotationContextMenu="false"
+            tools:ignore="MissingId,MissingPrefix"
+            tools:layout="@layout/fragment_instance_anomaly_chart"/>
+    </FrameLayout>
+
+    <fragment
+        android:id="@+id/fragment_annotation_list"
+        android:name="com.YOMPsolutions.YOMP.mobile.annotation.AnnotationListFragment"
+        class="com.YOMPsolutions.YOMP.mobile.annotation.AnnotationListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        tools:layout="@layout/annotation_item"/>
+
+</RelativeLayout>

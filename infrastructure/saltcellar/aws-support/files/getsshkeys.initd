@@ -1,0 +1,143 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# chkconfig: 2345 30 20
+# description: Takes the SSH key provided by EC2 to the instance and adds \
+# it to root & ec2-user's authorized_keys files.
+# processname: getsshkeys
+#
+
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
+
+AWS_INSTANCE_KEY_URL="http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key"
+
+EC2USER_AUTHFILE=/home/ec2-user/.ssh/authorized_keys
+ROOT_AUTHFILE=/root/.ssh/authorized_keys
+
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+[ -r /etc/sysconfig/network ] && . /etc/sysconfig/network
+
+# Check that networking is up.
+[ "${NETWORKING}" = "no" ] && exit 1
+
+archive_ssh_keys() {
+  # At boot, stash a copy of the SSH authorized keys for root and ec2-user.
+  # We will need these later when we want to drop support access on a machine
+  SAVED_KEYS_D=/etc/numenta/sshkeys.d/originals
+
+  mkdir -p "${SAVED_KEYS_D}"
+
+  if [ ! -f "${SAVED_KEYS_D}/root.authorized_keys" ]; then
+      cp ~root/.ssh/authorized_keys "${SAVED_KEYS_D}/root.authorized_keys"
+  fi
+
+  if [ ! -f "${SAVED_KEYS_D}/ec2-user.authorized_keys" ]; then
+      cp ~ec2-user/.ssh/authorized_keys "${SAVED_KEYS_D}/ec2-user.authorized_keys"
+  fi
+}
+
+function update_root_keys() {
+  if [ -f "${ROOT_AUTHFILE}" ]; then
+    logger -t gs-sshkeys "${0}: Original ${ROOT_AUTHFILE}"
+    logger -t gs-sshkeys < "${ROOT_AUTHFILE}"
+  fi
+  TEMPKEYS=$(mktemp --tmpdir sshsupportkeys.XXXXX)
+  logger -t gs-sshkeys "${0}: Loading key from ${AWS_INSTANCE_KEY_URL}"
+  curl -f "${AWS_INSTANCE_KEY_URL}" > "${TEMPKEYS}"
+  diff "${ROOT_AUTHFILE}" "${TEMPKEYS}" > /dev/null
+  if [ $? != 0 ]; then
+    logger -t gs-sshkeys "${0}: Updating ${ROOT_AUTHFILE}..."
+    echo "Updating ${ROOT_AUTHFILE}..."
+    cat "${TEMPKEYS}" > "${ROOT_AUTHFILE}"
+    chown root:root "${ROOT_AUTHFILE}"
+    chmod 600 "${ROOT_AUTHFILE}"
+  else
+    logger -t gs-sshkeys "${0}: ${ROOT_AUTHFILE} already ok"
+  fi
+  rm "${TEMPKEYS}"
+}
+
+function update_ec2user_keys() {
+  if [ -f "${EC2USER_AUTHFILE}" ]; then
+    logger -t gs-sshkeys "${0}: Original ${EC2USER_AUTHFILE}"
+    logger -t gs-sshkeys < "${EC2USER_AUTHFILE}"
+  fi
+  TEMPKEYS=$(mktemp --tmpdir sshsupportkeys.XXXXX)
+  logger -t gs-sshkeys "${0}: Loading key from ${AWS_INSTANCE_KEY_URL}"
+  curl -f "${AWS_INSTANCE_KEY_URL}" > "${TEMPKEYS}"
+  diff "${EC2USER_AUTHFILE}" "${TEMPKEYS}" > /dev/null
+  if [ $? != 0 ]; then
+    logger -t gs-sshkeys "${0}: Updating ${EC2USER_AUTHFILE}..."
+    echo "Updating ${EC2USER_AUTHFILE}..."
+    cat "${TEMPKEYS}" > "${EC2USER_AUTHFILE}"
+    chown ec2-user:root "${EC2USER_AUTHFILE}"
+    chmod 644 "${EC2USER_AUTHFILE}"
+  else
+    logger -t gs-sshkeys "${0}: ${EC2USER_AUTHFILE} already ok"
+  fi
+  rm "${TEMPKEYS}"
+}
+
+start() {
+  if [ ! -d /root/.ssh ] ; then
+    mkdir -p -m 700 /root/.ssh
+    chown root:root /root/.ssh
+  fi
+  if [ ! -d /home/ec2-user/.ssh ] ; then
+    mkdir -p -m 700 /home/ec2-user/.ssh
+    chown ec2-user:root /home/ec2-user/.ssh
+  fi
+  archive_ssh_keys
+  update_root_keys
+  update_ec2user_keys
+}
+
+stop() {
+  echo "Stop is not a relevant option to getsshkeys. This init script copies"
+  echo "the SSH public keys provided by EC2 to root & ec2-user's authorized_keys"
+  echo "files."
+}
+
+restart() {
+  start
+}
+
+# See how we were called.
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop}"
+    exit 1
+esac
+
+exit $?

@@ -1,0 +1,172 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+#
+# This should only contain settings specific to YOMP Plumbing AMIs
+
+source /etc/YOMP/supervisord.vars
+
+echo "Marking instance as being an AMI build..."
+AMIBUILD_LOCK=/tmp/baking-ami
+NUMENTA=/opt/numenta
+PRODUCTS="${NUMENTA}/products"
+touch "${AMIBUILD_LOCK}"
+S3_ROOT_URL="https://s3-us-west-2.amazonaws.com/public.numenta.com/yum/x86_64"
+
+splat() {
+  # Make it easier to distinguish phases of the script in the scrollback
+  echo "
+
+
+.                                    ######
+.                                  ##########
+.                                 ############
+.                                ##############
+.                                ##############
+.                                ##############
+.                                 ############
+.                                  ##########
+.                                    ######
+
+
+  "
+}
+
+install-prerequisites-and-update-repos() {
+  splat
+  # clean any stale /etc/YOMP and remake the folder
+  rm -rf /etc/YOMP
+  mkdir -p /etc/YOMP
+
+  echo "Engraving products SHA and build timestamp into AMI"
+  cp /tmp/products.sha /etc/YOMP/ami-operations.sha
+  date > /etc/YOMP/ami-bake.time
+  rm -f /tmp/products.sha /tmp/build.time
+
+  echo "Purging old YOMP repo file..."
+  rm -f /etc/yum.repos.d/YOMP.repo
+
+  echo "Cleaning up stale yum data..."
+  yum clean all
+
+  echo "Ensure Numenta S3 repos are current..."
+  for repo in YOMP-development.repo \
+              YOMP-release-candidates.repo \
+              YOMP-releases.repo \
+              nta-carbonite.repo \
+              nta-thirdparty.repo
+  do
+    echo "Installing ${repo}..."
+    mv "/tmp/${repo}" /etc/yum.repos.d
+  done
+  yum clean all
+  yum makecache
+  yum repolist
+
+  yum remove -y numenta-infrastructure-common YOMP-updater
+
+  # Ensure our pip is current
+  export PATH="${NUMENTA}/anaconda/bin:${PATH}"
+  export PYTHONPATH="${NUMENTA}/anaconda/lib/python2.7/site-packages"
+  "${NUMENTA}/anaconda/bin/pip" install --upgrade pip setuptools
+  "${NUMENTA}/anaconda/bin/pip" install numpy==1.9.2
+}
+
+run-salt() {
+  splat
+  echo "Configuring Salt minion_id"
+  echo
+  echo "Setting Salt minion_id to YOMP-server"
+  echo YOMP-server > /etc/salt/minion_id
+
+  # clean any existing salt states and point to the YOMP salt cellar
+  rm -rf /srv/salt
+  ln -s "${PRODUCTS}/infrastructure/saltcellar" /srv/salt
+
+  echo "Running Salt..."
+  run-salt-solo | tee /tmp/saltrun.log
+
+  # Salt exits zero unless the process crashes, even if there are failures in
+  # particular states.
+  salt_err_count=`grep -ic "Result: False" /tmp/saltrun.log`
+  echo
+  echo "post run-salt-solo"
+  if [ "${salt_err_count}" != 0 ]; then
+    echo "Salt failed with ${salt_err_count} failures"
+    grep -i "Result: False" /tmp/saltrun.log
+    exit "${salt_err_count}"
+  fi
+  rm -f /tmp/saltrun.log
+}
+
+install-YOMP() {
+  splat
+  echo "Installing YOMP..."
+  yum install -y "${S3_ROOT_URL}/${YOMP_RPM_NAME}"
+  if [ $? != 0 ]; then
+    echo "Failed to install YOMP RPM"
+    exit 1
+  fi
+
+  # We need to install YOMP-private-settings to get WUFOO and S3 configuration
+  # information
+  yum install -y YOMP-private-settings
+  if [ $? != 0 ]; then
+    echo "Failed to install YOMP private settings"
+    exit 1
+  fi
+
+  echo "Creating symlink for supervisord.vars"
+  ln -s "${PRODUCTS}/YOMP/supervisord.vars" /etc/YOMP/supervisord.vars
+  echo "Sourcing supervisord.vars..."
+  source /etc/YOMP/supervisord.vars
+
+  echo "Creating symlink to ${NUMENTA}/YOMP and setting permissions"
+  rm -fr "${NUMENTA}"/YOMP
+  ln -s "${PRODUCTS}/YOMP" "${NUMENTA}"/YOMP
+  chown -R ec2-user:ec2-user "${PRODUCTS}"
+
+  pushd "${PRODUCTS}"
+    echo "Running install-YOMP.sh"
+
+    ./install-YOMP.sh "${NUMENTA}/anaconda/lib/python2.7/site-packages" "${NUMENTA}/anaconda/bin"
+    if [ $? != 0 ]; then
+      echo "Failed to install YOMP"
+      exit 1
+    fi
+  popd
+}
+
+start-YOMP() {
+  splat
+  echo "Starting YOMP services..."
+  service YOMPservices start
+  if [ $? != 0 ]; then
+    echo "YOMPservices start failed"
+    exit 1
+  fi
+}
+
+
+install-prerequisites-and-update-repos
+install-YOMP
+run-salt
+start-YOMP

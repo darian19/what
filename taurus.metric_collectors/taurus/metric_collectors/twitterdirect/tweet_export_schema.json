@@ -1,0 +1,55 @@
+{
+  "description": "Message representing a tweet that twitter_direct_agent publishes to the exchange 'taurus.data.non-metric' with the routing key 'taurus.data.non-metric.twitter'.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "metric_name": {
+      "description" : "Unique name of custom metric",
+      "required": true,
+      "type": "string"
+    },
+
+    "tweet_uid": {
+      "description": "Unique ID of tweet from twitter stream",
+      "required": true,
+      "type": "string"
+    },
+
+    "created_at": {
+      "description": "Tweet creation time; UTC in ISO format; e.g., 2015-04-14T19:45:59.968166",
+      "required": true,
+      "type": "string"
+    },
+
+    "agg_ts": {
+      "description": "Aggregation timestamp; UTC in ISO format; e.g., 2015-04-14T19:45:59.968166",
+      "required": true,
+      "type": "string"
+    },
+
+    "text": {
+      "description": "Text of the tweet",
+      "required": true,
+      "type": "string"
+    },
+
+    "userid": {
+      "description": "Author's userid",
+      "required": true,
+      "type": "string"
+    },
+
+    "username": {
+      "description": "Author's screen name",
+      "required": true,
+      "type": "string"
+    },
+
+    "retweet_count": {
+      "description": "Retweet count represented in the given retweet; NULL if message is not a retweet; NOTE: will contain -2 in both tweet and retweet legacy rows that predate this column (Twitter uses retweet_count=-1 if the count is not available at the moment)",
+      "required": true,
+      "type": "integer"
+    },
+  
+  }
+}

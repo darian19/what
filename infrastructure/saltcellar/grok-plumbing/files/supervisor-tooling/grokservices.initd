@@ -1,0 +1,169 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# /etc/rc.d/init.d/YOMPservices
+#
+# YOMPservices uses supervisord to start up YOMP services.
+#
+# chkconfig: - 99 10
+# description: Starts YOMP Services
+# processname: supervisord
+
+# This init script starts YOMP services
+
+set -o pipefail
+
+if [ "$(/usr/bin/id -u)" -ne 0 ]; then
+  echo "You are not root"
+  exit 1
+fi
+
+# Source init functions
+. /etc/rc.d/init.d/functions
+source /etc/YOMP/supervisord.vars
+
+prog="supervisord"
+supervisor_helper="${NUMENTA}/supervisord-helper"
+FIRSTBOOT_RECEIPT=/etc/YOMP/firstboot.run
+ROOTBOOT_HELPER=/usr/local/sbin/firstboot-root.sh
+export ROOTBOOT_RECEIPT=/etc/YOMP/firstboot.run
+UPDATE_IS_RUNNING=/tmp/gs-perform-YOMP-update.lock
+
+run-rootboot-helper() {
+  # Run the firstboot things we need to do as root here, before we drop
+  # privileges to ec2-user
+
+  # Ensure ec2-user has r/w permission on the /opt/numenta/anaconda tree
+  chown -R ec2-user:ec2-user /opt/numenta/anaconda
+
+  if [ -x "${ROOTBOOT_HELPER}" ]; then
+    "${ROOTBOOT_HELPER}" 2>&1 | tee >(logger -t rootboot-helper)
+    if [ $? != "0" ]; then
+      service YOMP-preload YOMP-error
+      exit 1
+    fi
+  fi
+}
+
+kill_preload() {
+  /etc/init.d/YOMP-preload stop
+}
+
+syslog-rabbit-status() {
+  # Ensure we only have one rabbitmq dump at a time so the log entries
+  # don't get jumbled up
+  lockrun --lockfile=/var/lock/rabbit-status.lock -- \
+    rabbitmqctl status 2>&1 | \
+    logger -t taurus-rabbit
+}
+
+start()
+{
+  run-rootboot-helper
+  syslog-rabbit-status
+  echo -n "Starting ${prog}: "
+  logger -t YOMP-nginx "YOMPservices: start()"
+  cd "${YOMP_HOME}"
+  su ec2-user -c "${supervisor_helper} start"
+  echo
+  kill_preload
+  service nginx restart
+}
+
+stop()
+{
+  syslog-rabbit-status
+  echo -n "Shutting down ${prog}: "
+  logger -t YOMP-nginx "YOMPservices: stop()"
+  cd "${YOMP_HOME}"
+  su ec2-user -c "${supervisor_helper} stop"
+  service YOMP-preload YOMP-stopped
+  echo
+}
+
+status()
+{
+  syslog-rabbit-status
+  echo -n "Status of ${prog}: "
+  logger -t YOMP-nginx "YOMPservices: status()"
+  cd "${YOMP_HOME}"
+  su ec2-user -c "${supervisor_helper} status"
+  echo
+}
+
+restart()
+{
+  syslog-rabbit-status
+  run-rootboot-helper
+  echo -n "Restarting ${prog}: "
+  logger -t YOMP-nginx "YOMPservices: restart()"
+  cd "${YOMP_HOME}"
+  su ec2-user -c "${supervisor_helper} restart"
+  service nginx restart
+  echo
+}
+
+tickle()
+{
+  if [ -d "${UPDATE_IS_RUNNING}" ]; then
+    logger -t YOMP-nginx "YOMPservices: tickle() - Skipping, updater running"
+    exit 0
+  fi
+  syslog-rabbit-status
+  if [ -f "${FIRSTBOOT_RECEIPT}" ]; then
+    echo -n "Tickling $prog: "
+    logger -t YOMP-nginx "YOMPservices: tickle()"
+    cd "${YOMP_HOME}"
+    su ec2-user -c "${supervisor_helper} tickle"
+  else
+    echo "skipping tickle; firtboot hasn't run."
+  fi
+}
+
+case "${1}" in
+
+  start)
+    start
+    lockrun --lockfile=/var/lock/shuffle_YOMPlogs -- /usr/local/sbin/shuffle_YOMPlogs 2>&1 | logger -t gs-shuffle-YOMPlogs
+  ;;
+
+  stop)
+    stop
+    lockrun --lockfile=/var/lock/shuffle_YOMPlogs -- /usr/local/sbin/shuffle_YOMPlogs 2>&1 | logger -t gs-shuffle-YOMPlogs
+  ;;
+
+  status)
+    status
+  ;;
+
+  restart)
+    restart
+  ;;
+
+  tickle)
+    tickle
+  ;;
+
+  *)
+    echo "Usage: $0 {start|stop|restart|status|tickle}"
+  ;;
+
+esac

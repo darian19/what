@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>YOMP Backbone.View Tests</title>
+        <link rel="stylesheet" href="../lib/mocha.css" />
+    </head>
+    <body>
+        <div id="mocha"></div>
+
+        <!-- external deps -->
+        <script src="../../../static/bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../../../static/bower_components/underscore/underscore.min.js"></script>
+        <script src="../../../static/bower_components/backbone/backbone.min.js"></script>
+        <script src="../../../static/js/lib/YOMP/YOMPAPI.js"></script>
+
+        <!-- internal deps -->
+        <script src="../../../static/js/lib/YOMP/nta.js"></script>
+        <script>NTA.baseUrl = '';</script>
+        <script src="../../../static/js/lib/YOMP/loader.js"></script>
+        <script src="../../../static/js/lib/YOMP/utils.js"></script>
+
+        <!-- bare minimum mock messages -->
+        <script>
+            window.YOMPUI.msgs['auth-tmpl'] = {
+                title: 'Auth Title'
+            };
+            window.YOMPUI.msgs['welcome-tmpl'] = {
+                title: 'Welcome Title'
+            };
+
+            window.YOMPUI.msgs['site'] = {
+                buttons: {
+                    cancel: 'Cancel'
+                },
+                urltag: {
+                    setup: 'setupTag'
+                }
+            };
+        </script>
+
+        <!-- bare minimum mock templates -->
+        <script type="text/template" id="auth-tmpl"></script>
+        <script type="text/template" id="welcome-tmpl"></script>
+
+        <!-- browser testing framework -->
+        <script src="../lib/expect.js"></script>
+        <script src="../lib/mocha.js"></script>
+        <script>mocha.setup('bdd')</script>
+
+        <!-- code to test -->
+        <script src="../../../static/js/program/views/pages/auth.js"></script>
+        <script src="../../../static/js/program/views/pages/welcome.js"></script>
+
+        <!-- actual tests -->
+        <script src="./test.view.Auth.js"></script>
+        <script src="./test.view.Welcome.js"></script>
+
+        <!-- go! -->
+        <script>
+            $(document).ready(function() {
+                mocha.checkLeaks();
+                mocha.globals(['jQuery','mochaResults']);
+                var runner = mocha.run();
+                runner.on('end', function() {
+                    window.mochaResults = runner.stats;
+                });
+            });
+        </script>
+    </body>
+</html>

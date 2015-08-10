@@ -1,0 +1,290 @@
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# This file drives baking and validating the various AMI targets we use
+# at Numenta.
+#
+# Do `rake -T` to see what AMI configurations are available.
+
+CENTOS6_CONFIG="ami-configurations/centos6.json"
+YOMP_PIPELINE_CONFIG="ami-configurations/YOMP-pipeline.json"
+YOMP_PLUMBING_CONFIG="ami-configurations/YOMP-plumbing.json"
+INFRASTRUCTURE_256GB_CONFIG="ami-configurations/infrastructure-base-256gb.json"
+INFRASTRUCTURE_CONFIG="ami-configurations/infrastructure-base.json"
+WEB_CONFIG="ami-configurations/salt-webserver.json"
+
+epel_rpm = "epel-release-6-8.noarch.rpm"
+epel_rpm_url = "http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
+s3_yum_plugin_rpm = "yum-s3-0.2.4-1.noarch.rpm"
+s3_yum_plugin_url = "https://s3-us-west-2.amazonaws.com/public.numenta.com/yum/thirdparty/yum-s3-0.2.4-1.noarch.rpm"
+secretsauce_repo_f = "repos/secretsauce.repo"
+
+task :help do
+  sh %{ rake -T }
+end
+
+# task aliases
+task :clean => [:cleanup]
+task :default => [:help]
+task :YOMP => [:bake_YOMP_pipeline]
+task :h => [:help]
+task :i => [:bake_infrastructure]
+task :inf128 => [:bake_infrastructure_128gb]
+task :plumbing => [:bake_YOMP_plumbing]
+task :webserver => [:bake_webserver]
+
+# Validation section
+
+desc "Validate all packer configuration files"
+task :validate_all => [:validate_centos6,
+                       :validate_YOMP_pipeline,
+                       :validate_YOMP_plumbing,
+                       :validate_infrastructure,
+                       :validate_webserver]
+
+desc "Validate CentOS 6 configuration"
+task :validate_centos6 => [:products_sha,
+                           :salt_bootstrap,
+                           :yum_plugin] do
+  sh %{ packer validate #{CENTOS6_CONFIG} }
+end
+
+desc "Validate YOMP Pipeline configuration"
+task :validate_YOMP_pipeline => [:products_sha,
+                                 :YOMP_repos,
+                                 :yum_plugin] do
+  sh %{ packer validate #{YOMP_PIPELINE_CONFIG} }
+end
+
+desc "Validate YOMP Plumbing configuration"
+task :validate_YOMP_plumbing => [:products_sha,
+                                 :salt_bootstrap,
+                                 :YOMP_repos,
+                                 :yum_plugin] do
+  sh %{ packer validate #{YOMP_PLUMBING_CONFIG} }
+end
+
+desc "Validate Infrastructure configuration"
+task :validate_infrastructure => [:products_sha,
+                                  :YOMP_repos,
+                                  :infrastructure_minion_id,
+                                  :salt_bootstrap,
+                                  :yum_plugin] do
+  sh %{ packer validate #{INFRASTRUCTURE_CONFIG} }
+end
+
+desc "Validate Infrastructure 256GB configuration"
+task :validate_infrastructure_256gb => [:products_sha,
+                                        :YOMP_repos,
+                                        :salt_bootstrap,
+                                        :yum_plugin] do
+  sh %{ packer validate #{INFRASTRUCTURE_256GB_CONFIG} }
+end
+
+desc "Validate Webserver packer configuration"
+task :validate_webserver => [:products_sha, :yum_plugin] do
+  sh %{ packer validate #{WEB_CONFIG} }
+end
+
+# AMI targets
+
+desc "Bake a new CentOS 6 AMI"
+task :bake_centos6 => [:products_sha,
+                       :yum_plugin,
+                       :epel_repo,
+                       :salt_bootstrap,
+                       :validate_centos6 ] do
+  sh %{ packer build #{CENTOS6_CONFIG} }
+end
+
+# This task takes two parameters from the environment, which are passed from
+# the YOMP-pipeline to the ami-pipeline
+desc "Bake a new YOMP Pipeline AMI"
+task :bake_YOMP_pipeline => [:products_sha,
+                             :yum_plugin,
+                             :epel_repo,
+                             :YOMP_repos,
+                             :validate_YOMP_pipeline ] do
+  sh %{ packer build -var 'ami_name=#{ENV["AMI_NAME"]}' #{YOMP_PIPELINE_CONFIG} }
+end
+
+desc "Bake a new YOMP Plumbing AMI"
+task :bake_YOMP_plumbing => [:products_sha,
+                             :yum_plugin,
+                             :epel_repo,
+                             :YOMP_repos,
+                             :salt_bootstrap,
+                             :validate_YOMP_plumbing ] do
+  sh %{ packer build #{YOMP_PLUMBING_CONFIG} }
+end
+
+task :revoke_infrastructure_bake_id do
+  minion_id=File.read("infrastructure_minion_id").strip()
+  sh %{ revoke-salt-key #{minion_id} }
+end
+
+task :sign_infrastructure_bake_id => [:infrastructure_minion_id] do
+  minion_id=File.read("infrastructure_minion_id").strip()
+  sh %{ sign-salt-key #{minion_id} }
+end
+
+desc "Bake a new Infrastructure AMI"
+task :bake_infrastructure => [:devtools_repo,
+                              :YOMP_repos,
+                              :infrastructure_minion_id,
+                              :products_sha,
+                              :salt_bootstrap,
+                              :secretsauce_repo,
+                              :validate_infrastructure,
+                              :yum_plugin ] do
+  minion_id=File.read("infrastructure_minion_id").strip()
+  sh %{ sign-salt-key #{minion_id} }
+  sh %{ packer build #{INFRASTRUCTURE_CONFIG} }
+  sh %{ revoke-salt-key #{minion_id} }
+end
+
+desc "Bake a new 256GB Infrastructure AMI"
+task :bake_infrastructure_256gb => [:devtools_repo,
+                                    :YOMP_repos,
+                                    :infrastructure_minion_id,
+                                    :products_sha,
+                                    :salt_bootstrap,
+                                    :secretsauce_repo,
+                                    :sign_infrastructure_bake_id,
+                                    :validate_infrastructure_256gb,
+                                    :yum_plugin ] do
+  sh %{ packer build #{INFRASTRUCTURE_256GB_CONFIG} }
+  sh %{ rake revoke_infrastructure_bake_id }
+end
+
+desc "Bake a new HVM webserver AMI"
+task :bake_webserver => [:products_sha,
+                         :yum_plugin,
+                         :salt_bootstrap,
+                         :secretsauce_repo,
+                         :get_ami_keypairs,
+                         :validate_webserver ] do
+  sh %{ packer build #{WEB_CONFIG} }
+end
+
+# Utility stanzas
+desc "Set a minion_id for infrastructure baking"
+task :infrastructure_minion_id do
+  datestamp=`date +%Y.%m.%d.%H.%M.%S`
+  File.write("infrastructure_minion_id", "infrabake-#{datestamp}")
+end
+
+# Get the s3 yum plugin
+file s3_yum_plugin_rpm do
+  unless File.exist?(s3_yum_plugin_rpm)
+    puts "Downloading #{s3_yum_plugin_rpm}"
+    sh %{ wget --no-check-certificate #{s3_yum_plugin_url} }
+  end
+end
+
+desc "Download the yum s3 plugin"
+task :yum_plugin => [s3_yum_plugin_rpm]
+
+# Get the EPEL installer rpm for 6.5
+file epel_rpm do
+  unless File.exist?(epel_rpm)
+    puts "Downloading #{epel_rpm_url}"
+    sh %{ wget --no-check-certificate #{epel_rpm_url} }
+  end
+end
+
+desc "Download the epel yum plugin"
+task :epel_repo => [epel_rpm]
+
+# Get salt bootstrap
+desc "Download the latest Salt bootstrap.sh script"
+task :salt_bootstrap do
+  unless File.exist?("bootstrap-salt.sh")
+    sh %{ wget --no-check-certificate -O - https://bootstrap.saltstack.com > bootstrap-salt.sh }
+    sh %{ chmod +x bootstrap-salt.sh }
+  end
+end
+
+# Cleanups
+
+desc "Clean up working directory"
+task :cleanup do
+  sh %{ rm -f .*.un~}
+end
+
+desc "Clean the working directory"
+task :clean_workspace do
+  sh %{ rm -fr workspace *.un~ }
+end
+
+# These stanzas generate or copy files so we can install them into the
+# packer work instance.
+
+task :products_sha do
+  sh %{ YOMP rev-parse --verify HEAD > products.sha }
+end
+
+task :create_workspace_directory do
+  sh %{ mkdir -p workspace }
+end
+
+# We don't want internal keypairs in the repository, but we need them when
+# baking webserver AMIs.
+desc "Clone AMI keys from /etc/numenta/ami"
+task :get_ami_keypairs do
+  sh %{ rsync -a /etc/numenta/ami/sshkeys . }
+end
+
+# Copy the devtools-2 repo from the saltcellar so we aren't maintaining it
+# in two places
+desc "Copy the devtools-2 repo from the saltcellar"
+task :devtools_repo do
+  unless File.exist?("repos/devtools-2.repo")
+    sh %{ rsync ../saltcellar/devtools/files/devtools-2.repo repos/devtools-2.repo }
+  end
+  unless File.exist?("repos/devtools-pathaddition.sh")
+    sh %{ rsync ../saltcellar/devtools/files/00-add-devtools-to-path.sh repos/devtools-pathaddition.sh }
+  end
+end
+
+# Copy the secretsauce repo from the saltcellar so we aren't maintaining it
+# in two places
+desc "Copy the secretsauce repo from the saltcellar"
+task :secretsauce_repo do
+  unless File.exist?("repos/secretsauce.repo")
+    sh %{ rsync ../saltcellar/yum-numenta-secret-sauce/files/secretsauce.repo repos/secretsauce.repo }
+  end
+end
+
+# Copy the YOMP repos from the saltcellar so we aren't maintaining them
+# in two places.
+desc "Copy the YOMP repos from the saltcellar"
+task :YOMP_repos do
+  sh %{ rsync ../saltcellar/YOMP-plumbing/files/repos/YOMP*repo repos }
+end
+
+# Make saltcellar tarball
+desc "Pack up the saltcellar for Salt solo AMI bake"
+task :saltcellar_tarball => [:create_workspace_directory] do
+  sh %{ rm -f workspace/saltcellar.tar* }
+  sh %{ cd ../saltcellar ; tar cvf ../ami-tools/workspace/saltcellar.tar * }
+  sh %{ bzip2 -v workspace/saltcellar.tar }
+end

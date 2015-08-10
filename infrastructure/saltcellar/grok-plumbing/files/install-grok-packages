@@ -1,0 +1,370 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+"""
+Download and install YOMP RPMs and wheels from a json manifest
+"""
+
+import argparse
+import json
+import os
+
+from infrastructure.utilities import logger as log
+from infrastructure.utilities.cli import executeCommand, runWithOutput
+from infrastructure.utilities.exceptions import (
+  CommandFailedError,
+  InvalidParametersError)
+from infrastructure.utilities.path import rmrf
+
+
+g_config = None
+g_logger = None
+
+S3_BUCKET="s3://public.numenta.com"
+INSTALLER_BASE="/opt/numenta/updater"
+
+PYTHON_WHEEL_S3_DIR="%s/python" % S3_BUCKET
+RPM_S3_DIR = None
+
+LOCAL_PYTHON_DIR="%s/python" % INSTALLER_BASE
+LOCAL_REPO_DIR="%s/repo_d" % INSTALLER_BASE
+
+
+
+def parseCommandLineArguments():
+  """
+  Parse command line arguments, return the configuration
+
+  Sets global configuration object, g_config
+  """
+  global g_config
+
+  parser = argparse.ArgumentParser(description="Install YOMP from a manifest")
+  parser.add_argument("--configuration-file",
+                      help="Path to YOMP configuration",
+                      default="/etc/YOMP/YOMP-manifest.json")
+
+  parser.add_argument("--debug",
+                      dest="debug",
+                      help="Verbose output",
+                      action="store_true")
+
+  parser.add_argument("--download-only",
+                      help="Only download packages, skip install step",
+                      action="store_true")
+
+  parser.add_argument("--dryrun",
+                      help="Do a dry run without actually installing anything",
+                      action="store_true")
+
+  parser.add_argument("--log-level",
+                      dest="logLevel",
+                      type=str,
+                      default="warning",
+                      choices=["critical",
+                               "debug",
+                               "error",
+                               "info",
+                               "warning"
+                              ],
+                      help="Set the logging level")
+
+  parser.add_argument("--repository",
+                      dest="repository",
+                      type=str,
+                      default="releases",
+                      help="repository to download from")
+
+  g_config = parser.parse_args()
+
+
+
+def loadManifest(manifestFile):
+  """
+  Load a YOMP manifest from a JSON file into a dictionary.
+
+  Creates a dictionary with the following keys:
+    * 'packages': a list of package dictionaries, in the order we want them
+  installed.
+    * 'release_date' - Unused by the script, used to make the manifests more
+    easily read by humans. Optional.
+    * 'version' - For human readability, unused in the script. Optional.
+
+  The individual package dictionaries have the following keys:
+    * 'name' - A short, human readable name, used when displaying notices
+  during the download or install phases
+    * 'wheel' - the exact name of a wheel file.
+    * 'rpm' - the exact name of an rpm file.
+
+  Technically you can have both a wheel and an rpm key, in practice it is
+  not recommended.
+
+  Other keys found in the dictionaries will be ignored, this is to allow you
+  to use comment1..commentN keys to comment the source JSON.
+
+  Assume the following json manifest:
+  -- cut here --
+  {
+    "packages": [
+      {
+        "name": "numenta-infrastructure-python",
+        "comment": "Standard numenta infrastructure python modules",
+        "artifact": "numenta-infrastructure-python-1.7-9201.noarch.rpm"
+      },
+      {
+        "name": "nupic",
+        "comment": "Nupic Wheel file",
+        "artifact": "nupic-0.1.3.dev0-cp27-none-linux_x86_64.whl"
+      }
+    ],
+    "version": "1.7",
+    "description": "test 01"
+  }
+  -- end ---
+
+  Loading that manifest results in the following dictionary:
+
+  {u'description': u'test 01',
+   u'packages': [{u'artifact': u'numenta-infrastructure-python-1.7-9201.noarch.rpm',
+                  u'comment': u'Standard numenta infrastructure python modules',
+                  u'name': u'numenta-infrastructure-python'},
+                 {u'artifact': u'nupic-0.1.3.dev0-cp27-none-linux_x86_64.whl',
+                  u'comment': u'Nupic Wheel file',
+                  u'name': u'nupic'}],
+   u'version': u'1.7'}
+
+  @param manifestFile - path to the manifest to load
+
+  @raises InvalidParametersError if there is not at least one package in the
+  packages, or there is no packages list in the manifest file
+
+  @returns manifest dictionary
+  """
+  with open(manifestFile) as raw:
+    config = json.load(raw)
+
+  # Sanity checks
+  if "packages" not in config.keys():
+    raise InvalidParametersError("Manifest files must contain a packages key")
+  elif len(config["packages"]) == 0:
+    raise InvalidParametersError("Manifests must install at least one package")
+
+  return config
+
+
+
+def purgeRPMFileIfInvalid(rpmPath):
+  """
+  Check an RPM file for validity. If it fails, nuke the file
+
+  @param rpmPath - full path to the rpm to test
+  """
+  if os.path.exists(rpmPath):
+    g_logger.debug("Checking %s...", rpmPath)
+    try:
+      runWithOutput("rpm -K --nosignature %s" % rpmPath)
+    except CommandFailedError:
+      g_logger.debug("%s failed rpm validation, purging!", rpmPath)
+      # We don't care what went wrong. Any problem, delete the rpm
+      rmrf(rpmPath)
+    else:
+      g_logger.debug("%s is a valid RPM", rpmPath)
+
+
+
+def purgeWheelFileIfInvalid(wheelPath):
+  """
+  Check a wheel file for validity. If it fails, nuke it.
+
+  @param wheelPath - full path to the wheel file to test
+  """
+  if os.path.exists(wheelPath):
+    g_logger.debug("Checking %s...", wheelPath)
+    try:
+      # Wheels use zip file format so we can use unzip to validate them
+      runWithOutput("unzip -t %s" % wheelPath)
+    except CommandFailedError:
+      # We don't care what went wrong. Delete the wheel and we will download
+      # it again
+      g_logger.info("%s failed zip validation, purging file!", wheelPath)
+      rmrf(wheelPath)
+    else:
+      g_logger.debug("%s passed zip validation", wheelPath)
+
+
+
+def cleanDownloadCache(manifest):
+  """
+  Check the local cached copies of the wheels and rpms in a given manifest.
+
+  If they don't pass a validity check, nuke them so downloadManifest
+  can retry.
+
+  @param manifest - The manifest object containing the list of rpms and/or wheel
+  files to check in the 'packages' key.
+  """
+  g_logger.debug("Validating packages for manifest...")
+
+  for artifact in manifest["packages"]:
+
+    flavor = artifact["artifact"][-3:]
+    # Validate RPMs in the manifest
+    if flavor == "rpm":
+      purgeRPMFileIfInvalid("%s/%s" % (LOCAL_REPO_DIR, artifact["artifact"]))
+
+    # Validate WHL files in the manifest
+    if flavor == "whl":
+      purgeWheelFileIfInvalid("%s/%s" % (LOCAL_PYTHON_DIR, artifact["artifact"]))
+
+
+
+def downloadManifest(manifest):
+  """
+  Download files in a manifest to local cache.
+
+  @param manifest - The manifest object containing the list of rpms and/or wheel
+  files to download files from in the 'packages' key.
+  """
+  # Purge any invalid files from the cache
+  if not g_config.dryrun:
+    # Don't waste time on verification if we're not going to install anyway
+    cleanDownloadCache(manifest)
+
+  g_logger.debug("Download phase...")
+
+  for artifact in manifest["packages"]:
+    flavor = artifact["artifact"][-3:]
+    g_logger.debug("Downloading %s...", artifact["name"])
+
+    allowedFlavors = ["rpm", "whl"]
+    if flavor not in allowedFlavors:
+      raise InvalidParametersError("%s is not an RPM or wheel!" % artifact["artifact"])
+
+    if flavor == "rpm":
+      if not os.path.exists("%s/%s" % (LOCAL_REPO_DIR, artifact["artifact"])):
+        runWithOutput("s3cmd get -v %s/%s %s" % (RPM_S3_DIR,
+                                                 artifact["artifact"],
+                                                 LOCAL_REPO_DIR))
+      else:
+        if g_config.debug:
+          g_logger.info("%s already in local cache.", artifact["artifact"])
+
+    if flavor == "whl":
+      if not os.path.exists("%s/%s" % (LOCAL_PYTHON_DIR, artifact["artifact"])):
+        runWithOutput("s3cmd get -v %s/%s %s" % (PYTHON_WHEEL_S3_DIR,
+                                                 artifact["artifact"],
+                                                 LOCAL_PYTHON_DIR))
+      else:
+        g_logger.debug("%s already in local cache.", artifact["artifact"])
+
+
+
+def isRPMinstalled(rpm):
+  """
+  Check to see if an RPM is installed
+
+  @param rpm - name of the RPM to check for. Note that due to how rpm returns
+  the list of installed rpm files, we need to check for the full name of the
+  rpm, minus the trailing '.rpm'
+
+  @returns true if the rpm has been installed, false otherwise.
+  """
+  rpmlist = executeCommand(["rpm", "-qa"]).split("\n")
+  name = os.path.basename(rpm)[:-4]
+  return name in rpmlist
+
+
+
+def installManifest(manifest):
+  """
+  Install files from a manifest. It will install them in the order they are
+  listed in the packages element of the manifest.
+
+  @param manifest - manifest object. The list of rpms and/or wheel files to
+  install is in the 'packages' key.
+  """
+  g_logger.debug("Begin install phase...")
+
+  for artifact in manifest["packages"]:
+    g_logger.info("Installing %s", artifact["name"])
+
+    # The last 4 characters of an artifact name will be .rpm or .whl,
+    # so slice off the final 3 to determine if we're dealing with an
+    # RPM or wheel file
+    flavor = artifact["artifact"][-3:]
+
+    if flavor == "whl":
+      wheelPath = "%s/%s" % (LOCAL_PYTHON_DIR, artifact["artifact"])
+      pipCommand = "pip install %s" % wheelPath
+      if g_config.dryrun:
+        g_logger.info("DRYRUN: Would have run: %s", pipCommand)
+      else:
+        runWithOutput(command=pipCommand)
+
+    if flavor == "rpm":
+      rpmPath = "%s/%s" % (LOCAL_REPO_DIR, artifact["artifact"])
+      yumCommand = "yum install -y %s" % rpmPath
+      if g_config.dryrun:
+        g_logger.info("DRYRUN: Would have run: %s", yumCommand)
+      else:
+        # Yum exits non-zero if you try to install a package that is already
+        # installed, so make sure it isn't already installed.
+        if isRPMinstalled(rpmPath):
+          g_logger.debug("%s already installed, skipping install",
+                         artifact["rpm"])
+        else:
+          runWithOutput(command=yumCommand)
+
+
+
+def installYOMPPackages():
+  """
+  Install YOMP packages
+
+  1. Load configuration from command line arguments
+  2. Load the manifest file specified by --configuration-file
+  3. Download any rpms or wheels listed in the manifest that are not in the
+     local cache.
+  4. Do wheel/rpm installs in the order they were listed in the manifest
+     file.
+  """
+  global g_logger
+  global RPM_S3_DIR
+
+  parseCommandLineArguments()
+
+  # Setup logging
+  g_logger = log.initPipelineLogger(name="create-saltcellar-rpm",
+                                    logLevel=g_config.logLevel)
+
+  RPM_S3_DIR="%s/yum/%s" % (S3_BUCKET, g_config.repository)
+
+  manifest = loadManifest(g_config.configuration_file)
+  downloadManifest(manifest)
+
+  if g_config.download_only:
+    g_logger.debug("Download-only mode, skipping install")
+    return
+
+  installManifest(manifest)
+
+if __name__ == "__main__":
+  installYOMPPackages()

@@ -1,0 +1,13 @@
+.YOMP-manage-custom-metrics h3 {
+    margin-top: 2em;
+}
+
+.YOMP-manage-custom-metrics table {
+    /* this is to get css overflow:ellipsis working on the table */
+    /* table-layout: fixed; */
+    width: 100%;
+}
+
+.YOMP-manage-custom-metrics td .close {
+    float: none;
+}

@@ -1,0 +1,5 @@
+cloud.aws.access_key: REPLACEME 
+cloud.aws.secret_key: REPLACEME 
+discovery.type: ec2 
+http.cors.enabled: true
+http.cores.allow-origin: http://dnsentry.tld

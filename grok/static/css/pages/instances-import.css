@@ -1,0 +1,31 @@
+.YOMP-page .import {
+    margin-top: 2em;
+}
+.YOMP-page .import label {
+    padding-bottom: 0.33em;
+}
+.YOMP-page .import label:after {
+    content: ':';
+}
+.YOMP-page .import #upload {
+    margin-right: 0.66em;
+    position: relative;
+}
+.YOMP-page .import #upload #file {
+    cursor: pointer;
+    display: block;
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.YOMP-page .import code {
+    display: inline-block;
+}
+
+.YOMP-page h3 {
+    margin-top: 2em;
+}

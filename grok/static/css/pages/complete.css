@@ -1,0 +1,36 @@
+.YOMP-complete .well {
+  font-size: 96.5%;
+  padding-bottom: 0.5em;
+}
+.YOMP-complete .well strong {
+  display: block;
+  padding-bottom: 1em;
+}
+
+.YOMP-complete ol {
+  margin: 1em 0 1em 0;
+}
+.YOMP-complete ol.steps {
+  border-bottom: 1px solid #eee;
+  font-size: 110%;
+  padding-bottom: 2em;
+  margin: 2em 0 1em 0;
+}
+
+.YOMP-complete li {
+  margin-bottom: 0.5em;
+}
+.YOMP-complete li:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.YOMP-complete li img {
+  margin: 0.5em 0 1em 0;
+}
+.YOMP-complete li dl {
+  margin-top: 0.5em;
+}
+
+.YOMP-complete button {
+}
+

@@ -1,0 +1,31 @@
+{
+  "test":{
+    "testStatus":true
+  },
+  "syncRepo":{
+    "message":"x86_64 is up to date with S3",
+    "syncStatus":true
+  },
+  "manifest":{
+    "buildWorkspace":"/opt/numenta/jenkins/workspace/YOMP-product-pipeline/2014-12-04_20-11-33SXydjO",
+    "pipeline":"YOMP",
+    "YOMPRemote":"YOMP@YOMPhub.com:Numenta/numenta-apps.YOMP",
+    "logLevel":"debug",
+    "releaseVersion":"master",
+    "sha":"ca0e329c5d08e403f743ceb2265944f8e6a66d08",
+    "preCI":"8a5dc36a6cacd5546b3a515755a5c165cf2202e5",
+    "ciBranch":"CI"
+  },
+  "packageRpm":{
+    "YOMP":"YOMP-py27-YOMPsolutions-master-20141204.20.26.23.x86_64.rpm",
+    "syncRpm":true,
+    "repoName":"x86_64"
+  },
+  "build":{
+    "YOMPHome":"/opt/numenta/jenkins/workspace/YOMP-product-pipeline/2014-12-04_20-11-33SXydjO/products/YOMP",
+    "YOMPDeployTrack":"YOMPsolutions",
+    "deployTrack":"YOMPsolutions-numenta",
+    "amiName":"YOMPsolutions-8a5dc36a6cacd5546b3a515755a5c165cf2202e5",
+    "YOMPSha":"ca0e329c5d08e403f743ceb2265944f8e6a66d08",
+  }
+}

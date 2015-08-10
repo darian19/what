@@ -1,0 +1,116 @@
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_version_category">
+        <Preference
+            android:key="version"
+            android:selectable="false"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:title="@string/pref_title_version" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_general_category">
+        <EditTextPreference
+            android:inputType="textUri"
+            android:key="server_url"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_server_url" />
+
+        <ListPreference
+            android:defaultValue="5"
+            android:entries="@array/arr_data_refresh_rate_entries"
+            android:entryValues="@array/arr_data_refresh_rate_values"
+            android:key="data_refresh_rate"
+            android:title="@string/pref_data_refresh_rate" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_notification_category">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="notifications_enable"
+            android:title="@string/pref_title_enable_notifications" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="email_notifications_enable"
+            android:title="@string/pref_title_enable_email_notifications" />
+
+        <EditTextPreference
+            android:inputType="textEmailAddress"
+            android:key="notification_email"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/pref_summary_email_notification"
+            android:dialogTitle="@string/pref_summary_email_notification"
+            android:title="@string/pref_title_email_notification"
+            android:dependency="email_notifications_enable" />
+
+        <ListPreference
+            android:key="notification_frequency"
+            android:title="@string/pref_title_notifications_frequency"
+            android:summary="@string/pref_summary_notifications_frequency"
+            android:entries="@array/arr_notification_frequency_entries"
+            android:entryValues="@array/arr_notification_frequency_values"
+            android:defaultValue="@string/pref_notification_frequency_default" />
+
+        <!--
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:dependency="notifications_enable"
+            android:key="notifications_ringtone"
+            android:ringtoneType="notification"
+            android:title="@string/pref_title_ringtone" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="notifications_enable"
+            android:key="notifications_vibrate"
+            android:title="@string/pref_title_vibrate" />
+
+        <com.YOMPsolutions.YOMP.mobile.preference.SliderPreference
+            android:defaultValue="99"
+            android:dependency="notifications_enable"
+            android:key="notifications_threshold"
+            android:max="100"
+            android:summary="@string/pref_summary_notification_threshold"
+            android:title="@string/pref_title_notification_threshold"
+            YOMP:min="1"
+            YOMP:unitPostfix="%" />
+        -->
+    </PreferenceCategory>
+
+    <PreferenceCategory>
+        <Preference
+            android:persistent="false"
+            android:summary="@string/pref_summary_tutorial"
+            android:title="@string/pref_title_tutorial"
+            android:key="show_tutorial" />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

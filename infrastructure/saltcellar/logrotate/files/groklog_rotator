@@ -1,0 +1,154 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2014-2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+"""
+Script to move logs from foo-YYYYMMDD to foo-YYYYMMDD-HHMMSS post
+logrotate runs.
+"""
+
+import datetime
+import optparse
+import os
+import re
+import time
+
+_USAGE = "Usage: shuffle_YOMPlogs path/to/log/dir"
+_INPUT_FORMAT = r".*\.log$"
+_ROTATED_FORMAT = r".*-\d{8}-\d{6}"
+_NUMENTA="/opt/numenta"
+
+
+
+def run(logDir):
+  """
+  Take logrotated files named foo.log-YYYYMMDD and rename them to
+  foo.log-YYYYMMDD-HHMMSS for upload-logs to process.
+
+  :param logDir: Directory to process
+
+  :param force: ignored
+  """
+  _shuffleLogs(logDir, _INPUT_FORMAT)
+  _pruneLogs(logDir, _ROTATED_FORMAT, 168)
+
+
+
+def restartSupervisord():
+  """
+  Force supervisord to close and reopen its logfiles
+  """
+  try:
+    with open("%s/YOMP/YOMP-supervisord.pid" % (_NUMENTA), "r+") as f:
+      supervisordPid = f.read()
+    os.system("/bin/kill -USR2 %s" % supervisordPid)
+  except IOError as e:
+    print e, e.message
+
+
+
+def _shuffleLogs(logDir, nameFormat):
+  """
+  logrotate names files from foo.log to foo.log-YYYYMMDD format, and won't
+  rotate again on the same day. We want hourly rotations for
+  ${NUMENTA}/YOMP/bin/upload-logs.py, and it expects to process files in
+  foo.log-YYYYMMDD-HHMMSS format anyway, so we are going to handle rotation
+  ourselves instead of fighting with logrotate.
+
+  :param logDir: Path to log directory to process.
+  :param nameFormat: A regex matching which files we want to rotate
+  """
+  eligiblename = re.compile(nameFormat)
+  tock = time.time()
+  datestamp = datetime.datetime.fromtimestamp(tock).strftime('%Y%m%d-%H%M%S')
+  files = os.listdir(logDir)
+  for filename in files:
+    if eligiblename.match(filename):
+      # snip off the old YYYYMMDD datestamp
+      namebase = filename[:filename.find('.log')] + '.log'
+      # replace it with a full YYYYMMDD-HHMMSS datestamp
+      os.rename("%s/%s" % (logDir, filename),
+                "%s/%s-%s" % (logDir, namebase, datestamp))
+  # Now that we've renamed the logfiles, we need to force supervisord to close
+  # the old logs and reopen new ones.
+  restartSupervisord()
+
+
+
+def prune(fileList, maxFiles):
+  """
+  Passed a list of files as fileList, delete all but the most recent
+  maxFiles number of files.
+
+  :param fileList: List of file paths
+
+  :param maxFiles: Number of files to keep
+  """
+  maxFiles = 0 if maxFiles < 0 else maxFiles
+  # Happily our naming scheme lets us get away with a simple sort to determine
+  # the order by age
+  fileList.sort()
+  for deleteme in fileList[:len(fileList)-maxFiles]:
+      print "Deleting {}".format(deleteme)
+      os.remove(deleteme)
+
+
+
+def _pruneLogs(logDir, nameFormat, numLogfiles):
+  """
+  Prune the number of backups of each log file we find in logDir. For each
+  file we find in the format foo.log-YYYYMMDD-HHMMSS, assemble them all into
+  a single list, then keep only the numLogfiles most recent files.
+
+  :param logDir: Path to log directory to process.
+
+  :param nameFormat: format of the filenames we're allowed to touch
+
+  :param numLogfiles: How many logfiles of each prefix we should keep.
+  """
+  eligiblename = re.compile(nameFormat)
+  worklist = {}
+  files = os.listdir(logDir)
+  for filename in files:
+    if not eligiblename.match(filename):
+      continue
+    namebase = filename.split('-')[0]
+    fullpath = "%s/%s" % (logDir, filename)
+    if namebase in worklist.keys():
+      worklist[namebase].append(fullpath)
+    else:
+      worklist[namebase] = [fullpath]
+  for basefile in worklist.keys():
+    prune(worklist[basefile], numLogfiles)
+
+
+
+if __name__ == "__main__":
+
+  parser = optparse.OptionParser()
+  parser.add_option("-f", "--force", action="store_true", dest="force",
+                    default=False)
+  options, args = parser.parse_args()
+
+  if len(args) != 1:
+    parser.error(_USAGE)
+
+  run(args[0])

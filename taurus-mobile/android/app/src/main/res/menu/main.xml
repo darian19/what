@@ -1,0 +1,66 @@
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/menu_search"
+        android:title="@android:string/search_go"
+        android:icon="@android:drawable/ic_menu_search"
+        tools:ignore="AlwaysShowAction"
+        android:showAsAction="always|collapseActionView"
+        android:visible="false"
+        android:actionViewClass="android.widget.SearchView" />
+    <item
+        android:id="@+id/menu_refresh"
+        android:icon="@drawable/ic_action_refresh"
+        android:showAsAction="never"
+        android:title="@string/menu_refresh" />
+    <item
+        android:id="@+id/menu_feedback"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_action_email"
+        android:showAsAction="never"
+        android:title="@string/menu_feedback" />
+    <item
+        android:id="@+id/menu_share"
+        android:orderInCategory="50"
+        android:icon="@drawable/ic_action_share"
+        android:showAsAction="never"
+        android:title="@string/menu_share" />
+    <item
+        android:id="@+id/menu_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_settings" />
+    <item
+            android:id="@+id/menu_tutorial"
+            android:orderInCategory="150"
+            android:showAsAction="never"
+            android:title="@string/menu_tutorial" />
+    <item
+            android:id="@+id/menu_about"
+            android:orderInCategory="150"
+            android:showAsAction="never"
+            android:title="@string/menu_about" />
+
+</menu>

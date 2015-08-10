@@ -1,0 +1,24 @@
+.page .jumbotron {
+    padding-bottom: 0;
+}
+
+.page h3 {
+    margin-bottom: 0.66em;
+    margin-top: 0.5em;
+}
+
+.page ul {
+    margin-bottom: 2em;
+}
+
+.page ul li {
+    margin-bottom: 0.5em;
+}
+
+.page button {
+    margin-top: 0;
+}
+
+.page .flow {
+    font-size: 1.2em;
+}

@@ -1,0 +1,122 @@
+<div class="YOMP-register YOMP-page row">
+    <div class="col-md-8 col-md-offset-2">
+
+        <section id="progress-bar-container"></section>
+
+        <h1><% if(isSetup) { %><%= site.setup.steps.label %> <%= step %>: <% } %><%= msgs.title %></h1>
+        <p class="lead"><%= msgs.lead %></p>
+        <span class="help-block">
+            <ul>
+            <% msgs.notes.forEach(function(note) { %>
+                <li><%= note %></li>
+            <% }); %>
+            </ul>
+        </span>
+
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="name" class="control-label col-sm-3"><%= msgs.form.labels.name %></label>
+                <div class="col-sm-9">
+                    <input id="name" class="form-control" name="name" type="text" value="<%= values.name %>" placeholder="<%= msgs.form.placeholder.name %>" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="company" class="control-label col-sm-3"><%= msgs.form.labels.company %></label>
+                <div class="col-sm-9">
+                    <input id="company" class="form-control" name="company" type="text" value="<%= values.company %>" placeholder="<%= msgs.form.placeholder.company %>" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="control-label col-sm-3"><%= msgs.form.labels.email %></label>
+                <div class="col-sm-9">
+                    <input id="email" class="form-control" name="email" type="email" value="<%= values.email %>" placeholder="<%= msgs.form.placeholder.email %>" />
+                </div>
+            </div>
+        </form>
+
+        <article>
+            <p class="strong text-center">
+                SOFTWARE LICENSE AGREEMENT
+            </p>
+            <p class="strong">
+                THE TERMS AND CONDITIONS OF THIS SOFTWARE LICENSE AGREEMENT (THE “AGREEMENT”) GOVERN YOUR INSTALLATION, INSTANTIATION, ACCESS TO, AND USE OF THE YOMP SOFTWARE AND ANY ASSOCIATED DOCUMENTATION (COLLECTIVELY, THE “SOFTWARE”), UNLESS YOU AND NUMENTA, INC. HAVE EXECUTED A SEPARATE AGREEMENT GOVERNING ACCESS TO AND USE OF THE SOFTWARE.
+            </p>
+            <p>
+                Numenta is willing to license the Software to you only upon the condition that you accept all the terms contained in this Agreement.  By clicking on the “I accept” button below or by installing, downloading, instantiating, accessing, or using the Software, you have indicated that you understand this Agreement and accept all of its terms.  If you are accepting the terms of this Agreement on behalf of a company or other legal entity, you represent and warrant that you have the authority to bind that company or other legal entity to the terms of this Agreement, and, in such event, “you” and “your” will refer to that company or other legal entity.
+            </p>
+            <p>
+                <strong>1. Grant of License.</strong>
+                Conditioned upon your compliance with the terms and conditions of this Agreement, Numenta grants you a non-exclusive and non-transferable license to instantiate, implement, and use a single instance of the Software on the applicable cloud service provider’s infrastructure solely for your internal business use in accordance with this Agreement. Numenta reserves all rights in the Software not expressly granted to you in this Agreement.
+            </p>
+            <p>
+                <strong>2. Restrictions.</strong>
+                Except as expressly specified in this Agreement, you may not: (a) copy (except in the course of loading or installing) or modify the Software, including but not limited to adding new features or otherwise making adaptations that alter the functioning of the Software; (b) transfer, sublicense, lease, lend, rent or otherwise distribute the Software to any third party; or (c) make the functionality of the Software available to third party users (other than contractors working on your behalf) through any means, including but not limited to by uploading the Software to a network or file-sharing service or through any hosting, application services provider, service bureau, software-as-a-service (SaaS) or any other type of services.  You acknowledge and agree that portions of the Software, including but not limited to the source code and the specific design and structure of individual modules or programs, constitute or contain trade secrets of Numenta and its licensors.  Accordingly, you agree not to disassemble, decompile or reverse engineer the Software, in whole or in part, or permit or authorize a third party to do so, except to the extent such activities are expressly permitted by law notwithstanding this prohibition.
+            </p>
+            <p>
+                <strong>3. Ownership.</strong>
+                The copy of the Software is licensed, not sold.  Numenta retains ownership of the copy of the Software itself, including all intellectual property rights therein.  The Software is protected by United States copyright law and international treaties.  You will not delete or in any manner alter the copyright, trademark, and other proprietary rights notices or markings appearing on the Software as delivered to you.
+            </p>
+            <p>
+                <strong>4. Payment.</strong>
+                As an express condition to your access to and use of the Software, you agree to pay any amounts set forth in the applicable cloud service provider marketplace or website with respect to your instantiation and use of the Software.  Such fees may include but are not limited to instantiation fees, fees due to the applicable cloud service provider, and hourly, weekly, or monthly subscription or usage fees.  It is your responsibility to identify and pay the applicable fees in accordance with the terms and conditions set forth on the applicable cloud service provider marketplace or website.  Any price changes for periodic or usage fees that are posted on the applicable cloud service provider marketplace or website will apply immediately unless otherwise set forth therein.
+            </p>
+            <p>
+                <strong>5. Term.</strong>
+                The license granted under this Agreement remains in effect for so long as you continue to maintain and use the applicable instance of the Software on the applicable cloud service provider’s infrastructure, unless earlier terminated in accordance with this Agreement.  You may terminate the license at any time by ceasing to use and removing your instance of the Software from the applicable cloud service provider’s infrastructure.  The license granted under this Agreement will automatically terminate, with or without notice from Numenta, if you breach any term of this Agreement, if you fail to pay an applicable fees for your use of the Software, or if your rights to access and use the Software through the applicable cloud service provider are otherwise terminated.  Upon termination, you must cease all access to and use of the Software.
+            </p>
+            <p>
+                <strong>6. No Warranty.</strong>
+                THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND.  NUMENTA AND ITS LICENSORS DISCLAIM ALL WARRANTIES AND CONDITIONS, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT, AND ANY WARRANTIES AND CONDITIONS ARISING OUT OF COURSE OF DEALING OR USAGE OF TRADE.  NO ADVICE OR INFORMATION, WHETHER ORAL OR WRITTEN, OBTAINED FROM NUMENTA OR ELSEWHERE WILL CREATE ANY WARRANTY OR CONDITION NOT EXPRESSLY STATED IN THIS AGREEMENT. Numenta does not warrant that the Software will meet your requirements, that the Software will operate in the combinations that you may select for execution, that the operation of the Software will be error-free or uninterrupted, or that all Software errors will be corrected.
+            </p>
+            <p>
+                <strong>7. Limitation of Liability.</strong>
+                NUMENTA’S TOTAL LIABILITY TO YOU FROM ALL CAUSES OF ACTION AND UNDER ALL THEORIES OF LIABILITY WILL BE LIMITED TO THE AMOUNTS PAID TO NUMENTA BY YOU FOR THE SOFTWARE OR, IN THE EVENT THAT NUMENTA HAS MADE THE SOFTWARE AVAILABLE TO YOU WITHOUT CHARGE, NUMENTA’S TOTAL LIABILITY WILL BE LIMITED TO $500.  IN NO EVENT WILL NUMENTA BE LIABLE TO YOU FOR ANY SPECIAL, INCIDENTAL, EXEMPLARY, PUNITIVE OR CONSEQUENTIAL DAMAGES (INCLUDING LOSS OF DATA, BUSINESS, PROFITS OR ABILITY TO EXECUTE) OR FOR THE COST OF PROCURING SUBSTITUTE PRODUCTS ARISING OUT OF OR IN CONNECTION WITH THIS AGREEMENT OR THE EXECUTION OR PERFORMANCE OF THE SOFTWARE, WHETHER SUCH LIABILITY ARISES FROM ANY CLAIM BASED UPON CONTRACT, WARRANTY, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, AND WHETHER OR NOT NUMENTA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH LOSS OR DAMAGE.  THE FOREGOING LIMITATIONS WILL SURVIVE AND APPLY EVEN IF ANY LIMITED REMEDY SPECIFIED IN THIS AGREEMENT IS FOUND TO HAVE FAILED OF ITS ESSENTIAL PURPOSE. Some jurisdictions do not allow the limitation or exclusion of liability for incidental or consequential damages, so the above limitation or exclusion may not apply to you.
+            </p>
+            <p>
+                <strong>8. U.S. Government End Users.</strong>
+                The Software is a “commercial item” as that term is defined in FAR 2.101, consisting of “commercial computer software” and “commercial computer software documentation,” respectively, as such terms are used in FAR 12.212 and DFARS 227.7202.  If the Software is being acquired by or on behalf of the U.S. Government, then, as provided in FAR 12.212 and DFARS 227.7202-1 through 227.7202-4, as applicable, the U.S. Government’s rights in the Software will be only those specified in this Agreement.
+            </p>
+            <p>
+                <strong>9. Export Law.</strong>
+                You agree to comply fully with all U.S. export laws and regulations to ensure that neither the Software nor any technical data related thereto nor any direct product thereof are exported or re-exported directly or indirectly in violation of, or used for any purposes prohibited by, such laws and regulations.
+            </p>
+            <p>
+                <strong>10. General.</strong>
+                This Agreement will be governed by and construed in accordance with the laws of the State of California, without regard to or application of conflict of laws rules or principles.  The United Nations Convention on Contracts for the International Sale of Goods will not apply.  You may not assign or transfer this Agreement or any rights granted hereunder, by operation of law or otherwise, without Numenta’s prior written consent, and any attempt by you to do so, without such consent, will be void.  Except as expressly set forth in this Agreement, the exercise by either party of any of its remedies under this Agreement will be without prejudice to its other remedies under this Agreement or otherwise.  All notices or approvals required or permitted under this Agreement will be in writing and delivered by confirmed facsimile transmission, by overnight delivery service, or by certified mail, and in each instance will be deemed given upon receipt.  All notices or approvals will be sent to the addresses set forth in the applicable ordering document or invoice or to such other address as may be specified by either party to the other in accordance with this section.  The failure by either party to enforce any provision of this Agreement will not constitute a waiver of future enforcement of that or any other provision.  Any waiver, modification or amendment of any provision of this Agreement will be effective only if in writing and signed by authorized representatives of both parties.  If any provision of this Agreement is held to be unenforceable or invalid, that provision will be enforced to the maximum extent possible, and the other provisions will remain in full force and effect.  This Agreement is the complete and exclusive understanding and agreement between the parties regarding its subject matter, and supersedes all proposals, understandings or communications between the parties, oral or written, regarding its subject matter, unless you and Numenta have executed a separate agreement.  Any terms or conditions contained in your purchase order or other ordering document that are inconsistent with or in addition to the terms and conditions of this Agreement are hereby rejected by Numenta and will be deemed null.
+            </p>
+            <p>
+                <strong>11. Contact Information.</strong>
+                If you have any questions regarding this Agreement, you may
+                contact Numenta at
+                <a href="mailto:info@numenta.com">info@numenta.com</a>.
+            </p>
+        </article>
+
+        <form role="form">
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input id="usage" type="checkbox"<% if(checked) { %> checked="checked"<% } %> />
+                        <%= msgs.form.labels.usage %>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input id="agree" type="checkbox" checked="checked" />
+                        <%= msgs.form.labels.sla %>
+                    </label>
+                </div>
+            </div>
+        </form>
+
+        <div class="buttons">
+            <button id="back" type="button" class="btn btn-default">
+                <%= button.back %>
+            </button>
+            <button id="next" type="submit" class="btn btn-primary">
+                <%= button.next %>
+            </button>
+        </div>
+
+    </div>
+</div>

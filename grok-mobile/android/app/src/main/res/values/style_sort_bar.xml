@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources  xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Colors -->
+    <color name="SortBar.Background">#00678f</color>
+    <color name="SortBar.TitleBackground">#073447</color>
+    <color name="SortBar.TitleText">#ffffff</color>
+    <color name="SortBar.ButtonTextSelected">#ffffff</color>
+    <color name="SortBar.ButtonText">#014760</color>
+
+    <!-- Styles -->
+    <style name="SortBar">
+        <item name="android:background">@drawable/sort_bar_background</item>
+        <item name="android:layout_height">@dimen/sort_bar_layout_height</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:shadowColor">#555</item>
+    </style>
+
+    <style name="SortTitle">
+        <item name="android:background">@drawable/sort_title_background</item>
+        <item name="android:textColor">@color/SortBar.TitleText</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:paddingRight">20dip</item>
+        <item name="android:layout_marginRight">40dp</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
+    <style name="SortButton">
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@drawable/sort_bar_text</item>
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:paddingRight">10dip</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+</resources>

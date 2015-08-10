@@ -1,0 +1,95 @@
+{
+  "variables": {
+    "YOMP_rpm_name": "{{env `YOMP_RPM_NAME`}}",
+    "ami_name":"{{env `AMI_NAME`}}"
+  },
+  "builders": [
+    {
+      "ami_description": "CentOS 6.5 + yum updates + build tools + YOMP",
+      "ami_name": "packer-{{user `ami_name`}}-{{isotime | clean_ami_name}}",
+      "instance_type": "m3.large",
+      "region": "us-west-2",
+      "source_ami": "ami-e32219d3",
+      "ssh_port": 22,
+      "ssh_timeout": "5m",
+      "ssh_username": "root",
+      "tags": {
+        "OS_Version": "CentOS",
+        "Release": "6.5"
+      },
+      "ami_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "delete_on_termination" : true,
+          "volume_size": 32
+        }
+      ],
+      "type": "amazon-ebs"
+    }
+  ],
+  "provisioners": [
+    {
+      "destination": "/tmp/products.sha",
+      "source": "products.sha",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/YOMP-development.repo",
+      "source": "repos/YOMP-development.repo",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/YOMP-release-candidates.repo",
+      "source": "repos/YOMP-release-candidates.repo",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/YOMP-releases.repo",
+      "source": "repos/YOMP-releases.repo",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/nta-carbonite.repo",
+      "source": "repos/nta-carbonite.repo",
+      "type": "file"
+    },
+    {
+      "destination": "/tmp/nta-thirdparty.repo",
+      "source": "repos/nta-thirdparty.repo",
+      "type": "file"
+    },
+    {
+      "inline": [
+        "echo 'Sleeping for 30s, waiting for system to settle down.'",
+        "sleep 30",
+        "mkdir -p /etc/YOMP",
+        "mkdir -p /etc/numenta",
+        "mkdir -p /srv/salt"
+      ],
+      "type": "shell"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/install-epel-repo-6.5"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/configure-YOMP-pipeline-ami",
+      "environment_vars": [
+        "YOMP_RPM_NAME={{user `YOMP_rpm_name`}}"
+      ]
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/run-YOMP-ami-tests"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/cleanup-YOMP-pipeline-ami"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/cleanup-image"
+    }
+  ]
+}

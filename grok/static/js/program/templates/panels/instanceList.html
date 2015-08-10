@@ -1,0 +1,72 @@
+<div class="YOMP-instance-list YOMP-panel">
+
+    <h3><%= msgs.title %></h3>
+
+    <form>
+
+        <table class="table tablesorter">
+
+            <colgroup>
+                <col />
+                <col span="3" />
+                <col />
+            </colgroup>
+
+            <thead>
+                <tr>
+                    <th><%= msgs.table.headers.instance %></th>
+                    <th><%= msgs.table.headers.namespace %></th>
+                    <th><%= msgs.table.headers.region %></th>
+                    <th><%= msgs.table.headers.status %></th>
+                    <th class="sorter-false text-center"><%= msgs.table.headers.remove %></th>
+                </tr>
+            </thead>
+
+            <% if(instances.length > 0) { %>
+                <tbody class="instances">
+                    <% instances.forEach(function(instance) { %>
+                        <tr data-name="<%= instance.get('display') %>" data-instance="<%= instance.get('server') %>" data-namespace="<%= instance.get('namespace') %>" data-region="<%= instance.get('location') %>">
+                            <td class="truncate">
+                                <a class="metric-link" href="#"><%= instance.get('display') %></a>
+                            </td>
+                            <td class="truncate"><%= instance.get('namespace') %></td>
+                            <td class="truncate"><%= instance.get('location') %></td>
+                            <td>
+                                <% if(instance.get('message')) { %>
+                                    <abbr title="<%= instance.get('message') %>" class="text-danger">
+                                <% } %>
+                                <%= instance.get('statusName') %>
+                                <% if(instance.get('message')) { %></abbr><% } %>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="close">
+                                    <%= site.icons.close %>
+                                </button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            <% } else { %>
+                <tbody class="avoid-sort">
+                    <tr>
+                        <td class="text-muted" colspan="5"><%= msgs.table.empty %></td>
+                    </tr>
+                </tbody>
+            <% } %>
+
+        </table>
+
+        <% if(instances.length > 0) { %>
+            <div class="text-right">
+                <button type="button" class="export btn btn-default">
+                    <%= site.buttons.export %>
+                </button>
+                <button type="button" class="delete btn btn-default">
+                    <%= site.buttons.removeAll %>
+                </button>
+            </div>
+        <% } %>
+
+    </form>
+
+</div>

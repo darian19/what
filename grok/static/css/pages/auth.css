@@ -1,0 +1,26 @@
+.YOMP-page h1 {
+    margin-bottom: 0.66em;
+}
+
+.YOMP-page form {
+    padding-top: 2em;
+}
+.YOMP-page label {
+    padding-bottom: 0.33em;
+}
+.YOMP-page label:after {
+    content: ':';
+}
+
+.YOMP-page #key {
+    max-width: 15em;
+}
+.YOMP-page #secret {
+    max-width: 17em;
+}
+
+.YOMP-page .form-group div strong {
+    font-size: 110%;
+    position: relative;
+    top: 0.45em;
+}

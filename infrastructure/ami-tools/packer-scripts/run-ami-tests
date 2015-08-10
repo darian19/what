@@ -1,0 +1,69 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# Run AMI test suite during AMI bake
+
+PATH=/opt/numenta/anaconda/bin:/usr/local/sbin:/usr/local/bin:$PATH
+
+complain() {
+  echo "$@"
+  logger -t ami-bake "$@"
+}
+
+if [ ! -z "${DUMP_SCRIPT_SOURCE}" ]; then
+  echo "Dumping $0..."
+  echo "---------------------------"
+  cat "$0"
+  echo "---------------------------"
+  echo "Dump complete"
+fi
+
+show-unowned-files() {
+  echo
+  echo "**************"
+  echo "Unowned files:"
+  find / -xdev \( -nouser -o -nogroup \) -print 2>&1 | \
+    grep -vi "No such file or directory" | \
+    sort
+  echo "**************"
+  echo "Setuid files"
+  sudo find / -xdev -perm +4000 2>&1 | \
+    grep -vi "No such file or directory" | \
+    sort
+  echo
+  echo "**************"
+  echo "Setgid files"
+  sudo find / -xdev -perm +2000 2>&1 | \
+    grep -vi "No such file or directory" | \
+    sort
+  echo
+}
+
+if [ ! -z "${DEBUG}" ]; then
+  show-unowned-files
+fi
+
+# Clear /tmp
+rm -fr /tmp/*
+
+# Now, we run the run-ami-tests that is installed on the AMI. Exec so if the
+# tests fail, packer can see it and fail the bake.
+exec run-ami-tests

@@ -1,0 +1,18 @@
+[
+  {
+    "last_rowid": 20277,
+    "description": "The number of database connections in use by Amazon RDS database",
+    "metric": {
+      "status": 1,
+      "name": "AWS/RDS/DatabaseConnections",
+      "parameters": "{"region": "us-east-1", "DBInstanceIdentifier": "YOMPdb2"}",
+      "last_timestamp": "2013-08-15 21:25:00",
+      "poll_interval": 60,
+      "message": null,
+      "uid": "97c2bcd2-9b30-4100-8185-9cc6572d8951",
+      "description": "The number of database connections in use by Amazon RDS database"
+    },
+    "uid": "cebe9fab-f416-4845-8dab-02d292244112",
+    "name": "AWS/RDS/DatabaseConnections"
+  }
+]

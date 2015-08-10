@@ -1,0 +1,28 @@
+[
+  {
+    "name":"g_singh-mer-1292",
+    "region":"us-west-2",
+    "namespace":"AWS/EC2",
+    "datasource":"cloudwatch",
+    "identifier":"i-9d35c4ab",
+    "metric":"NetworkIn",
+    "dimensions":{
+      "InstanceId":[
+        "i-9d35c4ab"
+      ]
+    }
+  },
+  {
+    "name":"",
+    "region":"us-west-2",
+    "namespace":"AWS/EBS",
+    "datasource":"cloudwatch",
+    "identifier":"vol-1962a831",
+    "metric":"VolumeWriteBytes",
+    "dimensions":{
+      "VolumeId":[
+        "vol-1962a831"
+      ]
+    }
+  }
+]

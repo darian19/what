@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>YOMP Backbone.Collection Tests</title>
+        <link rel="stylesheet" href="../lib/mocha.css" />
+    </head>
+    <body>
+        <div id="mocha"></div>
+
+        <!-- external deps -->
+        <script src="../../../static/bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../../../static/bower_components/underscore/underscore.js"></script>
+        <script src="../../../static/bower_components/backbone/backbone.min.js"></script>
+        <script src="../../../static/js/lib/YOMP/YOMPAPI.js"></script>
+
+        <!-- browser testing framework -->
+        <script src="../lib/expect.js"></script>
+        <script src="../lib/mocha.js"></script>
+        <script>mocha.setup('bdd')</script>
+
+        <!-- data target -->
+        <script>
+            window.YOMPUI = {};
+        </script>
+
+        <!-- code to test -->
+        <script src="../../../static/js/program/collections/awsMetrics.js"></script>
+        <script src="../../../static/js/program/collections/awsNamespaces.js"></script>
+        <script src="../../../static/js/program/collections/awsRegions.js"></script>
+        <script src="../../../static/js/program/collections/YOMPAutostacks.js"></script>
+        <script src="../../../static/js/program/collections/YOMPCustomMetrics.js"></script>
+        <script src="../../../static/js/program/collections/instances.js"></script>
+        <script src="../../../static/js/program/collections/models.js"></script>
+        <script src="../../../static/js/program/collections/modelExports.js"></script>
+
+        <!-- actual tests -->
+        <script src="./test.collection.AwsMetrics.js"></script>
+        <script src="./test.collection.AwsNamespaces.js"></script>
+        <script src="./test.collection.AwsRegions.js"></script>
+        <script src="./test.collection.YOMPAutostacks.js"></script>
+        <script src="./test.collection.YOMPCustomMetrics.js"></script>
+        <script src="./test.collection.Instances.js"></script>
+        <script src="./test.collection.Models.js"></script>
+        <script src="./test.collection.ModelExports.js"></script>
+
+        <!-- go! -->
+        <script>
+            $(document).ready(function() {
+                mocha.checkLeaks();
+                mocha.globals(['jQuery','mochaResults']);
+                var runner = mocha.run();
+                runner.on('end', function() {
+                    window.mochaResults = runner.stats;
+                });
+            });
+        </script>
+    </body>
+</html>

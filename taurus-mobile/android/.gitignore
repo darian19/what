@@ -1,0 +1,18 @@
+# Local and temp files
+.gradle
+/build
+/local.properties
+
+# Idea project files
+/.idea
+*.iml
+#/.idea/workspace.xml
+#/.idea/libraries
+
+# Mac OS X
+.DS_Store
+
+# Keys and passwords
+password.properties
+YOMP.keystore
+

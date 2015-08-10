@@ -1,0 +1,36 @@
+{
+  "name": "YOMP",
+  "description": "YOMP Web UI",
+  "version": "0.0.1",
+  "private": true,
+  "bugs": {
+    "url": "https://YOMPhub.com/YOMPSolutions/YOMP/issues"
+  },
+  "dependencies": {
+    "bower": "1.4.1"
+  },
+  "devDependencies": {
+    "grunt": "0.4.5",
+    "grunt-cli": "0.1.13",
+    "grunt-contrib-connect": "0.8.0",
+    "grunt-contrib-watch": "0.6.1",
+    "grunt-saucelabs": "8.6.0",
+    "mocha": "1.21.4"
+  },
+  "repository": {
+    "type": "YOMP",
+    "url": "https://YOMPhub.com/YOMPSolutions/YOMP.YOMP"
+  },
+  "scripts": {
+    "postinstall": "bower install --allow-root  --config.interactive=false",
+    "test": "node_modules/grunt-cli/bin/grunt test"
+  },
+  "engine": {
+    "node": "0.10.x",
+    "npm": "1.4.x"
+  },
+  "keywords": [
+    "YOMP",
+    "Numenta"
+  ]
+}

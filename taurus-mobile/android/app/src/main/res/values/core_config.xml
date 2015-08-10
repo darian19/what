@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- The number of records for which the model is still learning -->
+    <item type="integer" name="learning_threshold">0</item>
+    <!-- Supported aggregation types "Hour", "HalfDay", "Day", "Week". See "AggregationType" for values -->
+    <string-array name="aggregation_type_options" tools:ignore="InconsistentArrays">
+        <item>Day</item>
+    </string-array>
+    <!-- Default aggregation "Hour", "Day", "Week". See "AggregationType" for values -->
+    <item name="aggregation_type" type="string">Day</item>
+    <!-- Control whether or not we should upload the android logs to the server -->
+    <item type="bool" name="upload_logs">false</item>
+    <!-- Maximum number of days to sync -->
+    <item name="number_of_days_to_sync" type="integer">14</item>
+    <!-- Yellow bar -->
+    <item type="fraction" name="yellow_bar_floor">40%</item>
+    <!-- Red bar -->
+    <item type="fraction" name="red_bar_floor">90%</item>
+    <!-- Anomaly bar levels (0..10000). Use 10000 * color_bar_floor -->
+    <item type="integer" name="yellow_bar_floor_level">4000</item>
+    <item type="integer" name="red_bar_floor_level">9000</item>
+    <!-- Should we use grouped / inbox-style notifications? -->
+    <item name="group_notifications" type="bool">true</item>
+    <!-- Application Name -->
+    <string name="application_name">Taurus</string>
+</resources>

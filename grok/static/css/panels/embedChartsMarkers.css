@@ -1,0 +1,26 @@
+.YOMP-embed-charts-markers {
+  background-color: #eee;
+  height: 22px;
+  overflow: hidden;
+  padding-top: 1px;
+}
+
+.YOMP-embed-charts-markers > span {
+  background-color: #e80e8a;
+  color: #fff;
+  height: 20px;
+  font-family: 'roboto_regular', Arial, sans-serif;
+  font-size: 81%;
+  padding: 0 1em;
+  opacity: 0.55;
+  position: absolute;
+}
+.YOMP-embed-charts-markers > span > aside {
+  border-left: 1px solid #e80e8a;
+  display: inline;
+  height: 100px;
+  opacity: 0.5;
+  margin-left: -10px;
+  position: absolute;
+  width: 1px;
+}

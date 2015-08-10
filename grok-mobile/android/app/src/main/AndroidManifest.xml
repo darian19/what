@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.YOMPsolutions.YOMP.mobile">
+
+    <application
+        android:name=".YOMPApplication"
+        android:allowBackup="true"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:icon="@drawable/ic_launcher"
+        tools:replace="android:icon"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <provider
+            android:name=".ScreenShotProvider"
+            android:authorities="${applicationId}"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider"
+            android:grantUriPermissions="true" />
+
+        <activity
+            android:name=".SplashScreenActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="m.numenta.com"
+                    android:path="/YOMP/login"
+                    android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".instance.InstanceListActivity"
+            android:label="@string/app_name"
+            android:logo="@drawable/ic_YOMP_logo"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".preference.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".instance.InstanceListActivity" />
+        </activity>
+
+
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:launchMode="singleTop"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateVisible">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".instance.InstanceListActivity" />
+        </activity>
+        <activity
+            android:name=".notification.NotificationListActivity"
+            android:label="@string/title_notification_activity"
+            android:launchMode="singleTop"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog">
+            <intent-filter>
+                <action android:name="com.numenta.core.intent.action.SHOW_NOTIFICATION_LIST" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".instance.InstanceListActivity" />
+        </activity>
+        <activity
+            android:name=".instance.InstanceDetailActivity"
+            android:label="@string/app_name"
+            android:logo="@drawable/ic_YOMP_logo"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".instance.InstanceListActivity" />
+        </activity>
+        <activity
+            android:name=".metric.MetricDetailActivity"
+            android:label="@string/app_name"
+            android:logo="@drawable/ic_YOMP_logo"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".instance.InstanceDetailActivity" />
+            <intent-filter>
+                <action android:name="com.numenta.core.intent.action.SHOW_NOTIFICATION" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".tutorial.TutorialActivity"
+            android:label="@string/title_activity_tutorial"
+            android:launchMode="singleTop"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
+        <activity
+            android:name=".annotation.AnnotationListActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_annotation_list" />
+        <activity
+            android:name=".annotation.AddAnnotationActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateVisible"
+            android:noHistory="true"
+            android:label="@string/title_activity_annotation_create" />
+    </application>
+</manifest>

@@ -1,0 +1,4 @@
+[localcache]
+name=YOMP Updater local cache repository
+baseurl=file:///opt/numenta/updater/repo_d
+gpgcheck=0

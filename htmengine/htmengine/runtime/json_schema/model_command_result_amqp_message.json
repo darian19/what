@@ -1,0 +1,68 @@
+{
+  "description": "Message representing model command result that Anomaly Service publishes to the results exchange with the header 'dataType': 'model-cmd-result'.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "method": {
+      "description" : "Command method",
+      "required": true,
+      "type": "string",
+      "enum": [
+        "defineModel", "deleteModel"
+      ]
+    },
+
+    "modelId": {
+      "description": "Model identifier",
+      "required": true,
+      "type": "string"
+    },
+
+    "commandId": {
+      "description": "command id of the corresponding command (for debugging)",
+      "required": true,
+      "type": "string"
+    },
+
+    "status": {
+      "description": "integer; 0 (zero) means success, otherwise it's an error code from htmengine.htmengineerno",
+      "required": true,
+      "type": "integer"
+    },
+
+    "errorMessage": {
+      "description": "error message if status is non-zero, ignore otherwise",
+      "required": false,
+      "type": ["string", "null"]
+    },
+
+    "modelInfo": {
+      "description": "Model info for successfully-completed 'defineModel'; ignore for other methods",
+      "required": false,
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "metricName": {
+          "description": "Human-readable metric identifier; e.g., 'TWITTER.TWEET.HANDLE.NUMENTA.VOLUME'",
+          "required": true,
+          "type": "string"
+        },
+
+        "resource": {
+          "description": "Resource that the metric is associated with; e.g., 'Numenta'",
+          "required": true,
+          "type": "string"
+        },
+
+        "modelSpec": {
+          "description": "model specification as publicly defined by the datasource adapters API",
+          "required": true,
+          "type": "object"
+        }
+
+      }
+  
+    }
+  
+  }
+}

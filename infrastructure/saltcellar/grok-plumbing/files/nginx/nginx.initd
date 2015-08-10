@@ -1,0 +1,158 @@
+#!/bin/sh
+#
+# nginx        Startup script for nginx
+#
+# chkconfig: - 99 15
+# processname: nginx
+# config: /etc/nginx/nginx.conf
+# config: /etc/sysconfig/nginx
+# pidfile: /var/run/nginx.pid
+# description: nginx is an HTTP and reverse proxy server
+#
+### BEGIN INIT INFO
+# Provides: nginx
+# Required-Start: $local_fs $remote_fs $network
+# Required-Stop: $local_fs $remote_fs $network
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: start and stop nginx
+### END INIT INFO
+
+if [ $(/usr/bin/id -u) -ne 0 ]; then
+    echo "You are not root"
+    exit 1
+fi
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+if [ -f /etc/sysconfig/nginx ]; then
+    . /etc/sysconfig/nginx
+fi
+
+# We don't want to use the system nginx.conf - we want to use the
+# YOMP-api.conf installed as part of YOMP app
+
+YOMP_HOME=/opt/numenta/YOMP
+YOMP_NGINX_CONF=conf/YOMP-api.conf
+NGINX_MAINT_CONF=conf/nginx-maint.conf
+
+prog=nginx
+nginx=/usr/sbin/nginx
+
+conffile=${CONFFILE-/etc/nginx/nginx.conf}
+lockfile=${LOCKFILE-/var/lock/subsys/nginx}
+pidfile=${PIDFILE-/var/run/nginx.pid}
+
+SLEEPMSEC=100000
+RETVAL=0
+
+YOMP_loading() {
+  logger -t YOMP-nginx "nginx: loading"
+  echo -n $"Starting ${prog}: "
+
+  daemon --pidfile="${pidfile}" "${nginx}" -c "${conffile}"
+  RETVAL=$?
+  echo
+  [ "${RETVAL}" = 0 ] && touch "${lockfile}"
+  return "${RETVAL}"
+}
+
+start() {
+  cd "${YOMP_HOME}"
+  logger -t YOMP-nginx "nginx: starting"
+  echo -n $"Starting ${prog}: "
+  "${nginx}" -p . -c "${YOMP_HOME}/${YOMP_NGINX_CONF}"
+  RETVAL=$?
+  echo
+  [ "${RETVAL}" = 0 ] && touch "${lockfile}"
+  return "${RETVAL}"
+}
+
+stop() {
+    cd "${YOMP_HOME}"
+    logger -t YOMP-nginx "nginx: stopping"
+    echo -n $"Stopping ${prog}: "
+    killproc -p "${pidfile}" "${prog}"
+    RETVAL=$?
+    echo
+    [ "${RETVAL}" = 0 ] && rm -f "${lockfile}" "${pidfile}"
+}
+
+start_maintenance() {
+  stop
+  cd "${YOMP_HOME}"
+  logger -t YOMP-nginx "nginx: start_maintenance"
+  echo -n $"Starting ${prog}: "
+  "${nginx}" -p . -c "${YOMP_HOME}/${NGINX_MAINT_CONF}"
+  RETVAL=$?
+  echo
+  [ "${RETVAL}" = 0 ] && touch "${lockfile}"
+  return "${RETVAL}"
+}
+
+reload() {
+    cd "${YOMP_HOME}"
+    logger -t YOMP-nginx "nginx: reloading"
+    echo -n $"Reloading ${prog}: "
+    killproc -p "${pidfile}" "${prog}" -HUP
+    RETVAL=$?
+    echo
+}
+
+configtest() {
+    logger -t YOMP-nginx "nginx: configtest"
+    nginx -c "${YOMP_HOME}/${YOMP_NGINX_CONF}" -t
+}
+
+rh_status() {
+    cd "${YOMP_HOME}"
+    logger -t YOMP-nginx "nginx: rh_status"
+    status -p "${pidfile}" "${nginx}"
+}
+
+# See how we were called.
+case "$1" in
+    start)
+        rh_status >/dev/null 2>&1 && exit 0
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    start_maintenance)
+        start_maintenance
+        ;;
+    start_maintainance)
+        start_maintenance
+        ;;
+    status)
+        rh_status
+        RETVAL=$?
+        ;;
+    restart)
+        # configtest -q || exit $RETVAL
+        stop
+        start
+        ;;
+    upgrade)
+        upgrade
+        ;;
+    condrestart|try-restart)
+        if rh_status >/dev/null 2>&1; then
+            stop
+            start
+        fi
+        ;;
+    force-reload|reload)
+        reload
+        ;;
+    configtest)
+        configtest
+        ;;
+    *)
+        echo $"Usage: ${prog} {start|stop|start_maintenance|stop|restart|condrestart|try-restart|force-reload|upgrade|reload|status|help|configtest}"
+        RETVAL=2
+esac
+
+exit "${RETVAL}"

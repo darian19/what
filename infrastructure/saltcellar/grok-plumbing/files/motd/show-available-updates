@@ -1,0 +1,48 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# Update MOTD if updates are available for YOMP. Warn them about not running
+# yum or salt either way.
+
+UPDATES_ARE_AVAILABLE_F=/tmp/YOMP-update-available
+
+fmt << END_WARNING
+
+Do not manually run yum update or salt! You are very likely to break your
+YOMP instance.
+
+Never manually update the installed version of salt, the YOMP formulas are
+only tested with the version of SaltStack bundled with the YOMP instance.
+
+END_WARNING
+
+if [ -f "${UPDATES_ARE_AVAILABLE_F}" ]; then
+fmt << END_UPDATE_MESSAGE
+
+YOMP updates are available. To install the updates, please use the web
+interface.
+
+Manually running salt or yum update will almost certainly break your YOMP
+instance.
+
+END_UPDATE_MESSAGE
+fi

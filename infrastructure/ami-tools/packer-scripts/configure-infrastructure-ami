@@ -1,0 +1,79 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+#
+# This script configures an Infrastructure AMI candidate by installing
+# the infrastructure repositories and base salt formulas.
+
+echo "Marking instance as being an Infrastructure AMI build..."
+AMIBUILD_LOCK=/tmp/baking-ami
+touch "${AMIBUILD_LOCK}"
+
+echo "Installing Numenta repositories..."
+mv /tmp/nta-carbonite.repo /etc/yum.repos.d
+mv /tmp/nta-thirdparty.repo /etc/yum.repos.d
+mv /tmp/secretsauce.repo /etc/yum.repos.d
+
+echo "Installing mysql community repository..."
+yum install -y http://repo.mysql.com/mysql-community-release-el6-5.noarch.rpm
+
+echo "Installing mysql-python..."
+yum install -y mysql-community-devel python-devel
+
+# Use /usr/bin/pip so this is visible to salt or instances won't be able to
+# create MySQL users or grant privileges to them.
+/usr/bin/pip install mysql-python
+
+echo "Cleaning yum..."
+yum clean all
+
+# Ensure we have the latest glibc to protect against the GHOST vulnerability
+echo "Updating glibc"
+yum install -y glibc
+
+echo
+echo "**********"
+echo "Updating yum"
+time yum update -y
+
+echo "Old minion_id"
+cat /etc/salt/minion_id
+
+echo "Stopping Salt..."
+service salt-minion stop
+
+echo "Salt minion_id: $(cat /etc/salt/minion_id)"
+
+echo
+echo "Running Salt..."
+salt-call state.highstate
+saltcode=$?
+
+if [ "${saltcode}" != 0 ]; then
+  sleep 15
+  echo "RETRY FAILED SALT RUN"
+  salt-call state.highstate
+  saltcode=$?
+fi
+
+echo
+echo "Salt run return code: ${saltcode}"
+exit "${saltcode}"

@@ -1,0 +1,7 @@
+REGION : "us-west-2"
+KEY : "chef_west"
+INSTANCE_TYPE : "m3.large"
+USER : "centos"
+S3_MAPPING_BUCKET : "builds.numenta.com"
+X86_64_REPO_PATH : "/opt/numenta/s3repo/s3/x86_64"
+YUM_REPO: "/opt/numenta/s3repo/s3"

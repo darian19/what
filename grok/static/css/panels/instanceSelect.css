@@ -1,0 +1,17 @@
+.YOMP-instance-select {
+    border: 1px solid #999;
+    height: 20em;
+    overflow: auto;
+}
+
+/* for css overflow:ellipsis to work */
+.YOMP-instance-select table {
+    table-layout: fixed;
+    width: 100%;
+}
+.YOMP-instance-select table > colgroup > col:nth-child(1) {
+    width: 15%;
+}
+.YOMP-instance-select table > colgroup > col:nth-child(3) {
+    width: 20%;
+}

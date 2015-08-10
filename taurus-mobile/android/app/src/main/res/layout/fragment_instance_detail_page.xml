@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:id="@+id/instance_detail_page"
+             style="@style/InstanceDetail"
+             android:layout_width="fill_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
+
+    <LinearLayout style="@style/InstanceDetail.Header"
+                  android:layout_width="fill_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical">
+
+        <fragment
+                android:id="@+id/instance_anomaly_chart"
+                tools:ignore="MissingId,MissingPrefix"
+                android:name="com.numenta.taurus.instance.InstanceAnomalyChartFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:showContextMenu="false"
+                tools:layout="@layout/fragment_instance_anomaly_chart"/>
+
+        <FrameLayout android:layout_width="fill_parent"
+                     android:background="@android:color/black"
+                     android:layout_height="fill_parent">
+            <fragment
+                    android:id="@+id/metric_list"
+                    tools:ignore="MissingId"
+                    android:name="com.numenta.taurus.metric.MetricListFragment"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@android:color/black"
+                    tools:layout="@android:layout/list_content"/>
+
+        </FrameLayout>
+    </LinearLayout>
+
+    <com.numenta.taurus.chart.TimeSliderView
+            android:id="@+id/time_slider"
+            android:layout_width="fill_parent"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:layout_height="fill_parent"
+            app:labelTextSize="14sp"
+            app:labelHeight="24sp"
+            app:labelTextColor="#777777"
+            app:backgroundColorDark="#30C0C0C0"
+            app:backgroundColorLight="@android:color/transparent"
+            app:showLabel="top"/>
+
+    <CheckBox
+            android:id="@+id/market_hours_checkbox"
+            android:layout_width="match_parent"
+            android:background="@android:color/black"
+            android:layout_height="24dp"
+            android:button="@drawable/checkbox_selector"
+            android:textAppearance="@android:style/TextAppearance.Holo.Small"
+            android:text="@string/show_market_hours_only"
+            android:layout_gravity="bottom|left"/>
+
+</FrameLayout>

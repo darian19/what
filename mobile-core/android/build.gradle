@@ -1,0 +1,66 @@
+/*
+ * Numenta Platform for Intelligent Computing (NuPIC)
+ * Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+ * Numenta, Inc. a separate commercial license for this software code, the
+ * following terms and conditions apply:
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses.
+ *
+ * http://numenta.org/licenses/
+ *
+ */
+
+
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.library'
+
+repositories {
+    jcenter()
+}
+// Move build output to root
+buildDir = "${rootProject.buildDir}/mobile-core"
+
+dependencies {
+    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.google.android.gms:play-services-base:6.5.87'
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
+
+    defaultConfig {
+        minSdkVersion 16
+        /******************************************************************************************
+        See https://code.google.com/p/android-developer-preview/issues/detail?id=1947
+        For now we keep the target SDK at 16 until we can test on all other versions of the SDK
+        *******************************************************************************************/
+        //noinspection OldTargetApi
+        targetSdkVersion 16
+        // Google Analytics Tracking ID
+        resValue "string", "ga_trackingId", System.getProperty('GA_TRACKING_ID')
+    }
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
+}

@@ -1,0 +1,31 @@
+<div class="YOMP-modal-metric-list YOMP-panel">
+    <p><%= msgs.lead %></p>
+
+    <code class="truncate">
+        <%= region %>
+        <span class="text-muted">&gt;</span>
+        <%= namespace %>
+        <span class="text-muted">&gt;</span>
+        <%= display %>
+    </code>
+
+    <div class="text-muted"><%= msgs.note %></div>
+
+    <ol>
+        <% Object.keys(metrics).sort().forEach(function(metric) { %>
+            <li class="row">
+                <div class="col-sm-3">
+                    <input id="metric-<%= metric %>" type="checkbox"<% if(metrics[metric]) { %> checked="checked"<% } %> data-metric="<%= metric %>" />
+                </div>
+                <label for="metric-<%= metric %>" class="col-sm-9">
+                    <%= metric %>
+                </label>
+            </li>
+        <% }); %>
+    </ol>
+
+    <div class="autostack hidden">
+        <h3><%= msgs.autostack.title %></h3>
+        <dl></dl>
+    </div>
+</div>

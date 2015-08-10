@@ -1,0 +1,33 @@
+.YOMP-page > div > ol {
+    margin: 2em 0;
+}
+.YOMP-page > div > ol > li {
+    font-size: 112%;
+}
+.YOMP-page ol li {
+    margin: 1em 0;
+}
+.YOMP-page ol li .playstore {
+    display: block;
+    margin: 1em 1.10em;
+}
+
+.YOMP-page .last strong {
+    font-size: 125%;
+}
+.YOMP-page .last .text-muted {
+    font-size: 90%;
+}
+
+.YOMP-page > div > ol ol {
+    margin: 1em 0;
+}
+
+.YOMP-page code {
+    display: block;
+    font-size: 120%;
+}
+
+.YOMP-page button {
+    margin-top: 0.5em;
+}

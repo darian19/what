@@ -1,0 +1,12 @@
+[Unit]
+Description=YOMP loading
+
+[Install]
+Alias=YOMP-loading.service
+
+[Service]
+Type=forking
+ExecStart=/etc/init.d/YOMP-preload YOMP-loading
+ExecStop=/etc/init.d/YOMP-preload stop
+ExecReload=/etc/init.d/YOMP-preload reload
+Restart=on-abort

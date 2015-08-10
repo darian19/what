@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Colors -->
+    <color name="ActionBar.Text">#014760</color>
+    <color name="ActionBar.TextSelected">#ffffff</color>
+
+    <!-- Styles -->
+    <style name="ActionBar.TabView" parent="@android:style/Widget.Holo.ActionBar.TabView">
+        <item name="android:background">@null</item>
+    </style>
+
+    <style name="ActionBar.TabBar" parent="@android:style/Widget.Holo.ActionBar.TabBar">
+        <item name="android:background">#0076a4</item>
+        <item name="android:dividerPadding">5dip</item>
+    </style>
+
+    <style name="ActionBar.TabText" parent="@android:style/Widget.ActionBar.TabText">
+        <item name="android:textColor">@drawable/action_bar_text</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

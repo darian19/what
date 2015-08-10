@@ -1,0 +1,194 @@
+#!/usr/bin/env bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+set -o errexit
+set -o pipefail
+
+NUMENTA=/opt/numenta
+PRODUCTS="${NUMENTA}/numenta-apps"
+YOMP_HOME="${PRODUCTS}/YOMP"
+
+splat() {
+  # Make it easier to distinguish phases of the script in the scrollback
+  echo "
+
+
+.                                    ######
+.                                  ##########
+.                                 ############
+.                                ##############
+.                                ##############
+.                                ##############
+.                                 ############
+.                                  ##########
+.                                    ######
+
+
+  "
+}
+
+install-prerequisites-and-update-repos() {
+  splat
+
+  echo "Installing devtools, mysql, and rabbit"
+  # Install base centos packages
+  sudo yum install gcc gcc-c++ -y
+  sudo rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+  sudo yum -y install python-pip python-devel libxml2-devel libxslt-devel
+
+  # Install MySQL and Rabbit
+  sudo rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
+  sudo yum install mysql-server mysql mariadb-devel rabbitmq-server nginx YOMP -y
+  sudo /usr/lib/rabbitmq/bin/rabbitmq-plugins enable rabbitmq_management
+
+  # Create folders with appropriate permissions
+  for folder in "${NUMENTA}" \
+    "${NUMENTA}/bin" \
+    "${NUMENTA}/lib/python2.7/site-packages" \
+    /etc/YOMP
+  do
+    sudo mkdir -p "${folder}"
+    sudo chown -R centos:centos "${folder}"
+  done
+
+  # Add www-data user for nginx
+  sudo groupadd -g 502 www-data
+  sudo useradd -u 502 -g 502 -m www-data
+}
+
+configure-private-settings() {
+  splat
+
+  echo "Write private settings from env vars to private-settings.sh file"
+  
+  if [ -f /etc/YOMP/private-settings.sh ]; then
+    sudo rm -f /etc/YOMP/private-settings.sh
+  fi
+
+  echo "# Configure S3 credentials for log uploading
+    export LOG_UPLOADER_S3_ACCESS_KEY_ID=${LOG_UPLOADER_S3_ACCESS_KEY_ID}
+    export LOG_UPLOADER_S3_SECRET_ACCESS_KEY=${LOG_UPLOADER_S3_SECRET_ACCESS_KEY}
+
+    # Configure Wufoo
+    export WUFOO_URL=${WUFOO_URL}
+    export WUFOO_USER=${WUFOO_USER}
+
+    # Configure notifications
+    export NOTIFICATIONS_AWS_ACCESS_KEY_ID=${NOTIFICATIONS_AWS_ACCESS_KEY_ID}
+    export NOTIFICATIONS_AWS_SECRET_ACCESS_KEY=${NOTIFICATIONS_AWS_SECRET_ACCESS_KEY}
+    export NOTIFICATIONS_SENDER_EMAIL=${NOTIFICATIONS_SENDER_EMAIL}
+    " >> /etc/YOMP/private-settings.sh
+}
+
+install-YOMP() {
+  splat
+
+  echo "Installing YOMP"
+
+  # Install YOMP pre-requisites
+  pip install paver==1.2.4 agamotto==0.5.1 --target "${NUMENTA}/lib/python2.7/site-packages"
+  pip install uwsgi==2.0.4 --install-option="--prefix=${NUMENTA}"
+
+  # Clone Numenta Apps Repo
+  cd "${NUMENTA}"
+  YOMP clone "${GIT_REMOTE}"
+  cd "${PRODUCTS}"
+  YOMP checkout "${GIT_BRANCH}"
+  YOMP reset --hard "${GIT_COMMIT_SHA}"
+
+  echo "Creating symlink to ${NUMENTA}/YOMP"
+  ln -s "${YOMP_HOME}" "${NUMENTA}/YOMP"
+
+  echo "Creating symlink for supervisord.vars"
+  ln -s "${YOMP_HOME}/supervisord.vars" /etc/YOMP/
+  echo "Enabling wufoo"
+  touch /etc/YOMP/enable_wufoo
+  echo "Sourcing supervisord.vars..."
+  source /etc/YOMP/supervisord.vars
+
+  BOOTSCRIPTS_D="${PRODUCTS}/infrastructure/ami-tools/boot-scripts/centos7"
+
+  for file in firstboot.sh \
+    firstboot-root.sh \
+    set-mysql-root-password \
+    wait-until-network-up shuffle_YOMPlogs \
+    YOMPlog_rotator \
+    lockrun
+  do
+    echo "Creating symlink for ${file}"
+    sudo ln -s "${BOOTSCRIPTS_D}/${file}" /usr/local/sbin/
+  done
+
+  for file in YOMPservices YOMP-preload
+  do
+    echo "Creating symlink for ${file} init script"
+    sudo ln -s "${BOOTSCRIPTS_D}/${file}" /etc/init.d/
+  done
+
+  for service in YOMP-error.service \
+    YOMP-loading.service \
+    YOMP-preload.service \
+    YOMP-stopped.service \
+    YOMPservices-tickle.service
+  do
+    echo "Creating symlink for ${service} systemd script"
+    sudo ln -s "${BOOTSCRIPTS_D}/${service}" /etc/systemd/system/
+  done
+
+  # NOTE: Per https://bugzilla.redhat.com/show_bug.cgi?id=955379 we need to use
+  # the absolute path to the file instead of the symlink in /etc/systemd to
+  # enable the services
+  echo "Enabling YOMPservices.service to start at boot"
+  sudo systemctl enable "${BOOTSCRIPTS_D}/YOMPservices.service"
+  
+  # Add Rabbit Admin scripts
+  sudo ln -s "${PRODUCTS}/infrastructure/saltcellar/rabbitmq/files/rabbitmqadmin" /usr/local/bin/
+
+  sudo systemctl daemon-reload
+
+  echo "Creating symlink for supervisord-helper"
+  ln -s "${BOOTSCRIPTS_D}/supervisord-helper" "${NUMENTA}"
+
+  echo "Creating symlink for preYOMP.html"
+  sudo mkdir -p /usr/share/nginx/html/
+  sudo ln -s "${BOOTSCRIPTS_D}/preYOMP.html" /usr/share/nginx/html/
+
+  cd "${PRODUCTS}"
+  ./install-YOMP.sh "${NUMENTA}/lib/python2.7/site-packages" "${NUMENTA}/bin"
+}
+
+bootstrap-YOMP() {
+  splat
+
+  echo "Bootstrap YOMP"
+  # Increase max connections for YOMP
+  sudo sysctl -w net.core.somaxconn=1024
+  echo "net.core.somaxconn=1024" | sudo tee -a /etc/sysctl.conf
+
+  cd "${YOMP_HOME}"
+  mkdir -p "${YOMP_LOG_DIR}"/
+}
+
+install-prerequisites-and-update-repos
+configure-private-settings
+install-YOMP
+bootstrap-YOMP

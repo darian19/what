@@ -1,0 +1,149 @@
+{
+    "create_data": {
+        "region": "us-west-2",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "CPUUtilization",
+        "dimensions": {
+            "InstanceId": "i-53f52b67"
+        }
+    },
+    "create_empty_ds_data": {
+        "region": "us-west-2",
+        "namespace": "AWS/EC2",
+        "datasource": "",
+        "metric": "CPUUtilization",
+        "dimensions": {
+            "InstanceId": "i-53f52b67"
+        }
+    },
+    "create_invalid_ds_data": {
+        "region": "us-west-2",
+        "namespace": "AWS/EC2",
+        "datasource": "DOESNOTExist",
+        "metric": "CPUUtilization",
+        "dimensions": {
+            "InstanceId": "i-53f52b67"
+        }
+    },
+    "create_empty_metric_data": {
+        "region": "us-west-2",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "",
+        "dimensions": {
+            "InstanceId": "i-53f52b67"
+        }
+    },
+    "create_invalid_metric_data": {
+        "region": "us-west-2",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "DOESNOTExist",
+        "dimensions": {
+            "InstanceId": "i-53f52b67"
+        }
+    },
+    "create_empty_dimension_data": {
+        "region": "us-west-2",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "CPUUtilization",
+        "dimensions": {
+        }
+    },
+    "create_invalid_dimension_data": {
+        "region": "us-west-2",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "CPUUtilization",
+        "dimensions": {
+            "DOESNOTExist": "i-53f52b67"
+        }
+    },
+    "create_empty_instanceid_data": {
+        "region": "us-west-2",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "CPUUtilization",
+        "dimensions": {
+            "InstanceId": ""
+        }
+    },
+    "create_empty_region": {
+        "region": "",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "CPUUtilization",
+        "dimensions": {
+            "InstanceId": "i-53f52b67"
+        }
+    },
+    "create_invalid_namepace": {
+        "region": "us-west-2",
+        "name": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "CPUUtilization",
+        "dimensions": {
+            "InstanceId": "i-53f52b67"
+        }
+    },
+    "create_missing_namepace": {
+        "region": "us-west-2",
+        "datasource": "cloudwatch",
+        "metric": "CPUUtilization",
+        "dimensions": {
+            "InstanceId": "i-53f52b67"
+        }
+    },
+    "create_response": {
+        "status": "",
+        "last_rowid": "",
+        "display_name":  "",
+        "description": "",
+        "name": "AWS/EC2/CPUUtilization",
+        "last_timestamp": "",
+        "poll_interval": "",
+        "server": "",
+        "tag_name": "",
+        "datasource": "",
+        "location": "us-west-2",
+        "message": "",
+        "parameters": "",
+        "uid": ""
+    },
+    "get_response": {
+        "status": "",
+        "last_rowid": "",
+        "display_name": "",
+        "description": "",
+        "parameters": "",
+        "last_timestamp": "",
+        "poll_interval": "",
+        "location": "",
+        "server": "",
+        "tag_name": "",
+        "datasource": "",
+        "uid": "",
+        "message": "",
+        "name": ""
+    },
+    "create_invalid_region_key": {
+        "regio": "us-west-2",
+        "namespace": "AWS/EC2",
+        "datasource": "cloudwatch",
+        "metric": "CPUUtilization",
+        "dimensions": {
+            "InstanceId": "i-53f52b67"
+        }
+    },
+    "get_model_data_from_to": {
+        "data": [],
+        "names": [
+            "timestamp",
+            "value",
+            "anomaly_score",
+            "rowid"
+        ]
+    }
+}

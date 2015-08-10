@@ -1,0 +1,40 @@
+<p class="lead">
+    The following instances will be monitored:
+    <div class="text-muted">
+        Please de-select any instances that you do not wish to monitor.
+    </div>
+</p>
+
+<form class="YOMP-instance-select YOMP-panel">
+    <table class="table tablesorter">
+
+        <colgroup>
+            <col />
+            <col />
+            <col span="2" />
+        </colgroup>
+
+        <thead>
+            <tr>
+                <th class="sorter-false text-center">Monitor?</th>
+                <th>Instance</th>
+                <th>Service</th>
+                <th>Region</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% Object.keys(instances).forEach(function(instance) { %>
+                <tr data-region="<%= instances[instance].region %>" data-namespace="<%= instances[instance].service %>" data-instance="<%= instance %>" data-creator="<%= instances[instance].creator %>">
+                    <td class="text-center">
+                        <input type="checkbox" checked="checked" /></td>
+                    </td>
+                    <td class="truncate"><%= instances[instance].display %></td>
+                    <td class="truncate"><%= instances[instance].service %></td>
+                    <td><%= instances[instance].region %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+
+    </table>
+</form>

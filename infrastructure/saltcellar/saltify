@@ -1,0 +1,164 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# This script is for helping test salt formulas on remote boxes. It doesn't
+# apply any logic, all the action happens on the test box.
+#
+# Steps:
+# 1. Copy the saltcellar to the target
+# 2. Install salt on the target if not already present
+# 3. Set the minion ID so salt will know what formulas to apply
+# 4. Run salt to confirm the formulas successfully compile & run
+#
+# It doesn't do any testing afterward, you'll need a ssh session open on
+# the target to run ami tests.
+
+set -o pipefail
+
+MY_NAME=$(basename $0)
+reporoot=$(YOMP rev-parse --show-toplevel)
+
+splat() {
+  # Make it easier to tell where a run starts in your scrollback
+  echo "
+
+
+                                    ######
+                                  ##########
+                                 ############
+                                ##############
+                                ##############
+                                ##############
+                                 ############
+                                  ##########
+                                    ######
+
+
+  "
+}
+
+clone_formulas() {
+  # Clone the salt directory tree to target box
+  ssh "root@${targethost}" mkdir -p /srv/salt
+  rsync -av -e ssh --progress --stats --delete . \
+    --exclude '.*~' \
+    --exclude log \
+    --exclude .YOMPignore \
+    --exclude .YOMP \
+    "root@${targethost}:/srv/salt"
+
+  # Ensure the permissions of /srv/salt is correct
+  ssh "root@${targethost}" chown -R root:root /srv/salt
+}
+
+purge_desktop_software() {
+  # If salt hasn't been installed, assume we need to purge the desktop
+  # software packages CentOS installed by default.
+  #
+  # We don't want to run this every formula test because it is slow.
+  scp "${reporoot}/infrastructure/ami-tools/packer-scripts/zap-centos-nonessentials" \
+    "root@${targethost}:/tmp"
+  ssh "root@${targethost}" \
+    "[[ ! -x /usr/bin/salt-call ]] && /tmp/zap-centos-nonessentials"
+  ssh "root@${targethost}" "rm -f /tmp/zap-centos-nonessentials"
+}
+
+install_salt_if_missing() {
+  echo
+  echo "Checking for Salt on ${targethost}..."
+  ssh "root@${targethost}" "[[ ! -x /usr/bin/salt-call ]] && /srv/salt/bootstrap-salt.sh"
+
+  ensure-system-python-has-pip
+}
+
+run_salt_on_client() {
+  rsync -e ssh -av --progress \
+    "${reporoot}/infrastructure/ami-tools/packer-scripts/set-salt-output-state-to-mixed" \
+    "root@${targethost}":/tmp/set-salt-output-state-to-mixed
+  ssh "root@${targethost}" "/tmp/set-salt-output-state-to-mixed"
+  ssh "root@${targethost}" "rm /tmp/set-salt-output-state-to-mixed"
+
+  # Do a salt run
+  ssh "root@${targethost}" "time salt-call --local state.highstate"
+}
+
+set_minion_id() {
+  if [ -n "${minionid}" ]; then
+    ssh "root@${targethost}" "mkdir -p /etc/salt"
+    minion_cmd="echo ${minionid} > /etc/salt/minion_id"
+    ssh "root@${targethost}" "$minion_cmd"
+  fi
+}
+
+print_usage() {
+  echo "${MY_NAME} usage:"
+  echo "${MY_NAME} -t|--target HOSTNAME|IPADDRESS -m|--minionid MINIONID"
+  echo
+  echo "--target is mandatory, --minionid is optional"
+  echo
+  echo "This script transfers our salt formulas to a test machine, installs salt if it isn't already on the machine, then runs salt in solo mode." | fmt
+  echo
+}
+
+ensure-system-python-has-pip() {
+  # Salt won't let us use pip resources in the agamotto environment
+  # if system-python doesn't have pip installed. Yes, that is totally lame.
+  ssh "root@${targethost}" "[[ ! -f /usr/bin/pip ]] && yum install -y python-pip"
+}
+
+# Enforce that we had arguments passed to us
+if [ $# -eq 0 ]; then
+  print_usage
+  exit 0
+fi
+
+# Parse the arguments
+while [[ "$1" != "" ]]; do
+    case "$1" in
+      --target)    shift
+                   targethost="$1"
+                   ;;
+      --minion-id | --minionid)  shift
+                                 minionid="$1"
+                                 ;;
+      -h | --help)      print_usage
+                        exit
+                        ;;
+      * )               print_usage
+                        exit 1
+    esac
+    shift
+done
+
+# Sanity check arguments
+if [ -z "${targethost}" ]; then
+  print_usage
+  echo "You did not specify a target host to saltify with --target, exiting"
+  exit 1
+fi
+
+splat
+clone_formulas
+purge_desktop_software
+install_salt_if_missing
+set_minion_id
+run_salt_on_client

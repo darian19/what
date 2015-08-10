@@ -1,0 +1,139 @@
+{
+  "type": [
+    {
+      "description" : "New create-model format.",
+      "type": "object",
+      "additionalProperties":false,
+      "properties": {
+        "datasource": {
+          "required": true,
+          "type": "string",
+          "enum": [
+            "cloudwatch"
+          ]
+        },
+        "metricSpec": {
+          "required": true,
+          "type": "object",
+          "additionalProperties":false,
+          "properties": {
+            "region": {
+              "required": true,
+              "type": "string",
+              "enum": [
+                "ap-northeast-1",
+                "ap-southeast-1",
+                "ap-southeast-2",
+                "eu-west-1",
+                "sa-east-1",
+                "us-east-1",
+                "us-west-1",
+                "us-west-2"
+              ]
+            },
+            "namespace": {
+              "required": true,
+              "type": "string",
+              "enum": [
+                "AWS/AutoScaling",
+                "AWS/DynamoDB",
+                "AWS/EBS",
+                "AWS/ELB",
+                "AWS/OpsWorks",
+                "AWS/RDS",
+                "AWS/Redshift",
+                "AWS/SNS",
+                "AWS/SQS",
+                "AWS/EC2"
+              ]
+            },
+            "metric": {
+              "required": true,
+              "type": "string"
+            },
+            "dimensions": {
+              "required": true,
+              "type": "object"
+            }
+          }
+        },
+        "modelParams": {
+          "required": false,
+          "type": "object",
+          "additionalProperties":false,
+          "properties": {
+            "min": {
+              "required": false,
+              "type": "number"
+            },
+            "max": {
+              "required": false,
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "description" : "(MER-3481: add back \"additionalProperties\":false after fixing the issue) Legacy create-model; or import-model with optional 'type' property",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "type": {
+          "description" : "Marker for import-model",
+          "required": false,
+          "type": "string",
+          "enum": [
+            "metric"
+          ]
+        },
+        "region": {
+          "required": true,
+          "type": "string",
+          "enum": [
+            "ap-northeast-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "eu-west-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "namespace": {
+          "required": true,
+          "type": "string",
+          "enum": [
+            "AWS/AutoScaling",
+            "AWS/DynamoDB",
+            "AWS/EBS",
+            "AWS/ELB",
+            "AWS/OpsWorks",
+            "AWS/RDS",
+            "AWS/Redshift",
+            "AWS/SNS",
+            "AWS/SQS",
+            "AWS/EC2"
+          ]
+        },
+        "datasource": {
+          "required": true,
+          "type": "string",
+          "enum": [
+            "cloudwatch"
+          ]
+        },
+        "metric": {
+          "required": true,
+          "type": "string"
+        },
+        "dimensions": {
+          "required": true,
+          "type": "object"
+        }
+      }
+    }
+  ]
+}

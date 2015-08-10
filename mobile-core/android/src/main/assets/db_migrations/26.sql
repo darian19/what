@@ -1,0 +1,1 @@
+ALTER TABLE metric ADD COLUMN unit TEXT;

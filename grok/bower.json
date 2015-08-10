@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "backbone": "1.1.2",
+    "blob": "eligrey/Blob.js#ae8dda658acb983a3165bffa27cb184186927306",
+    "bootbox": "4.2.0",
+    "bootstrap": "3.1.1",
+    "bootstrap-switch": "3.0.0",
+    "cryptojs": "gwjjeff/cryptojs#c3c843c5131e00607fd8cad1baf3761d0209663a",
+    "file-saver": "eligrey/FileSaver.js#6a7619f5ab2cb530b9991e1f850abac0eb752736",
+    "jqtree": "0.20.0",
+    "jquery": "2.1.1",
+    "jquery.tablesorter": "2.16.4",
+    "jquery-ui": "1.11.1",
+    "labjs": "2.0",
+    "rgb-color": "ariutta/rgb-color#ab331e3e527c2a5bbd0497817bdc604265468230",
+    "underscore": "1.6.0",
+    "zeroclipboard": "1.3.5"
+  },
+  "name": "YOMP",
+  "private": true
+}

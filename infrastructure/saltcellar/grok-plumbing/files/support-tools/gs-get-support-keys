@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# TODO: Refactor when working on TAUR-635. We should no longer need to
+# print the keys here after the refactor is done.
+
+"""
+Downloads the YOMP support public keys and dumps them to stdout. Used
+by other scripts to pull the YOMP keys when needed.
+"""
+
+BUCKET = "public.numenta.com"
+
+import boto
+from boto.s3.key import Key
+
+
+def printYOMPSupportPubkey(conn):
+  """Print the YOMP Support Public keys on stdout"""
+  bucket = conn.get_bucket(BUCKET, validate=False)
+  k = Key(bucket)
+
+  k.key = "/resources/YOMPSupport.pubkeys"
+  print k.get_contents_as_string()
+
+
+
+if __name__ == "__main__":
+  s3connection = boto.connect_s3(AWS_ACCESS_KEY, AWS_SECRET_KEY)
+  printYOMPSupportPubkey(s3connection)
+

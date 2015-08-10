@@ -1,0 +1,1 @@
+https://YOMPhub.com/numenta/nupic/archive/f26b821a6e5b2ddcf10b62d54315b6c6007c608f.zip#egg=nupic-0.1.0

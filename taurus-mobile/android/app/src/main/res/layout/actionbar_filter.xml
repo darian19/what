@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/filter"
+    android:layout_gravity="left|center"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_height="wrap_content">
+
+    <RadioButton
+        android:id="@+id/filter_none"
+        android:layout_width="wrap_content"
+        android:text="@string/action_bar_all"
+        android:checked="true"
+        android:button="@android:color/transparent"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:textColor="@drawable/favorite_selector"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_width="21dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:layout_height="match_parent"
+        android:src="#29AAE2" />
+
+    <RadioButton
+        android:id="@+id/filter_favorites"
+        android:layout_width="wrap_content"
+        android:text="@string/action_bar_favorite"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:button="@android:color/transparent"
+        android:layout_height="wrap_content"
+        android:textColor="@drawable/favorite_selector" />
+
+</RadioGroup>

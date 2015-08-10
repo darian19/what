@@ -1,0 +1,21 @@
+[
+  {
+    "datasource": "cloudwatch",
+    "display_name": "YOMPdb2",
+    "status": 1,
+    "last_rowid": 20277,
+    "description": "The number of database connections in use by Amazon RDS database",
+    "last_timestamp": "2013-08-15 21:25:00",
+    "message": null,
+    "uid": "cebe9fab-f416-4845-8dab-02d292244112",
+    "name": "AWS/RDS/DatabaseConnections",
+    "parameters": {
+      "region": "us-east-1",
+      "DBInstanceIdentifier": "YOMPdb2"
+    },
+    "poll_interval": 60,
+    "server": "YOMPdb2",
+    "tag_name": null,
+    "location": "us-east-1"
+  }
+]

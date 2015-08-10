@@ -1,0 +1,460 @@
+/**
+ * webfonts and typography
+ */
+
+@font-face {
+    font-family: 'roboto_light';
+    src: url('../fonts/roboto/roboto_light/Roboto-Light-webfont.eot');
+    src: url('../fonts/roboto/roboto_light/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/roboto_light/Roboto-Light-webfont.woff') format('woff'),
+         url('../fonts/roboto/roboto_light/Roboto-Light-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/roboto_light/Roboto-Light-webfont.svg#roboto_light') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'roboto_regular';
+    src: url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.eot');
+    src: url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.woff') format('woff'),
+         url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.svg#roboto_regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'roboto';
+    src: url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.eot');
+    src: url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.woff') format('woff'),
+         url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/roboto_regular/Roboto-Regular-webfont.svg#roboto_regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'roboto';
+    src: url('../fonts/roboto/roboto_bold/Roboto-Bold-webfont.eot');
+    src: url('../fonts/roboto/roboto_bold/Roboto-Bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/roboto/roboto_bold/Roboto-Bold-webfont.woff') format('woff'),
+         url('../fonts/roboto/roboto_bold/Roboto-Bold-webfont.ttf') format('truetype'),
+         url('../fonts/roboto/roboto_bold/Roboto-Bold-webfont.svg#roboto_bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
+
+body {
+    font-family: 'roboto_light', Arial, sans-serif;
+}
+
+.jumbotron h1, h1, h2, h3, h4, h5, h6 {
+    color: #e80e8a;
+    font-family: 'roboto_regular', Arial, sans-serif;
+}
+h2, h3, h4, h5, h6 {
+    color: #d83e7a;
+    opacity: 0.80;
+}
+
+a, a:link, a:visited {
+    color: #29aae2;
+    text-decoration: underline;
+}
+a:active, a:hover {
+    color: #098ac2;
+}
+
+strong, .strong {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+code {
+    background: #eee;
+    border-radius: 0.25em;
+    color: #e80e8a;
+    display: block;
+    padding: 0.5em 1em;
+}
+
+ul {
+    line-height: 150%;
+    padding-left: 2em;
+}
+
+dl {
+    margin-left: 1.5em;
+}
+dl dt {
+    font-family: Arial, sans-serif;
+}
+dl dt:after {
+    content: ':';
+}
+dl dd {
+    margin-bottom: 1em;
+}
+
+.container .jumbotron {
+    background: 0;
+    border-radius: 0.25em;
+}
+
+.panel {
+    border-radius: 0.25em;
+}
+
+.progress {
+    border-radius: 0.25em;
+    margin-bottom: 0;
+}
+
+.table th {
+    font-family: Arial, sans-serif;
+}
+
+
+/**
+ * forms
+ */
+
+form {
+    margin-bottom: 1.5em;
+}
+fieldset {
+    margin-bottom: 2.5em;
+}
+
+label {
+    font-family: 'roboto_regular', Arial, sans-serif;
+}
+
+form .required:before {
+    content: '*';
+    color: red;
+    margin: 0 0.25em;
+}
+input {
+    color: #000;
+    font-family: 'roboto_regular', Arial, sans-serif;
+}
+input.form-control {
+    border-radius: 0.25em;
+}
+
+.form-group {
+    margin-bottom: 1.5em;
+}
+.form-horizontal .form-group {
+    margin-right: 0;
+}
+
+.btn {
+    border-radius: 0.25em;
+    margin-right: 0.25em;
+    padding: 0.5em 2em;
+}
+.btn:focus {
+    outline: none;
+}
+.btn-primary {
+    background: #29aae2;
+    border: 1px solid #29aae2;
+}
+.btn-primary:hover {
+    background: #098ac2;
+    border: 1px solid #098ac2;
+    color: #fff;
+}
+.btn-default {
+    background: #fff;
+    border: 1px solid #29aae2;
+    color: #29aae2;
+}
+.btn-default:hover {
+    background: #def;
+    border: 1px solid #29aae2;
+    color: #29aae2;
+}
+.btn-default[disabled] {
+    background: #eee;
+    color: #999;
+}
+
+
+/**
+ * animation instructions
+ */
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(359deg); }
+}
+@-webkit-keyframes rotate {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes flash-danger {
+    0% { background: #f2dede; }
+    100% { background: none; }
+}
+@-webkit-keyframes flash-danger {
+    0% { background: #f2dede; }
+    100% { background: none; }
+}
+
+@keyframes flash-success {
+    0% { background: #def2f2; }
+    100% { background: none; }
+}
+@-webkit-keyframes flash-success {
+    0% { background: #def2f2; }
+    100% { background: none; }
+}
+
+
+/*
+ * special classes
+ */
+
+.off {
+    display: none;
+}
+
+.close {
+    opacity: 0.5;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.danger {
+    background-color: #fee;
+}
+
+.flash-danger {
+    animation: flash-danger 2s;
+    -webkit-animation: flash-danger 2s;
+}
+.flash-success {
+    animation: flash-success 2s;
+    -webkit-animation: flash-success 2s;
+}
+
+.loading {
+    -webkit-animation: rotate 1.5s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+       -moz-animation: rotate 1.5s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+            animation: rotate 1.5s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+    background-image: url('/static/img/mark.svg');
+    background-repeat: no-repeat;
+    background-size: 30px 30px;
+    height: 30px;
+    min-height: 30px;
+    min-width: 30px;
+    opacity: 0.80;
+    width: 30px;
+}
+.loading-tiny {
+    -webkit-animation: rotate 1.5s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+       -moz-animation: rotate 1.5s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+            animation: rotate 1.5s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+    background-image: url('/static/img/mark.svg');
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    height: 20px;
+    min-height: 20px;
+    min-width: 20px;
+    opacity: 0.80;
+    width: 20px;
+}
+
+.loading-throbber {
+    background-color: rgba(204, 204, 204, 0.66); /* #ccc */
+    bottom: 0;
+    height: 100%;
+    left: 0;
+    /*opacity: 0.66;*/
+    padding-top: 125px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    z-index: 9998;
+}
+.loading-throbber img {
+    -webkit-animation: rotate 2s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+       -moz-animation: rotate 2s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+            animation: rotate 2s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+    height: 250px;
+    margin: 0 auto;
+    opacity: 0.66;
+    width: 250px;
+}
+.loading-throbber div {
+    position: relative;
+    text-align: center;
+    top: -145px;
+}
+.loading-throbber div span {
+    background: rgba(0, 0, 0, 0.66);
+    border-radius: 0.25em;
+    color: #fff;
+    font-size: 150%;
+    opacity: 1;
+    padding: 0.5em 1em;
+}
+.loading-throbber div span:after {
+    content: '…';
+}
+
+
+/**
+ * layout
+ */
+
+/* header */
+
+body {
+    background-color: #eee;
+}
+body.YOMP-embed {
+    background-color: #fff;
+}
+
+header.navbar {
+    border-radius: 0;
+    margin-bottom: 0;
+}
+header.navbar a,
+header.navbar a:link {
+    text-decoration: none;
+}
+header.navbar ul.nav > li > a {
+    font-family: 'roboto_regular', Arial, sans-serif;
+    font-size: 125%;
+}
+header.navbar-inverse .navbar-nav > li > a {
+    color: #ccc;
+}
+header.navbar-inverse .navbar-nav > li > a:hover {
+    background: #333;
+    color: #fff;
+}
+header.navbar-inverse .navbar-nav > li > a > .glyphicon {
+    color: #666;
+    padding-right: 0.15em;
+}
+header.navbar-inverse .navbar-nav > li > a:hover > .glyphicon {
+    color: #999;
+}
+header.navbar .dropdown-menu > li.text-muted {
+    padding: 3px 20px;
+}
+header.navbar .dropdown-menu > li.sub > a {
+    padding: 3px 20px 3px 40px;
+}
+header.navbar .dropdown-menu > li > a {
+    color: #29aae2;
+}
+header.navbar .dropdown-menu > li > a:hover,
+header.navbar .dropdown-menu > li > a:focus {
+    background-color: #29aae2;
+    color: #fff;
+}
+
+header.navbar .badge.update {
+    background-color: #e80e8a;
+    font-family: 'roboto_regular', Arial, sans-serif;
+    font-size: 90%;
+    font-weight: bold;
+    margin: 0 0.1em 0 0.33em;
+}
+
+header .navbar-brand {
+    background-image: url('/static/img/logo-white.svg');
+    background-repeat: no-repeat;
+    background-size: 125px;
+    direction: ltr;
+    margin-left: 0.75em;
+    margin-right: 2em;
+    position: relative;
+    text-indent: -9999px;
+    top: 0.6em;
+    width: 125px;
+}
+
+/* body */
+
+body .content-wrap {
+    background: #fff;
+}
+body .alert {
+    border-radius: 0.25em;
+}
+body .content-wrap .alert {
+    margin-bottom: 0;
+    padding: 1.25em 2.5em 1.25em 1.5em;
+}
+body .content-wrap #content {
+    padding: 0.5em 1.25em 6em 1.25em;
+}
+
+/* modal */
+
+body .modal h4 {
+    display: inline;
+    font-size: 166%;
+}
+body .modal-content {
+    border-radius: 0.25em;
+}
+body .modal-body {
+    margin-bottom: 1.5em;
+}
+body .modal-body code {
+    font-size: 115%;
+    margin-top: 0.5em;
+}
+
+/* footer */
+
+footer {
+    font-size: 90%;
+    margin-left: 0.5em;
+    padding: 2.5em 0 5em 0;
+}
+footer ul:first-of-type {
+    color: #999;
+    font-size: 110%;
+}
+footer ul:last-of-type {
+    font-size: 95%;
+}
+footer ul {
+    color: #aaa;
+}
+footer ul > li:after {
+    content: '·';
+    margin-left: 1em;
+}
+footer ul > li:last-of-type:after {
+    content: '';
+    margin-left: 0;
+}
+footer a:link {
+    margin-left: 0.1em;
+    text-decoration: none;
+}
+footer a:link:hover {
+    text-decoration: underline;
+}

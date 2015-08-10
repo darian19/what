@@ -1,0 +1,79 @@
+/*
+ * Numenta Platform for Intelligent Computing (NuPIC)
+ * Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+ * Numenta, Inc. a separate commercial license for this software code, the
+ * following terms and conditions apply:
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses.
+ *
+ * http://numenta.org/licenses/
+ *
+ */
+
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.application'
+
+// Move build output to root
+buildDir = "${rootProject.buildDir}/YOMP-mobile"
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
+    signingConfigs {
+        release {
+            keyAlias defaultKeyAlias
+            keyPassword askForKeystorePassword()
+            storeFile file(defaultKeystoreLocation)
+            storePassword keyPassword
+        }
+    }
+    defaultConfig {
+        applicationId 'com.YOMPsolutions.YOMP.mobile'
+        minSdkVersion 16
+        targetSdkVersion 16
+        versionCode YOMPCommitCount + initialVersionCode
+        versionName project.version
+        // Email address to send user feedback
+        resValue "string", "feedback_email_address", System.getProperty('FEEDBACK_EMAIL')
+    }
+    buildTypes {
+        debug {
+            buildConfigField "String", "SERVER_URL", "\"${System.getProperty("SERVER_URL", "https://10.0.2.2")}\""
+            buildConfigField "String", "SERVER_PASS", "\"${System.getProperty("SERVER_PASS", "12345")}\""
+
+            //testCoverageEnabled = true
+            versionNameSuffix '-' + defaultConfig.versionCode + '-' + YOMPCommitSHA + '-debug'
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        qa.initWith(buildTypes.release)
+        qa {
+            versionNameSuffix '-' + defaultConfig.versionCode + '-' + YOMPCommitSHA
+        }
+    }
+    lintOptions {
+        ignore 'RtlSymmetry'
+        ignore 'RtlHardcoded'
+        ignore 'RtlEnabled'
+        ignore 'ContentDescription'
+    }
+}
+
+dependencies {
+    compile project(':mobile-core')
+    androidTestCompile files('libs/robotium-solo-5.1.jar')
+    compile 'org.msgpack:msgpack:0.6.11'
+}

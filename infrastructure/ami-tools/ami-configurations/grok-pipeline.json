@@ -1,0 +1,73 @@
+{
+  "variables": {
+    "ami_name":"{{env `AMI_NAME`}}",
+    "log_uploader_s3_access_key_id": "{{env `LOG_UPLOADER_S3_ACCESS_KEY_ID`}}",
+    "log_uploader_s3_secret_access_key": "{{env `LOG_UPLOADER_S3_SECRET_ACCESS_KEY`}}",
+    "wufoo_url": "{{env `WUFOO_URL`}}",
+    "wufoo_user": "{{env `WUFOO_USER`}}",
+    "notifications_aws_access_key_id": "{{env `NOTIFICATIONS_AWS_ACCESS_KEY_ID`}}",
+    "notifications_aws_secret_access_key": "{{env `NOTIFICATIONS_AWS_SECRET_ACCESS_KEY`}}",
+    "notifications_sender_email": "{{env `NOTIFICATIONS_SENDER_EMAIL`}}",
+    "YOMP_remote": "{{env `REMOTE`}}",
+    "YOMP_branch": "{{env `BRANCH`}}",
+    "YOMP_commit_sha": "{{env `COMMIT_SHA`}}"
+  },
+  "builders": [
+    {
+      "ami_description": "CentOS 7 + YOMP",
+      "ami_name": "packer-{{user `ami_name`}}-{{isotime | clean_ami_name}}",
+      "instance_type": "m3.large",
+      "region": "us-west-2",
+      "source_ami": "ami-c7d092f7",
+      "ssh_port": 22,
+      "ssh_timeout": "5m",
+      "ssh_username": "centos",
+      "tags": {
+        "OS_Version": "CentOS",
+        "Release": "7"
+      },
+      "ami_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "delete_on_termination" : true,
+          "volume_size": 32
+        }
+      ],
+      "type": "amazon-ebs"
+    }
+  ],
+  "provisioners": [
+    {
+      "destination": "/tmp/products.sha",
+      "source": "products.sha",
+      "type": "file"
+    },
+    {
+      "inline": [
+        "echo 'Sleeping for 30s, waiting for system to settle down.'",
+        "sleep 30"
+      ],
+      "type": "shell"
+    },
+    {
+      "inline": "sudo yum update -y",
+      "type": "shell"
+    },
+    {
+      "type": "shell",
+      "script": "packer-scripts/configure-YOMP-pipeline-centos7-ami",
+      "environment_vars": [
+        "LOG_UPLOADER_S3_ACCESS_KEY_ID={{user `log_uploader_s3_access_key_id`}}",
+        "LOG_UPLOADER_S3_SECRET_ACCESS_KEY={{user `log_uploader_s3_secret_access_key`}}",
+        "WUFOO_URL={{user `wufoo_url`}}",
+        "WUFOO_USER={{user `wufoo_user`}}",
+        "NOTIFICATIONS_AWS_ACCESS_KEY_ID={{user `notifications_aws_access_key_id`}}",
+        "NOTIFICATIONS_AWS_SECRET_ACCESS_KEY={{user `notifications_aws_secret_access_key`}}",
+        "NOTIFICATIONS_SENDER_EMAIL={{user `notifications_sender_email`}}",
+        "GIT_REMOTE={{user `YOMP_remote`}}",
+        "GIT_BRANCH={{user `YOMP_branch`}}",
+        "GIT_COMMIT_SHA={{user `YOMP_commit_sha`}}"
+      ]
+    }
+  ]
+}

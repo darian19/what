@@ -1,0 +1,11 @@
+[YOMP-noarch]
+name=YOMP Noarch repo
+baseurl=http://public.numenta.com/yum/noarch
+gpgcheck=0
+priority=1
+
+[YOMP-x86-64]
+name=YOMP x86-64 Repository
+baseurl=http://public.numenta.com/yum/x86_64
+gpgcheck=0
+priority=1

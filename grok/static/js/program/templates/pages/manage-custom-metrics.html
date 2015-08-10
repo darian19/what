@@ -1,0 +1,78 @@
+<div class="YOMP-manage-custom-metrics YOMP-page row">
+
+    <div class="col-md-8 col-md-offset-2">
+
+        <h1><%= msgs.title %></h1>
+
+        <!-- Div class for the metric list. Used to set opacity -->
+        <div class="list" style= <%= opacityMsg %>>
+            <h3><%= msgs.table.name %></h3>
+
+            <form>
+
+            <table class="table tablesorter">
+
+                <colgroup>
+                    <col />
+                    <col span="3" />
+                    <col />
+                </colgroup>
+
+                <thead>
+                    <tr>
+                        <th><%= msgs.table.headers.metric %></th>
+                        <th class="sorter-false text-center" style="width: 15%"><%= msgs.table.headers.delete %></th>
+                    </tr>
+                </thead>
+
+                <% if(metrics.length > 0) { %>
+                    <tbody class="metrics">
+                        <% metrics.forEach(function(metric) { %>
+                            <tr data-name="<%= metric.get('name') %>">
+                                <td class="truncate">
+                                    <%= metric.get('name') %>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="close">
+                                        <%= site.icons.close %>
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                <% } else { %>
+                    <tbody class="avoid-sort">
+                        <tr>
+                            <td class="text-muted" colspan="5"><%= msgs.table.empty %></td>
+                        </tr>
+                    </tbody>
+                <% } %>
+
+            </table>
+
+            </form>
+        </div>
+        <!-- end of metric list -->
+
+        <table>
+            <tr>
+                <td>
+                    <button id="done" type="submit" class="btn btn-primary">
+                        <%= site.buttons.done %>
+                    </button>
+                </td>
+                <td>
+                    <% if(metrics.length > 0) { %>
+                        <div class="text-right">
+                            <button type="button" class="delete btn btn-default">
+                                <%= site.buttons.deleteAll %>
+                            </button>
+                        </div> 
+                    <% } %>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>

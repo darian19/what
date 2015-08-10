@@ -1,0 +1,12 @@
+{
+  "name": "cryptojs",
+  "homepage": "https://YOMPhub.com/gwjjeff/cryptojs",
+  "_release": "c3c843c513",
+  "_resolution": {
+    "type": "commit",
+    "commit": "c3c843c5131e00607fd8cad1baf3761d0209663a"
+  },
+  "_source": "YOMP://YOMPhub.com/gwjjeff/cryptojs.YOMP",
+  "_target": "c3c843c5131e00607fd8cad1baf3761d0209663a",
+  "_originalSource": "gwjjeff/cryptojs"
+}

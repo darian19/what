@@ -1,0 +1,4 @@
+REGION : "us-west-2"
+KEY : "chef_west"
+INSTANCE_TYPE : "m3.medium"
+USER : "ec2-user"

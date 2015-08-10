@@ -1,0 +1,56 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# This scripts builds taurus and executes tests.
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+pushd ${BUILD_WORKSPACE}/products
+
+# Taurus application configuration is hard-coded. Create symlink to
+# installation target at /opt/numenta/taurus to match hard-coded assumptions
+sudo ln -s ${BUILD_WORKSPACE}/products/taurus /opt/numenta/taurus
+
+# Run Taurus installation script
+./install-taurus.sh /opt/numenta/taurus ${BIN_DIR}
+
+pushd /opt/numenta/taurus
+
+mkdir logs
+
+# Set Taurus Application Config Path
+export APPLICATION_CONFIG_PATH=/opt/numenta/taurus/conf
+
+# Create database
+taurus-create-db
+
+# Start services
+supervisord -c conf/supervisord.conf
+sudo nginx -p . -c conf/nginx-taurus.conf
+
+# Run tests
+py.test ../htmengine/tests
+
+popd
+popd
+

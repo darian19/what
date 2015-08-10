@@ -1,0 +1,26 @@
+<div class="YOMP-manage YOMP-page row">
+    <div class="col-md-8 col-md-offset-2">
+
+        <h1><%= msgs.title %></h1>
+
+        <div id="instance-list"></div>
+
+        <div class="button">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    <%= msgs.button %> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li><a href="<%= site.paths['instances-manual'] %>"><%= site.nav.setup.method.manual %></a></li>
+                    <li><a href="<%= site.paths['instances-auto'] %>"><%= site.nav.setup.method.auto %></a></li>
+                    <li><a href="<%= site.paths['instances-import'] %>"><%= site.nav.setup.method.import %></a></li>
+                    <li><a href="<%= site.paths['autostack'] %>"><%= site.nav.setup.method.autostack %></a></li>
+                    <li><a href="<%= site.paths['manage-custom-metrics'] %>"><%= site.nav.setup.method.custom %></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="embed-form"></div>
+
+    </div>
+</div>

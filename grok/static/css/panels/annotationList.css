@@ -1,0 +1,68 @@
+.modal-body {
+	background: #cccccc;
+	margin-bottom: 0px !important;
+	padding: 5px;
+}
+
+.YOMP-modal-annotation-list {
+	max-height: 420px;
+	overflow-y: auto;
+}
+
+.modal-title {
+	color: black;
+	font-weight: bold;
+	font-size:medium !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.modal-header {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.header {
+	margin-bottom: 0;
+	border-top: solid 1px #a0a0a0;
+	border-top-right-radius: 10px;
+	padding: 0 0 0 5px;
+	background: #b0b0b0;
+	font-size: small;
+	width: 130px;
+}
+.content {
+    margin: 0 0 3px;
+    padding: 0px 3px 0px 3px;
+    background: #ffffc0;
+    border: solid 1px #b0b0b0;
+    border-radius: 5px;
+    display: block;
+}
+
+.header + .content {
+    border-top-left-radius: 0px;
+}
+
+.message {
+	white-space: pre-wrap;
+	font-weight: bold;
+	margin-bottom: 2px;
+}
+
+.date {
+	font-size: x-small;
+}
+
+.name {
+	font-weight: bold;
+}
+
+.footer {
+	margin: 0px;
+	text-align: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

@@ -1,0 +1,366 @@
+# AutoScaling group
+# Using group webserver-vpc-asg-numenta-abc
+AWS::AutoScaling::AutoScalingGroup:
+  - metric: CPUUtilization
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {AutoScalingGroupName: webserver-vpc-asg-numenta-abc}
+    tag_name: west-webserver-vpc-backend
+    modelParams: {min: 0, max: 100}
+  - metric: DiskReadBytes
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {AutoScalingGroupName: webserver-vpc-asg-numenta-abc}
+    tag_name: west-webserver-vpc-backend
+    modelParams: {min: 0, max: 1000000}
+  - metric: DiskWriteBytes
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {AutoScalingGroupName: webserver-vpc-asg-numenta-abc}
+    tag_name: west-webserver-vpc-backend
+    modelParams: {min: 0, max: 1000000}
+  - metric: GroupTotalInstances
+    region: us-west-2
+    namespace: AWS/AutoScaling
+    datasource: cloudwatch
+    dimensions: {AutoScalingGroupName: webserver-vpc-asg-numenta-abc}
+    tag_name: west-webserver-vpc-backend
+    modelParams: {min: 0, max: 114}
+  - metric: NetworkIn
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {AutoScalingGroupName: webserver-vpc-asg-numenta-abc}
+    tag_name: west-webserver-vpc-backend
+    modelParams: {min: 0, max: 10000000}
+  - metric: NetworkOut
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {AutoScalingGroupName: webserver-vpc-asg-numenta-abc}
+    tag_name: west-webserver-vpc-backend
+    modelParams: {min: 0, max: 10000000}
+# DynamoDB
+# Using table DONOTREMOVE-YOMP-test
+AWS::DynamoDB::Table:
+  - metric: ConsumedReadCapacityUnits
+    region: us-west-2
+    namespace: AWS/DynamoDB
+    datasource: cloudwatch
+    dimensions: {TableName: DONOTREMOVE-YOMP-test}
+    modelParams: {min: 0, max: 20}
+  - metric: ConsumedWriteCapacityUnits
+    region: us-west-2
+    namespace: AWS/DynamoDB
+    datasource: cloudwatch
+    dimensions: {TableName: DONOTREMOVE-YOMP-test}
+    modelParams: {min: 0, max: 20}
+# The following is deprecated re: MER-3802
+#  - metric: ReturnedItemCount
+#    region: us-west-2
+#    namespace: AWS/DynamoDB
+#    datasource: cloudwatch
+#    dimensions: {TableName: DONOTREMOVE-YOMP-test}
+#    modelParams: {min: 0, max: 20}
+#  - metric: ReturnedItemCount
+#    region: us-west-2
+#    namespace: AWS/DynamoDB
+#    datasource: cloudwatch
+#    dimensions: {TableName: DONOTREMOVE-YOMP-test, Operation: Scan}
+#    modelParams: {min: 0, max: 20}
+#  - metric: SuccessfulRequestLatency
+#    region: us-west-2
+#    namespace: AWS/DynamoDB
+#    datasource: cloudwatch
+#    dimensions: {TableName: DONOTREMOVE-YOMP-test, Operation: Scan}
+#    modelParams: {min: 0, max: 1000}
+# EC2
+# Using instance jira.numenta.com
+AWS::EC2::Instance:
+  - metric: CPUUtilization
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {InstanceId: i-88ca4981}
+    tag_name: jira.numenta.com
+    modelParams: {min: 0, max: 100}
+  - metric: NetworkIn
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {InstanceId: i-88ca4981}
+    tag_name: jira.numenta.com
+    modelParams: {min: 0, max: 10000000}
+  - metric: NetworkOut
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {InstanceId: i-88ca4981}
+    tag_name: jira.numenta.com
+    modelParams: {min: 0, max: 10000000}
+  - metric: DiskReadBytes
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {InstanceId: i-88ca4981}
+    tag_name: jira.numenta.com
+    modelParams: {min: 0, max: 1000000}
+  - metric: DiskWriteBytes
+    region: us-west-2
+    namespace: AWS/EC2
+    datasource: cloudwatch
+    dimensions: {InstanceId: i-88ca4981}
+    tag_name: jira.numenta.com
+    modelParams: {min: 0, max: 1000000}
+# EBS
+# Using volume DONOTREMOVE-YOMP-test
+AWS::EC2::Volume:
+  - metric: VolumeQueueLength
+    region: us-west-2
+    namespace: AWS/EBS
+    datasource: cloudwatch
+    dimensions: {VolumeId: vol-42ac2747}
+    modelParams: {min: 0, max: 200}
+  - metric: VolumeReadBytes
+    region: us-west-2
+    namespace: AWS/EBS
+    datasource: cloudwatch
+    dimensions: {VolumeId: vol-42ac2747}
+    modelParams: {min: 0, max: 1000000}
+  - metric: VolumeTotalReadTime
+    region: us-west-2
+    namespace: AWS/EBS
+    datasource: cloudwatch
+    dimensions: {VolumeId: vol-42ac2747}
+    modelParams: {min: 0, max: 200}
+  - metric: VolumeTotalWriteTime
+    region: us-west-2
+    namespace: AWS/EBS
+    datasource: cloudwatch
+    dimensions: {VolumeId: vol-42ac2747}
+    modelParams: {min: 0, max: 200}
+  - metric: VolumeWriteBytes
+    region: us-west-2
+    namespace: AWS/EBS
+    datasource: cloudwatch
+    dimensions: {VolumeId: vol-42ac2747}
+    modelParams: {min: 0, max: 1000000}
+# ELB
+# Using LB numenta-com-vpc-asg
+AWS::ElasticLoadBalancing::LoadBalancer:
+  - metric: Latency
+    region: us-west-2
+    namespace: AWS/ELB
+    datasource: cloudwatch
+    dimensions: {LoadBalancerName: numenta-com-vpc-asg}
+    modelParams: {min: 0, max: 3.0}
+  - metric: RequestCount
+    region: us-west-2
+    namespace: AWS/ELB
+    datasource: cloudwatch
+    dimensions: {LoadBalancerName: numenta-com-vpc-asg}
+    modelParams: {min: 0, max: 1000}
+# OpsWorks
+# Using stack DONOTREMOVE-YOMP-test
+AWS::OpsWorks::Stack:
+  - metric: cpu_idle
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: cpu_nice
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: cpu_system
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: cpu_user
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: cpu_waitio
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: load_5
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 20}
+  - metric: memory_buffers
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: memory_cached
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: memory_free
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: memory_swap
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: memory_total
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: memory_used
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 100}
+  - metric: procs
+    region: us-east-1
+    namespace: AWS/OpsWorks
+    datasource: cloudwatch
+    dimensions: {StackId: a134874f-057f-4f80-9562-c7e0254809c0}
+    modelParams: {min: 0, max: 200}
+# RDS
+# Using instance jiradbinstance
+AWS::RDS::DBInstance:
+  - metric: CPUUtilization
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 100}
+  - metric: DatabaseConnections
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 1000}
+  - metric: DiskQueueDepth
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 10000}
+  - metric: FreeableMemory
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 300000000}
+  - metric: ReadIOPS
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 10.0}
+  - metric: ReadLatency
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 2.0}
+  - metric: ReadThroughput
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 1000000}
+  - metric: SwapUsage
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 1000000}
+  - metric: WriteIOPS
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 10.0}
+  - metric: WriteLatency
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 2.0}
+  - metric: WriteThroughput
+    region: us-west-2
+    namespace: AWS/RDS
+    datasource: cloudwatch
+    dimensions: {DBInstanceIdentifier: jiradbinstance}
+    modelParams: {min: 0, max: 500000}
+# Redshift
+# Using instance donotremove-YOMP-test
+AWS::Redshift::Cluster:
+  - metric: DatabaseConnections
+    region: us-west-2
+    namespace: AWS/Redshift
+    datasource: cloudwatch
+    dimensions: {ClusterIdentifier: donotremove-YOMP-test}
+    modelParams: {min: 0, max: 500}
+# SNS
+# Using topic DONOTREMOVE-YOMP-test
+AWS::SNS::Topic:
+  - metric: NumberOfMessagesPublished
+    region: us-west-2
+    namespace: AWS/SNS
+    datasource: cloudwatch
+    dimensions: {Topic: DONOTREMOVE-YOMP-test}
+    modelParams: {min: 0, max: 500}
+# SQS
+# Using queue DONOTREMOVE-YOMP-test
+AWS::SQS::Queue:
+  - metric: NumberOfEmptyReceives
+    region: us-west-2
+    namespace: AWS/SQS
+    datasource: cloudwatch
+    dimensions: {QueueName: DONOTREMOVE-YOMP-test}
+    modelParams: {min: 0, max: 1000}
+  - metric: NumberOfMessagesDeleted
+    region: us-west-2
+    namespace: AWS/SQS
+    datasource: cloudwatch
+    dimensions: {QueueName: DONOTREMOVE-YOMP-test}
+    modelParams: {min: 0, max: 1000}
+  - metric: NumberOfMessagesReceived
+    region: us-west-2
+    namespace: AWS/SQS
+    datasource: cloudwatch
+    dimensions: {QueueName: DONOTREMOVE-YOMP-test}
+    modelParams: {min: 0, max: 1000}
+  - metric: NumberOfMessagesSent
+    region: us-west-2
+    namespace: AWS/SQS
+    datasource: cloudwatch
+    dimensions: {QueueName: DONOTREMOVE-YOMP-test}
+    modelParams: {min: 0, max: 1000}
+  - metric: SentMessageSize
+    region: us-west-2
+    namespace: AWS/SQS
+    datasource: cloudwatch
+    dimensions: {QueueName: DONOTREMOVE-YOMP-test}
+    modelParams: {min: 0, max: 10000}

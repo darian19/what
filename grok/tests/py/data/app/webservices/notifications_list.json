@@ -1,0 +1,29 @@
+[
+    {
+        "target": "mailto:person@organization.com",
+        "name": "Cloudwatch Notification",
+        "filter": "AWS/*",
+        "score": "0.1",
+        "template": "Anomalous behavior detected for fake foo metrics",
+        "uid": "1",
+        "description": "Global Cloudwatch Notification"
+    },
+    {
+        "target": "mailto:person@organization.com",
+        "name": "Cloudwatch Notification",
+        "filter": "AWS/*",
+        "score": "0.25",
+        "template": "Anomalous behavior detected for fake bar metrics",
+        "uid": "2",
+        "description": "Global Cloudwatch Notification"
+    },
+    {
+        "target": "mailto:person@organization.com",
+        "name": "Cloudwatch Notification",
+        "filter": "AWS/*",
+        "score": "0.1",
+        "template": "Anomalous behavior detected for fake baz metrics",
+        "uid": "3",
+        "description": "Global Cloudwatch Notification"
+    }
+]

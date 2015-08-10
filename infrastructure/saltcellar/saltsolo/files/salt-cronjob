@@ -1,0 +1,53 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# Update Salt formulas, then run salt in solo mode.
+
+PATH=/opt/numenta/anaconda/bin
+PATH="${PATH}:/usr/local/sbin"
+PATH="${PATH}:/usr/local/bin"
+PATH="${PATH}:/usr/sbin"
+PATH="${PATH}:/sbin"
+PATH="${PATH}:/usr/bin:/bin"
+export PATH
+
+LOCK_D=/var/lock
+
+if [ ! -f "/etc/numenta/saltsolo-rpmname" ]; then
+  logger -t salt-cron "/etc/numenta/saltsolo-rpmname missing, skipping salt-solo run"
+  exit 0
+fi
+# Figure out what saltcellar rpm this machine needs
+SALTCELLAR_RPM=$(cat /etc/numenta/saltsolo-rpmname)
+
+# Make it easy to disable running salt from cron during formula testing
+if [ -f /etc/numenta/no-salt-cron ]; then
+  logger -t salt-cron "Found /etc/numenta/no-salt-cron; skipping salt run"
+  exit 0
+fi
+
+# Use the same lockfile for both updating the salt recipes and running salt.
+#
+# This will prevent problems if the cronjob is run manually while cron is
+# running it in the background.
+lockrun --lockfile="${LOCK_D}/salt-run" -- nice yum install -y "${SALTCELLAR_RPM}"
+exec lockrun --lockfile="${LOCK_D}/salt-run" -- salt-call --local state.highstate

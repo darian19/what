@@ -1,0 +1,210 @@
+{
+  "type": [
+    {
+      "description" : "Create-model 1st variant with metric uid.",
+      "type": "object",
+      "additionalProperties":false,
+      "properties": {
+        "datasource": {
+          "required": true,
+          "type": "string",
+          "enum": [
+            "custom"
+          ]
+        },
+        "metricSpec": {
+          "required": true,
+          "type": "object",
+          "additionalProperties":false,
+          "properties": {
+            "uid": {
+              "description" : "Metric unique id.",
+              "required": true,
+              "type": "string"
+            },
+            "unit": {
+              "required": false,
+              "type": "string"
+            },
+            "resource": {
+              "required": false,
+              "type": "string"
+            },
+            "userInfo": {
+              "description" : "Optional custom user info.",
+              "required": false,
+              "type": "object"
+            }
+          }
+        },
+        "modelParams": {
+          "required": false,
+          "type": "object",
+          "additionalProperties":false,
+          "properties": {
+            "min": {
+              "required": false,
+              "type": "number"
+            },
+            "max": {
+              "required": false,
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "description" : "Create-model 2nd variant with metric name; or import-model with optional data array",
+      "type": "object",
+      "additionalProperties":false,
+      "properties": {
+        "datasource": {
+          "required": true,
+          "type": "string",
+          "enum": [
+            "custom"
+          ]
+        },
+        "metricSpec": {
+          "required": true,
+          "type": "object",
+          "additionalProperties":false,
+          "properties": {
+            "metric": {
+              "description" : "Metric name",
+              "required": true,
+              "type": "string"
+            },
+            "unit": {
+              "required": false,
+              "type": "string"
+            },
+            "resource": {
+              "required": false,
+              "type": "string"
+            },
+            "userInfo": {
+              "description" : "Optional custom user info.",
+              "required": false,
+              "type": "object"
+            }
+          }
+        },
+        "modelParams": {
+          "required": false,
+          "type": "object",
+          "additionalProperties":false,
+          "properties": {
+            "min": {
+              "required": false,
+              "type": "number"
+            },
+            "max": {
+              "required": false,
+              "type": "number"
+            }
+          }
+        },
+        "data": {
+          "description": "Optional data for import-model",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": [{"type": "number"}, {"type": "string"}]
+          }
+        }
+      }
+    },
+
+    {
+      "description" : "Legacy create-model 1st variant with metric uid.",
+      "type": "object",
+      "additionalProperties":false,
+      "properties": {
+        "datasource": {
+          "required": true,
+          "type": "string",
+          "enum": [
+            "custom"
+          ]
+        },
+        "uid": {
+          "required": true,
+          "type": "string"
+        },
+        "min": {
+          "required": false,
+          "type": "number"
+        },
+        "max": {
+          "required": false,
+          "type": "number"
+        },
+        "unit": {
+          "required": false,
+          "type": "string"
+        },
+        "resource": {
+          "required": false,
+          "type": "string"
+        },
+        "userInfo": {
+          "description" : "Optional custom user info.",
+          "required": false,
+          "type": "object"
+        }
+      }
+    },
+
+    {
+      "description" : "Legacy create-model 2nd variant with metric name; or import-model with optional data array",
+      "type": "object",
+      "additionalProperties":false,
+      "properties": {
+        "datasource": {
+          "required": true,
+          "type": "string",
+          "enum": [
+            "custom"
+          ]
+        },
+        "metric": {
+          "required": true,
+          "type": "string"
+        },
+        "min": {
+          "required": false,
+          "type": "number"
+        },
+        "max": {
+          "required": false,
+          "type": "number"
+        },
+        "unit": {
+          "required": false,
+          "type": "string"
+        },
+        "resource": {
+          "required": false,
+          "type": "string"
+        },
+        "userInfo": {
+          "description" : "Optional custom user info.",
+          "required": false,
+          "type": "object"
+        },
+        "data": {
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": [{"type": "number"}, {"type": "string"}]
+          }
+        }
+      }
+    }
+  ]
+}

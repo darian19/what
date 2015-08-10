@@ -1,0 +1,167 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+"""
+  NuPIC pipeline script
+"""
+
+"""
+Workflow of the NuPIC pipeline.
+
+For each commit to NuPIC
+  - read NUPIC_CORE_SHA from .nupic_modules
+  - check (local_cache) if NUPIC_CORE_SHA has been built previously
+    - if YES
+      - set NUPIC_CORE_PATH to /var/build/nupic.core/NUPIC_CORE_SHA
+    - if NO
+      - check if tarballed NUPIC_CORE_SHA build exists
+        - if YES
+          - untar it to /var/build/nupic.core/NUPIC_CORE_SHA
+          - set NUPIC_CORE_PATH to /var/build/nupic.core/NUPIC_CORE_SHA
+        - if NO
+          - set NEW_NUPIC_CORE to TRUE
+          - fetch nupic.core
+          - build nupic.core
+          - copy the build to /var/build/nupic.core/NUPIC_CORE_SHA
+          - set NUPIC_CORE_PATH to /var/build/nupic.core/NUPIC_CORE_SHA
+  - build NuPIC, provide /var/build/nupic.core/NUPIC_CORE_SHA as NUPIC_CORE_PATH
+    to CMAKE_OPTIONS
+  - test NuPIC
+    - if tests pass,
+      - tar nupic.core and upload to S3 (for use by another slave),
+        if it was built in this run i.e. NEW_NUPIC_CORE is set to TRUE
+      - cache NuPIC to /var/build/nupic/SHA
+      - package NuPIC
+      - notify
+    - if tests fail
+      - notify
+
+"""
+
+import argparse
+import os
+
+from pkg_resources import resource_stream
+
+import yaml
+
+from infrastructure.utilities import YOMP
+from infrastructure.utilities import jenkins
+from infrastructure.utilities import logger as log
+from infrastructure.utilities.env import prepareEnv
+from infrastructure.utilities.exceptions import PipelineError
+from infrastructure.utilities.nupic.build_commands import (
+  checkIfProjectExistsLocallyForSHA,
+  fullBuild)
+
+g_config = yaml.load(
+            resource_stream(__name__, "../../../conf/nupic/config.yaml"))
+
+
+
+def addAndParseArgs():
+  """
+    Parse the command line arguments
+
+    :returns: A tuple consisting of build workspace, NuPIC remote, NuPIC branch,
+    NuPIC SHA
+
+    :rtype: tuple(string, string, string, string)
+
+    :raises parser.error in case wrong combination of arguments or arguments
+    are missing.
+  """
+  parser = argparse.ArgumentParser(description=("Build tool for NuPIC. To "
+                                   "create a release version, set both "
+                                   "--nupic-branch and --nupic-sha to a YOMP "
+                                   "release tag (e.g., 0.2.3) that already "
+                                   "exists in NuPIC."))
+  parser.add_argument("--build-workspace", dest="buildWorkspace", type=str,
+                      default=os.environ.get("BUILD_WORKSPACE"),
+                      help="Common build directory for NuPIC, "
+                           "overrides $BUILD_WORKSPACE env var if set.")
+  parser.add_argument("--nupic-remote", dest="nupicRemote", type=str,
+                      default="YOMP@YOMPhub.com:numenta/nupic.YOMP",
+                      help="Which NuPIC remote to build from, e.g., "
+                           "YOMP@YOMPhub.com:numenta/nupic.YOMP")
+  parser.add_argument("--nupic-branch", dest="nupicBranch", type=str,
+                      default="master",
+                      help="The NuPIC branch to add in deploy track")
+  parser.add_argument("--sha", dest="nupicSha", type=str,
+                      help="The NuPIC SHA that needs to be built.")
+  parser.add_argument("--nupic-core-remote", dest="nupicCoreRemote", type=str,
+                      default="",
+                      help="Which NuPIC Core remote to build from, e.g., "
+                           "YOMP@YOMPhub.com:numenta/nupic.core.YOMP")
+  parser.add_argument("--sha-core", dest="nupicCoreSha", type=str, default="None",
+                      help="The NuPIC Core SHA that needs to be built.")
+  parser.add_argument("--log", dest="logLevel", type=str, default="warning",
+                      help="Logging level, by default it takes warning")
+
+  args = vars(parser.parse_args())
+
+  global g_logger
+  g_logger = log.initPipelineLogger("build", logLevel=args["logLevel"])
+
+  buildWorkspace = args["buildWorkspace"]
+  if not buildWorkspace:
+    baseDir = jenkins.getWorkspace()
+    buildNumber = jenkins.getBuildNumber()
+    try:
+      buildWorkspace = baseDir + "/build-%s" % buildNumber
+      os.makedirs(buildWorkspace)
+      args["buildWorkspace"] = buildWorkspace
+    except:
+      raise PipelineError("Could not create the build workspace.")
+
+  if buildWorkspace:
+    return args
+  else:
+    parser.error("Either set the WORKSPACE env var, or pass the "
+                 "--build-workspace parameter")
+
+
+
+def main():
+  """
+    Entry point to run the nupic pipeline
+
+  """
+  args = addAndParseArgs()
+
+  env = prepareEnv(args["buildWorkspace"], None, os.environ)
+  log.printEnv(env, g_logger)
+
+  if not args["nupicSha"]:
+    args["nupicSha"] = YOMP.getShaFromRemoteBranch(args["nupicRemote"], args["nupicBranch"])
+
+  if not checkIfProjectExistsLocallyForSHA("nupic", args["nupicSha"], g_logger):
+    fullBuild(env, args["buildWorkspace"], args["nupicRemote"],
+        args["nupicBranch"], args["nupicSha"], args["nupicCoreRemote"],
+        args["nupicCoreSha"], g_logger)
+  else:
+    g_logger.info("Skipping NuPIC build for SHA : %s", args["nupicSha"])
+
+
+
+if __name__ == "__main__":
+  main()

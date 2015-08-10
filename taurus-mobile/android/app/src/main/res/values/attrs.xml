@@ -1,0 +1,42 @@
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources>
+    <declare-styleable name="InstanceAnomalyChartFragment">
+        <attr name="showAnnotationList" format="boolean" />
+        <attr name="showContextMenu" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="TimeSliderView">
+        <attr name="backgroundColorLight" format="color|reference" />
+        <attr name="backgroundColorDark" format="color|reference" />
+        <attr name="strokeColor" format="color|reference" />
+        <attr name="labelTextColor" format="color|reference" />
+        <attr name="labelTextSize" format="dimension|reference" />
+        <attr name="labelHeight" format="dimension|reference" />
+        <attr name="showBackground" format="boolean" />
+        <attr name="showLabel">
+            <flag name="none" value="0"/>
+            <flag name="top" value="1"/>
+            <flag name="bottom" value="2"/>
+        </attr>
+    </declare-styleable>
+</resources>

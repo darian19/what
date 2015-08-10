@@ -1,0 +1,46 @@
+.YOMP-page form:first-of-type {
+    margin-top: 2.5em;
+}
+
+.YOMP-page label:after {
+    content: ':';
+}
+
+.YOMP-page #name {
+    width: 22em;
+}
+.YOMP-page #company {
+    width: 15em;
+}
+.YOMP-page #email {
+    width: 20em;
+}
+
+.YOMP-page .lead {
+	margin-bottom: 0;
+}
+
+.YOMP-page .help-block {
+    margin-left: 0.25em;
+}
+
+.YOMP-page article {
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    height: 10em;
+    overflow: auto;
+    margin: 3em 0 2em 0;
+    padding: 2em;
+}
+
+.YOMP-page .checkbox {
+    margin: 0 2em;
+}
+
+.YOMP-page .checkbox label:after {
+    content: "";
+}
+
+.YOMP-page .buttons {
+    margin-top: 2em;
+}

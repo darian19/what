@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources>
+    <color name="annotationBGColor">#CCCCCC</color>
+    <color name="annotationMessageBGColor">#FFFFCC</color>
+    <color name="annotationMessageStrokeColor">#b0b0b0</color>
+
+    <style name="AnnotationList" parent="@android:style/Theme">
+        <item name="android:background">@color/annotationBGColor</item>
+    </style>
+
+    <style name="AnnotationList.ListItem">
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:background">@drawable/annotation_background</item>
+    </style>
+
+    <style name="AnnotationList.ListItem.Header" parent="android:TextAppearance.DeviceDefault.Small">
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:background">@drawable/annotation_header_background</item>
+    </style>
+
+    <style name="AnnotationList.ListItem.Message" parent="android:TextAppearance.DeviceDefault.Medium">
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+    </style>
+
+    <style name="AnnotationList.ListItem.User" parent="android:TextAppearance.DeviceDefault.Medium">
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+    </style>
+    <style name="AnnotationList.Header" parent="@android:style/Widget.Holo.Button">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
+    <style name="AddAnnotation" parent="@android:style/Theme">
+        <item name="android:background">@color/annotationBGColor</item>
+    </style>
+
+    <style name="AddAnnotation.Body" parent="@android:style/Theme">
+        <item name="android:background">@drawable/annotation_background</item>
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+    </style>
+
+    <style name="AddAnnotation.Header" parent="@android:style/Widget.Holo.Button">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
+</resources>

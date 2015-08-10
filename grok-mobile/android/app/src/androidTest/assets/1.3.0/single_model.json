@@ -1,0 +1,27 @@
+[
+  {
+    "status": 1,
+    "last_rowid": 4289,
+    "display_name": "testN.domain.tld - 2014-03-20 (us-east-1/AWS/EC2/i-d9e211f6)",
+    "description": "CPUUtilization on EC2 instance i-d9e211f6 in us-east-1 region",
+    "parameters": {
+      "InstanceId": "i-d9e211f6",
+      "region": "us-east-1"
+    },
+    "last_timestamp": "2014-07-08 16:15:00",
+    "name": "AWS/EC2/CPUUtilization",
+    "poll_interval": 300,
+    "server": "us-east-1/AWS/EC2/i-d9e211f6",
+    "tag_name": "testN.domain.tld - 2014-03-20",
+    "instance_status_history": [
+      {
+        "status": "running",
+        "timestamp": "2014-07-07 17:45:21"
+      }
+    ],
+    "location": "us-east-1",
+    "uid": "3654d3972c1742a0bef5e0022f210544",
+    "message": null,
+    "datasource": "cloudwatch"
+  }
+]

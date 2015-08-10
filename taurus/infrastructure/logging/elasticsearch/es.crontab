@@ -1,0 +1,2 @@
+@daily /opt/es_rotate
+@daily find /opt/elasticsearch/logs -type f -mtime +7 -exec rm -f {} \;

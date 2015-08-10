@@ -1,0 +1,202 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+
+"""
+  This script is the single point of entry for running YOMP behavioral
+  tests. It can be run either locally or from Jenkins.
+"""
+import argparse
+import os
+import pkg_resources
+import signal
+import sys
+import shutil
+import yaml
+
+from subprocess import CalledProcessError, check_call
+
+from infrastructure.utilities import jenkins
+from infrastructure.utilities.ec2 import (
+  launchInstance,
+  stopInstance,
+  terminateInstance)
+from infrastructure.utilities.exceptions import (
+  InstanceLaunchError,
+  InstanceNotReadyError,
+  InvalidParametersError)
+from infrastructure.utilities.logger import initPipelineLogger
+from infrastructure.utilities.YOMP_server import waitForYOMPServerToBeReady
+from infrastructure.utilities.s3 import getLastStableAmi
+
+
+YOMP_AWS_CREDENTIALS_SETUP_TRIES = 30
+SLEEP_DELAY = 10
+
+
+def recordResults(resultsDir):
+  """
+    Records result against jenkins build. This also make  sure that any stale
+    results are deleted before recording new results. It checks whether we
+    have $WORKSPACE set to make sure we are running tests on jenkins. Results
+    will be recorded only when we are triggering job on jenkins
+
+      :param resultsDir: Destination directory where results should be copied
+  """
+  if os.environ.get("WORKSPACE") and os.environ.get("JENKINS_HOME"):
+    if os.path.isdir(resultsDir):
+      shutil.rmtree(resultsDir)
+    shutil.copytree(os.path.join(g_tests_root, "results"), resultsDir)
+
+
+def parseArgs():
+  """
+    Parse the command line arguments
+  """
+  parser = argparse.ArgumentParser(description="Runs YOMP behavioral tests")
+  parser.add_argument("--ami-id", dest="amiId", type=str,
+                      help=("OPTIONAL: AMI ID to test against. If this is set "
+                            "launch an instance of the AMI specified and run "
+                            "the tests. If not set it will AMI created in last"
+                            "successful build of production parameters"))
+  parser.add_argument("--region", dest="region", type=str, default="us-west-2",
+                      help=("Which region to launch the AMI in currently "
+                            "supporing us-west-2, us-east-1"),
+                      choices=["us-west-2", "us-east-1"])
+  parser.add_argument("--platform", dest="platform", type=str,
+                      default="windows",
+                      help="Accepts valid browser name under test")
+  parser.add_argument("--browser", dest="browser", type=str, default="chrome",
+                      help="Accepts valid browser name under test")
+  parser.add_argument("--log", dest="logLevel", type=str, default="warning",
+                      help="Logging level")
+
+  return parser.parse_args()
+
+
+def handleInstancePostTestRunFailure(instanceId, config, logger, killInstance,
+    exception):
+  """
+    Runs post run actions for launched server instance when exception occurs.
+    Depending on given parameters instance is either stopped or terminated.
+
+    :param instanceId: Instance Id for launched server instance
+    :param config: Pipeline configurations
+    :param logger: An initialized logger
+    :param killInstance: This flag decides whether to terminate / stop instance
+    :param exception: Exception occured during pipeline/ test run.
+
+    :raises re-raise the exception so that the failure will be communicated to
+      the upstream calling script.
+  """
+  if instanceId:
+    if killInstance:
+      terminateInstance(instanceId, config, logger)
+    else:
+      stopInstance(instanceId, config, logger)
+  logger.exception(exception)
+  raise
+
+
+def main(args):
+  """
+    Main function for the pipeline. Executes all sub-tasks
+    Reads and Updates g_config with AWS keys and sauce keys
+    Runs selenium tests and updates results
+    Depending upon success/ Failure for tests, execute clean up for launched
+    server
+
+    :param args: Parsed command line arguments
+  """
+  global g_config, g_logger, g_tests_root
+
+  supportedRegions = {"us-east-1" : "chef-knife",
+                      "us-west-2" : "chef_west"}
+
+  g_logger = initPipelineLogger(__file__, logLevel=args.logLevel)
+
+  g_config = yaml.load(pkg_resources.resource_stream(__name__,
+               "pipeline/conf/config.yaml"))
+  g_config["AWS_ACCESS_KEY_ID"] = os.environ.get("AWS_ACCESS_KEY_ID")
+  g_config["AWS_SECRET_ACCESS_KEY"] = os.environ.get("AWS_SECRET_ACCESS_KEY")
+  g_config["SAUCE_USER_NAME"] = os.environ.get("SAUCE_USER_NAME")
+  g_config["SAUCE_KEY"] = os.environ.get("SAUCE_KEY")
+  g_config["JOB_NAME"] = os.environ.get("JOB_NAME", "Local Run")
+  g_config["BUILD_NUMBER"] = jenkins.getBuildNumber()
+
+  g_config["KEY"] = supportedRegions[args.region]
+  g_config["REGION"] = args.region
+
+  g_tests_root = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                              "tests", "java", "behavioral", "YOMP")
+  serverKey = os.path.join("~", ".ssh", g_config["KEY"] + ".pem")
+  amiId = args.amiId or getLastStableAmi(g_config("S3_MAPPING_BUCKET"),
+                                         g_logger)
+
+
+  # The calls in this function are not signal-safe. However, the expectation is
+  # that making them signal safe would be overly burdensome at this time. If
+  # issues arise later, then we'll figure out what the right approach is at that
+  # time.
+  def handleSignalInterrupt(signal, _frame):
+    g_logger.error("Received interrupt signal %s", signal)
+    if instanceId:
+      g_logger.error("Terminating instance %s", instanceId)
+      terminateInstance(instanceId, g_config, g_logger)
+    sys.exit(1)
+  signal.signal(signal.SIGINT, handleSignalInterrupt)
+  signal.signal(signal.SIGTERM, handleSignalInterrupt)
+
+  if not amiId:
+    g_logger.error("Failed to find stable ami id")
+    raise InvalidParametersError(
+      "Failed to find stable ami id and no server specified")
+  try:
+    publicDnsName, instanceId = launchInstance(amiId, g_config, g_logger)
+    waitForYOMPServerToBeReady(publicDnsName, serverKey, g_config["USER"],
+                               g_logger)
+    testCommand = 'cd %s && ./run_selenium_tests %s "%s" "%s"' % (
+      g_tests_root, publicDnsName, args.platform.upper(), args.browser.upper())
+    resultsDir = os.path.join(jenkins.getWorkspace(), "results")
+    check_call(testCommand, shell=True)
+    recordResults(resultsDir)
+    terminateInstance(instanceId, g_config, g_logger)
+
+  except CalledProcessError as e:
+    killInstance = True if instanceId else False
+    recordResults(resultsDir)
+    handleInstancePostTestRunFailure(instanceId, g_config, g_logger,
+                                     killInstance, e)
+  except InstanceNotReadyError as ie:
+    handleInstancePostTestRunFailure(instanceId, g_config, g_logger, True, ie)
+  except InstanceLaunchError as iel:
+    handleInstancePostTestRunFailure(instanceId, g_config, g_logger, False, iel)
+  except Exception as e:
+    if instanceId:
+      handleInstancePostTestRunFailure(instanceId, g_config, g_logger, True, e)
+    g_logger.exception(e)
+    raise
+
+
+
+if __name__ == "__main__":
+  main(parseArgs())

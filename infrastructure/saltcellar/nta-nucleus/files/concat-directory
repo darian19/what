@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Given a directory, dump all file contents to stdout.
+# If a file is executable, run it instead.
+#
+# Usage:
+#   dir-contents-spew /path
+
+if [ $# -ne 1 ]; then
+  echo "You need to specify a directory"
+fi
+
+if [ ! -d $1 ]; then
+  echo "$1 is not a directory"
+fi
+
+for f_name in $1/*
+do
+  if [ -x $f_name ]; then
+    $f_name
+  else
+    cat $f_name
+  fi
+done

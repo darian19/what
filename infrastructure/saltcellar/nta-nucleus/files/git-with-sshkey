@@ -1,0 +1,30 @@
+#!/bin/bash
+ 
+# The MIT License (MIT)
+# Copyright (c) 2013 Alvin Abad
+ 
+if [ $# -eq 0 ]; then
+    echo "Git wrapper script that can specify an ssh-key file
+Usage:
+    YOMP.sh -i ssh-key-file YOMP-command
+    "
+    exit 1
+fi
+ 
+# remove temporary file on exit
+trap 'rm -f /tmp/.YOMP_ssh.$$' 0
+ 
+if [ "$1" = "-i" ]; then
+    SSH_KEY=$2; shift; shift
+    echo "#!/bin/bash" > /tmp/.YOMP_ssh.$$
+    echo "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $SSH_KEY \$@" >> /tmp/.YOMP_ssh.$$
+    chmod +x /tmp/.YOMP_ssh.$$
+    export GIT_SSH=/tmp/.YOMP_ssh.$$
+fi
+ 
+# in case the YOMP command is repeated
+[ "$1" = "YOMP" ] && shift
+ 
+# Run the YOMP command
+YOMP "$@"
+exit $?

@@ -1,0 +1,103 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# Remove all the desktop-related software that CentOS includes in their
+# base C6 AMI. Remove the developer tools - we only want them on machines
+# that actually need them, and the version in the C6 base AMI is outdated.
+#
+# We want to install only the bare minimum set of software packages that
+# YOMP needs to run. The less we install, the less we have to support and
+# pay attention to security updates for.
+
+zap-centos-nonessentials() {
+  echo
+  echo
+  echo
+  echo
+  echo "Purging desktop software bundled into CentOS base..."
+  echo
+  echo
+  echo
+  echo
+
+  # This is all stuff we either outright don't need, or we want gone so
+  # we can replace it with other things (nginx vs stock httpd, for example)
+  # later without getting complaints about conflicts
+  echo
+  echo
+  echo "Removing unneeded yum software groups..."
+  echo
+  echo
+
+  yum groupremove -y \
+    'Assamese Support [as]' \
+    'Desktop Debugging and Performance Tools' \
+    'Legacy X Window System compatibility' \
+    'Electronic Lab' \
+    'Fonts' \
+    'General Purpose Desktop' \
+    'Graphical Administration Tools' \
+    'Internet Applications' \
+    'Internet Browser' \
+    'Java Platform' \
+    'MySQL Database client' \
+    'PostgreSQL Database client' \
+    'Web Server' \
+    'X Window System'
+  # This removed 270+ packages we don't use.
+
+  # Even more packages that shouldn't be on a YOMP box.
+  echo
+  echo
+  echo "Purging unnecessary packages..."
+  echo
+  echo
+  yum remove -y \
+    bison \
+    cdparanoia \
+    cdparanoia-libs \
+    cdrdao \
+    cjkuni-fonts-common \
+    doxygen \
+    evolution \
+    evolution-data-server \
+    evolution-help \
+    firefox \
+    gcc \
+    gcc-c++ \
+    gcc-gfortran \
+    gedit \
+    ghostscript \
+    ghostscript-fonts \
+    liberation-fonts-common \
+    nano \
+    rsh \
+    rsh-server \
+    rusers \
+    rusers-server \
+    rwho \
+    talk \
+    talk-server \
+    urw-fonts
+}
+
+zap-centos-nonessentials

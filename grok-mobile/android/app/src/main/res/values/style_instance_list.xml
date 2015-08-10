@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Colors -->
+    <color name="InstanceList.Background">#ffffff</color>
+
+    <!-- Styles -->
+    <style name="InstanceList" parent="@android:style/Theme.Holo.Light">
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:background">@color/InstanceList.Background</item>
+    </style>
+
+    <style name="InstanceList.Name" parent="@android:style/TextAppearance.Holo.Medium">
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">30sp</item>
+        <!--
+        <item name="android:drawableRight">@drawable/ic_red_notification_icon</item>
+        <item name="android:drawablePadding">5sp</item>
+        -->
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

@@ -1,0 +1,15 @@
+.YOMP-manage h3 {
+    margin-top: 2em;
+}
+
+.YOMP-manage button .caret {
+    margin-left: 0.33em;
+}
+
+.YOMP-manage .button .dropdown-menu > li > a {
+    text-decoration: none;
+}
+
+.YOMP-manage #embed-form {
+    margin-top: 5em;
+}

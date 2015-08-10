@@ -1,0 +1,24 @@
+[
+  {
+    "datasource": "cloudwatch",
+    "dimensions": {
+      "InstanceId": [
+        "i-2997dc1d"
+      ]
+    },
+    "metric": "DiskWriteOps",
+    "namespace": "AWS/EC2",
+    "region": "us-west-2"
+  },
+  {
+    "datasource": "cloudwatch",
+    "dimensions": {
+      "InstanceId": [
+        "i-0430d633"
+      ]
+    },
+    "metric": "NetworkOut",
+    "namespace": "AWS/EC2",
+    "region": "us-west-2"
+  }
+]

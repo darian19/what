@@ -1,0 +1,9 @@
+numpy==1.9.2
+requests==2.0.1
+sqlalchemy==0.9.4
+msgpack-python==0.3.0
+validictory==0.9.1
+mysql-python==1.2.5
+nupic==0.2.6
+nta.utils>=0.0.0
+psutil==1.0.1

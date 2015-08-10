@@ -1,0 +1,20 @@
+# Based on standard CentOS 6 config
+# Set up logrotation for standard logfiles.
+# Keep only a week's worth, rotate them every day, and compress them.
+
+/var/log/cron
+/var/log/maillog
+/var/log/messages
+/var/log/secure
+/var/log/spooler
+{
+    daily
+    compress
+    rotate 7
+    # Only run the postrotate script once, after all the rotations.
+    sharedscripts
+    notifempty
+    postrotate
+    /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
+    endscript
+}

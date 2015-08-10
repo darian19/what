@@ -1,0 +1,11 @@
+[Unit]
+Description=YOMP services (tickle)
+
+[Install]
+Alias=YOMPservices-tickle.service
+
+[Service]
+Type=forking
+ExecStart=/etc/init.d/YOMPservices tickle
+ExecStop=/etc/init.d/YOMPservices stop
+Restart=on-abort

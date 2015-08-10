@@ -1,0 +1,101 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+#
+# Keep this as generic as possible. YOMP specific cleanups should go into
+# a separate cleanup-YOMP script, Taurus to cleanup-taurus, etc.
+
+logline() {
+  echo "$@"
+  logger -t ami-bake "$@"
+}
+
+echo
+echo "Cleaning instance for AMI bake"
+
+if [ ! -z "${DEBUG}" ]; then
+  echo "**********"
+  echo "Yum repositories:"
+  yum repolist
+fi
+
+if [ -d /var/lib/rabbitmq/mnesia ]; then
+  # Rabbit is installed. Purge the rabbit files
+  echo "**********"
+  echo "Purging rabbitmq mnesia files"
+  service rabbitmq-server stop
+  rm -rfv /var/lib/rabbitmq/mnesia/rabbit*
+fi
+
+# Zap user shell histories
+
+# Bash
+find /home -name .bash_history -exec rm -fv '{}' ';'
+
+# ZSH
+find /home -name .zsh_history -exec rm -fv '{}' ';'
+
+# And for root
+rm -f ~root/.zsh_history ~root/.bash_history
+
+# The yum caches will almost instantly be stale once the AMI is baked.
+# Better to have the first yum operation on an instance started from this
+# AMI force it to download current yum information.
+echo "**********"
+echo "Purging yum caches"
+yum clean all
+
+echo
+echo "**********"
+echo "Purging /tmp..."
+rm -fr /tmp/*
+
+echo
+echo "**********"
+echo "Purging salt minion key data..."
+rm -fr /etc/salt/pki/minion/*
+
+echo "Clearing salt configuration flag"
+rm -f "${saltConfigured}"
+
+echo
+echo "Confirming AMI root volume size..."
+df -h /
+echo
+
+echo "CentOS version: $(cat /etc/centos-release)"
+
+echo
+echo "**********"
+logline "Zapping logfiles..."
+logger -t image-cleanup "Zapping logfiles..."
+for logf in /var/log/cron \
+            /var/log/dracut.log \
+            /var/log/maillog \
+            /var/log/messages \
+            /var/log/secure \
+            /var/log/yum.log
+do
+  logline "Resetting ${logf}"
+  cat /dev/null > "${logf}"
+done
+
+find / -name '*.rpmnew' -print

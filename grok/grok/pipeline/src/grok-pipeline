@@ -1,0 +1,122 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+"""
+  This script is the single point of entry for the YOMP pipeline. It can
+  be run either locally or from Jenkins.
+"""
+
+import argparse
+import os
+import sys
+
+from YOMP.pipeline.src import (bake_ami, build, manifest, package,
+  run_unit_tests, sync_yum_repo_s3)
+from infrastructure.utilities.exceptions import TestsFailed
+from infrastructure.utilities.logger import initPipelineLogger
+
+
+TOOLS_DIR = os.path.join(os.getcwd(), "pipeline")
+
+
+def parseArgs():
+  """
+    Parse the command line arguments
+
+    :returns Parsed object for the command-line arguments from sys.argv
+    :rtype argparse.Namespace
+  """
+  parser = argparse.ArgumentParser(description="Single point of entry for the "
+                                   "YOMP pipeline")
+  parser.add_argument("--trigger-pipeline",
+                      dest="pipeline",
+                      type=str,
+                      help="Triggered pipeline",
+                      required=True)
+
+  parser.add_argument("--YOMP-sha",
+                      dest="YOMPSha",
+                      type=str,
+                      help="Triggering SHA from YOMP")
+
+  parser.add_argument("--YOMP-branch",
+                      dest="YOMPBranch",
+                      default="master",
+                      type=str,
+                      help="The branch you are building from")
+
+  parser.add_argument("--YOMP-remote",
+                      dest="YOMPRemote",
+                      type=str,
+                      default="YOMP@YOMPhub.com:Numenta/numenta-apps.YOMP",
+                      help="URL for YOMP remote repository")
+
+  parser.add_argument("--release-version",
+                      dest="releaseVersion",
+                      type=str,
+                      help="Current release version, this will be used as base"
+                      "version for YOMP and tracking rpm")
+
+  parser.add_argument("--log",
+                      dest="logLevel",
+                      type=str,
+                      default="warning",
+                      help="Logging level")
+
+  return parser.parse_args()
+
+
+def main(args):
+  """
+    Main function for the pipeline. Executes all sub-tasks
+
+    :param args: Parsed command line arguments
+  """
+  logger = initPipelineLogger("YOMP-pipeline", logLevel=args.logLevel)
+
+  # Calling manifest to create the manifest json for pipeline
+  logger.debug("#############################################")
+  pipelineJsonPath = manifest.main(args)
+
+  commonOptions = {"pipelineJson" : pipelineJsonPath,
+                   "logLevel" : args.logLevel}
+
+  # Build
+  logger.debug("#############################################")
+  build.main(commonOptions)
+
+  # Run unit tests
+  logger.debug("#############################################")
+  run_unit_tests.main(commonOptions)
+
+  try:
+    # Bake Ami
+    logger.debug("#############################################")
+    bake_ami.main(commonOptions)
+  except TestsFailed:
+    sys.exit(1)
+  except Exception:
+    logger.exception("Unknown error while baking AMI")
+    raise
+
+if __name__ == "__main__":
+  main(parseArgs())

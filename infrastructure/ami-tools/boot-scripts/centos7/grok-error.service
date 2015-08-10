@@ -1,0 +1,12 @@
+[Unit]
+Description=YOMP error
+
+[Install]
+Alias=YOMP-error.service
+
+[Service]
+Type=forking
+ExecStart=/etc/init.d/YOMP-preload YOMP-error
+ExecStop=/etc/init.d/YOMP-preload stop
+ExecReload=/etc/init.d/YOMP-preload reload
+Restart=on-abort

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Colors -->
+    <color name="InstanceAnomalyChart.Background">#00ffffff</color>
+
+    <style name="InstanceAnomalyChart.Title" parent="@android:style/TextAppearance.Holo.Medium">
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">30sp</item>
+        <!--
+        <item name="android:drawableRight">@drawable/ic_red_notification_icon</item>
+        <item name="android:drawablePadding">5sp</item>
+        -->
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="InstanceAnomalyChart.Name" parent="@android:style/TextAppearance.Holo.Medium">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!--
+        <item name="android:drawableRight">@drawable/ic_red_notification_icon</item>
+        <item name="android:drawablePadding">5sp</item>
+        -->
+        <item name="android:textStyle">bold</item>
+    </style>
+	<style name="InstanceAnomalyChart.Date" parent="@android:style/TextAppearance.Holo.Small">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="InstanceAnomalyChart" parent="@android:style/Widget.DeviceDefault.Button">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:background">@color/InstanceAnomalyChart.Background</item>
+    </style>
+
+    <style name="InstanceAnomalyChart.Chart" parent="@style/AnomalyChart">
+        <item name="android:layout_height">85dp</item>
+    </style>
+
+</resources>

@@ -1,0 +1,27 @@
+{
+  "description" : "Custom-adapter-specific metric specification that is stored in metric row's properties field, embedded inside a modelSpec; describes custom datasource's metricSpec property in model_spec_schema.json",
+  "type": "object",
+  "additionalProperties":false,
+  "properties": {
+    "metric": {
+      "description" : "Metric name",
+      "required": true,
+      "type": "string"
+    },
+    "unit": {
+      "description" : "Optional user-defined metric data unit name",
+      "required": false,
+      "type": "string"
+    },
+    "resource": {
+      "description" : "Optional identifier of resource that this metric applies to",
+      "required": false,
+      "type": "string"
+    },
+    "userInfo": {
+      "description" : "Optional custom user info.",
+      "required": false,
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "FileSaver.js",
+  "main": "FileSaver.js",
+  "homepage": "https://YOMPhub.com/eligrey/FileSaver.js",
+  "authors": [
+    "Eli Grey <me@eligrey.com>"
+  ],
+  "description": "A saveAs() FileSaver implementation",
+  "keywords": [
+    "filesaver",
+    "saveas",
+    "blob"
+  ],
+  "license": "MIT/X11",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "6a7619f5ab",
+  "_resolution": {
+    "type": "commit",
+    "commit": "6a7619f5ab2cb530b9991e1f850abac0eb752736"
+  },
+  "_source": "YOMP://YOMPhub.com/eligrey/FileSaver.js.YOMP",
+  "_target": "6a7619f5ab2cb530b9991e1f850abac0eb752736",
+  "_originalSource": "eligrey/FileSaver.js"
+}

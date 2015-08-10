@@ -1,0 +1,164 @@
+#!/usr/bin/env python
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+"""
+Create a YOMP installation manifest usable by install-YOMP-packages
+"""
+
+import argparse
+import json
+import re
+
+from infrastructure.utilities import logger as log
+from infrastructure.utilities.exceptions import InvalidParametersError
+
+
+
+# Set up our globals
+g_config = None
+g_logger = None
+
+
+
+def parseCLA():
+  """
+  Parse command line arguments, return a config
+
+  @returns parsed command line options in a configuration object
+  """
+  global g_logger
+
+  parser = argparse.ArgumentParser(description="Create a YOMP manifest")
+
+  parser.add_argument("--set-version",
+                      dest="manifestVersion",
+                      help="version number to tag the manifest with",
+                      default="1.7")
+
+  parser.add_argument("--debug",
+                      dest="debug",
+                      action="store_true",
+                      help="Debug mode. Spam up the console output.")
+
+  parser.add_argument("--description",
+                      dest="description",
+                      help="manifest description",
+                      required=True,
+                      default=None)
+
+  parser.add_argument("--install-package",
+                      action="append",
+                      dest="packages",
+                      help="rpm files to install",
+                      default=[])
+
+  parser.add_argument("--log-level",
+                      dest="logLevel",
+                      type=str,
+                      default="warning",
+                      choices=["critical",
+                               "debug",
+                               "error",
+                               "info",
+                               "warning"
+                              ],
+                      help="Set the logging level")
+
+  parser.add_argument("--manifest-file",
+                      dest="manifestFile",
+                      help="manifest file name",
+                      required=True,
+                      default=None)
+
+  parser.add_argument("--tempdir",
+                      dest="tempdir",
+                      help="Where to write our temporary files",
+                      default="/tmp/")
+
+  g_config = parser.parse_args()
+
+  # Setup logging now that we know what loglevel to use
+  g_logger = log.initPipelineLogger(name="create-YOMP-manifest",
+                                    logLevel=g_config.logLevel)
+
+  # Do some basic sanity checking
+  g_logger.debug("Configuration: %s", g_config)
+
+  # Check for failure errors
+  if g_config.packages == []:
+    parser.error("Specify at least one RPM or Wheel to install")
+
+  if not g_config.manifestFile:
+    parser.error("You must specify a filename to write the manifest to.")
+
+  # Warn the user, but assume they know what they want
+  if not g_config.description:
+    g_logger.warning("Creating a manifest without a description")
+
+  return g_config
+
+
+
+def createYOMPManifest():
+  """
+  Create a YOMP Manifest file
+  """
+  global g_config
+
+  g_config = parseCLA()
+
+  manifestInfo = {}
+  manifestInfo["packages"] = []
+  manifestInfo["version"] = g_config.manifestVersion
+  if g_config.description:
+    manifestInfo["description"] = g_config.description
+
+  allowedPackageTypes = ["rpm", "whl"]
+  for package in g_config.packages:
+    g_logger.debug("package: %s", package)
+    flavor = package[-3:]
+    if flavor not in allowedPackageTypes:
+      raise InvalidParametersError("%s is not a valid package type" % package)
+
+    pkgInfo = {}
+
+    # Slice off the package/wheel name for display to humans. Don't forget to
+    # subtract one for the trailing -
+    offset = re.search("\d", package).start() - 1
+    pkgInfo["name"] = package[:offset]
+
+    pkgInfo["artifact"] = package
+
+    manifestInfo["packages"].append(pkgInfo)
+
+  # Convert it to pretty JSON
+  manifestJSON = json.dumps(manifestInfo, indent=2)
+  g_logger.debug("manifestJSON")
+  g_logger.debug(manifestJSON)
+
+  with open(g_config.manifestFile, "w") as jsonFile:
+    jsonFile.write(manifestJSON)
+
+
+if __name__ == "__main__":
+
+  createYOMPManifest()

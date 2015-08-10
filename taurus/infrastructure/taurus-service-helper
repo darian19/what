@@ -1,0 +1,118 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# Helper script for the taurus service
+#
+# We need to run the taurus service as ec2-user, but using su to switch users
+# makes us lose our environment settings. This helper script is called by the
+# taurus-server init script, loads the necessary environment and
+# starts supervisord.
+
+# TODO: figure out a cleaner solution to avoid this extra layer. TAUR-655
+
+# Source standard init script functions
+source /etc/rc.d/init.d/functions
+
+set -o pipefail
+set -o errexit
+
+prog=supervisord
+NUMENTA=/opt/numenta
+TAURUS_D="${NUMENTA}/products/taurus"
+SUPERVISORCTL_URL="http://127.0.0.1:9001"
+
+if [ ! -z "${DEBUG}" ]; then
+  echo "============="
+  env
+  echo "============="
+  echo "sourcing taurus env"
+fi
+
+# Load taurus environment
+if [ -r "${TAURUS_D}/taurus/env.sh" ]; then
+  source "${TAURUS_D}/taurus/env.sh"
+else
+  logger -t supervisor "${TAURUS_D}/taurus/env.sh is missing"
+  exit 1
+fi
+
+if [ ! -z "${DEBUG}" ]; then
+  echo "============="
+  env
+  echo "============="
+fi
+
+start()
+{
+  echo -n "Starting ${prog} as ec2-user: "
+  cd "${TAURUS_D}"
+  supervisorctl -c conf/supervisord.conf
+  echo
+}
+
+stop()
+{
+  echo -n "Shutting down ${prog} as ec2-user: "
+  cd "${TAURUS_D}"
+  supervisorctl -s "${SUPERVISORCTL_URL}" shutdown
+  echo
+}
+
+status()
+{
+  echo -n "Restarting ${prog} as ec2-user: "
+  cd "${TAURUS_D}"
+  supervisorctl -s "${SUPERVISORCTL_URL}" status
+  echo
+}
+
+restart()
+{
+  echo -n "Restarting ${prog} as ec2-user: "
+  cd "${TAURUS_D}"
+  supervisorctl -s "${SUPERVISORCTL_URL}" restart all
+  echo
+}
+
+case "$1" in
+
+  start)
+    start
+  ;;
+
+  stop)
+    stop
+  ;;
+
+  status)
+    status
+  ;;
+
+  restart)
+    restart
+  ;;
+
+  *)
+    echo "Usage: $0 {restart|start|status|stop}"
+  ;;
+
+esac

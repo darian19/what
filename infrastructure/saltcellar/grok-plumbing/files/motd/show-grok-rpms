@@ -1,0 +1,59 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# Display the version of the YOMP rpms installed on this machine.
+
+# YOMP data
+if [ -f /etc/YOMP/build.time ]; then
+  YOMP_ami_build_time=$(cat /etc/YOMP/build.time)
+  echo "YOMP AMI Build time: ${YOMP_ami_build_time}"
+fi
+echo
+
+# YOMP was originally code-named "Mercury". There are still legacy artifacts
+# on some older servers that include mercury in the package name, so we want to
+# continue to search for them.  If we see any "Mercury" packages, we should work
+# to remove them so we can drop the `-e mercury` search from this list.
+echo "Currently installed YOMP rpms:"
+for rpm in $(rpm -qa | grep -e nupic -e YOMP -e saltcellar -e mercury | sort)
+do
+  echo "  ${rpm}"
+done
+
+CENTOS_SHA_F=/etc/YOMP/centos/operations-scripts.sha
+YOMP_SHA_F=/opt/numenta/products/YOMP/static/YOMP.sha
+NUPIC_SHA_F=/opt/numenta/nupic/nupic.build.sa
+
+echo
+echo "Installed SHAs:"
+
+if [ -f "${CENTOS_SHA_F}" ]; then
+  echo " centos: $(cat ${CENTOS_SHA_F})"
+fi
+
+if [ -f "${YOMP_SHA_F}" ]; then
+  echo "   YOMP: $(cat ${YOMP_SHA_F})"
+fi
+
+if [ -f "${NUPIC_SHA_F}" ]; then
+  echo "  nupic: $(cat ${NUPIC_SHA_F})"
+fi

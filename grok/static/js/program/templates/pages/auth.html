@@ -1,0 +1,51 @@
+<div class="YOMP-auth YOMP-page row">
+    <div class="col-md-8 col-md-offset-2">
+
+        <section id="progress-bar-container"></section>
+
+        <h1><% if(isSetup) { %><%= site.setup.steps.label %> <%= step %>: <% } %><%= msgs.title %></h1>
+        <ul>
+            <% msgs.info.forEach(function(line) { %>
+                <li><%= line %></li>
+            <% }); %>
+        </ul>
+
+        <form class="form-horizontal">
+            <fieldset>
+                <div class="form-group">
+                    <label for="key" class="control-label col-sm-3"><%= msgs.form.labels.key %></label>
+                    <div class="col-sm-9">
+                        <% if(values.key) { %>
+                            <strong><%= values.key %></strong>
+                        <% } else { %>
+                            <input id="key" class="form-control" name="key" type="text" value="<%= values.key %>" placeholder="<%= msgs.form.labels.key %>" required="required" />
+                        <% } %>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="secret" class="control-label col-sm-3"><%= msgs.form.labels.secret %></label>
+                    <div class="col-sm-9">
+                        <% if(values.key) { %>
+                            <strong class="text-muted"><%= msgs.form.authorized %></strong>
+                        <% } else { %>
+                            <input id="secret" class="form-control" name="secret" type="password" value="<%= values.secret %>" placeholder="<%= msgs.form.labels.secret %>" required="required" />
+                        <% } %>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <% if(isSetup) { %>
+                        <button id="back" type="button" class="btn btn-default">
+                            <%= button.back %>
+                        </button>
+                    <% } %>
+                    <button id="next" type="submit" class="btn btn-primary">
+                        <%= button.next %>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>

@@ -1,0 +1,6 @@
+[nta-carbonite]
+name=Numenta Carbonite Repository
+baseurl=http://public.numenta.com/yum/carbonite
+enabled=1
+gpgcheck=0
+priority=1

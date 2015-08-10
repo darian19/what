@@ -1,0 +1,39 @@
+<div class="YOMP-modal-annotation-list YOMP-panel">
+	<% if(annotations.length > 0) { 
+	   for(var i=0, len=annotations.length; i < len; i++) {
+	       var annotation = annotations[i]; 
+	       var timestamp = new Date(annotation.get('timestamp') + " UTC"); 
+	       var created = new Date(annotation.get('created') + " UTC"); 
+           var showHeader = false;
+	       // Only show the annotation date before the first annotation for the specific time.
+	       if (i == 0) {
+	           showHeader = true; 
+            } else { 
+                var prev = new Date(annotations[i-1].get('timestamp')  + " UTC");
+                if (prev.getTime() != timestamp.getTime()) { 
+                    showHeader = true; 
+                }
+            }
+            if (showHeader) { %>
+                <div class="header"><%=timestamp.toLocaleString().replace(/:\d{2}\s/,' ')%></div>
+          <%}%>
+	<div class="content">
+		<p class="message"><%=annotation.get('message') %></p>
+		<p class="footer">
+		     <%// Show date only if the "created" day is different from the previous day
+				var createdString = created.toLocaleTimeString();
+				if (i > 0) {
+                       var prev = new Date(annotations[i-1].get('created')  + " UTC");
+                       if (prev.toDateString() != created.toDateString()) {
+                           createdString = created.toLocaleString();
+                       }
+				}
+		     %>
+			<span class="date"><%=createdString.replace(/:\d{2}\s/,' ')%> - </span><span class="name" title="<%=annotation.get('user')%>"><%= annotation.get('user') %></span>
+		</p>
+	</div>
+	<% }; %> <% } else { %>
+	<div class="text-muted" colspan="5"><%= msgs.table.empty %></div>
+	<% } %>
+	</table>
+</div>

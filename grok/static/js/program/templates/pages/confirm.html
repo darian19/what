@@ -1,0 +1,38 @@
+<div class="YOMP-confirm YOMP-page row">
+    <div class="col-md-8 col-md-offset-2">
+
+        <section id="progress-bar-container"></section>
+
+        <h1><% if(isSetup) { %><%= site.setup.steps.label %> <%= step %>: <% } %><%= msgs.title %></h1>
+        <ul>
+            <% msgs.info.forEach(function(line) { %>
+                <li><%= line %></li>
+            <% }); %>
+            <li>AWS Region selected: <strong><%= region %></strong></li>
+        </ul>
+
+        <form id="confirmed-instances" class="form-horizontal">
+            <fieldset>
+                <div>
+                    <h3>Autoscaling Groups</h3>
+                    <div id="AutoScaling-instances"></div>
+                    <h3>EC2 Instances</h3>
+                    <div id="EC2-instances"></div>
+                    <h3>ELB Instances</h3>
+                    <div id="ELB-instances"></div>
+                    <h3>RDS Instances</h3>
+                    <div id="RDS-instances"></div>
+                </div>
+            </fieldset>
+            <div class="buttons form-group">
+                <button id="back" type="button" class="btn btn-default">
+                    <%= button.back %>
+                </button>
+                <button id="next" type="submit" class="btn btn-primary" disabled>
+                    <%= button.next %>
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>

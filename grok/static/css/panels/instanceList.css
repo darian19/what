@@ -1,0 +1,15 @@
+.YOMP-instance-list table {
+    /* this is to get css overflow:ellipsis working on the table */
+    table-layout: fixed;
+    width: 100%;
+}
+.YOMP-instance-list table > colgroup > col:nth-child(2) {
+    width: 15%;
+}
+.YOMP-instance-list table > colgroup > col:nth-child(3) {
+    width: 11%;
+}
+
+.YOMP-instance-list td .close {
+    float: none;
+}

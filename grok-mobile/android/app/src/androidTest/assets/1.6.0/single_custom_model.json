@@ -1,0 +1,25 @@
+[
+  {
+    "status": 1,
+    "last_rowid": 359,
+    "display_name": "stocks.defaultID.AAPL.VOLUME",
+    "uid": "f32565f1b6454eb9a26df2ba994e83a9",
+    "parameters": {
+      "datasource": "custom",
+      "metricSpec": {
+        "metric": "stocks.defaultID.AAPL.VOLUME",
+        "unit": "Count"
+      }
+    },
+    "last_timestamp": null,
+    "description": "Custom metric stocks.defaultID.AAPL.VOLUME",
+    "poll_interval": 300,
+    "location": "",
+    "server": "stocks.defaultID.AAPL.VOLUME",
+    "tag_name": null,
+    "instance_status_history": [],
+    "datasource": "custom",
+    "message": null,
+    "name": "stocks.defaultID.AAPL.VOLUME"
+  }
+]

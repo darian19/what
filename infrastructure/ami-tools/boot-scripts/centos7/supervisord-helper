@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# Helper script for YOMP supervisor
+#
+# Because we need to run as centos, using su to switch users makes us
+# lose our environment settings. Putting a helper in place that can be
+# called and load the necessary environment changes.
+
+# TODO: figure out a cleaner solution to avoid needing an extra layer. TAUR-655
+
+# Source init functions
+source /etc/rc.d/init.d/functions
+
+set -o pipefail
+
+prog=supervisord
+NUMENTA=/opt/numenta
+
+prog_bin="supervisord"
+PIDFILE="/var/run/${prog}.pid"
+
+FIRSTBOOT_HELPER=/usr/local/sbin/firstboot.sh
+FIRSTBOOT_RECEIPT=/etc/YOMP/firstboot.run
+
+if [ ! -z "${DEBUG}" ]; then
+  echo "============="
+  env
+  echo "============="
+  echo "sourcing supervisord.vars"
+fi
+
+source /etc/YOMP/supervisord.vars
+
+if [ ! -z "${DEBUG}" ]; then
+  echo "============="
+  env
+  echo "============="
+fi
+
+# Run the firstboot stuff that needs to be done as centos
+if [ -x "${FIRSTBOOT_HELPER}" ]; then
+  "${FIRSTBOOT_HELPER}" 2>&1 | tee >(logger -t supervisord-helper)
+  if [ $? != "0" ]; then
+    sudo service YOMP-preload YOMP-error
+    exit 1
+  fi
+fi
+
+start()
+{
+  echo -n "Starting ${prog}: "
+  cd "${YOMP_HOME}"
+  ${prog_bin} -c conf/supervisord.conf
+  echo
+}
+
+stop()
+{
+  echo -n "Shutting down ${prog}: "
+  cd "${YOMP_HOME}"
+  supervisorctl -c conf/supervisord.conf shutdown
+  echo
+}
+
+status()
+{
+  echo -n "Restarting ${prog}: "
+  cd "${YOMP_HOME}"
+  supervisorctl -c conf/supervisord.conf status
+  echo
+}
+
+restart()
+{
+  echo -n "Restarting ${prog}: "
+  cd "${YOMP_HOME}"
+  supervisorctl -c conf/supervisord.conf restart all
+  echo
+}
+
+tickle()
+{
+  if [ -f "${FIRSTBOOT_RECEIPT}" ]; then
+    echo -n "Tickling ${prog}: "
+    cd "${YOMP_HOME}"
+    supervisorctl -c conf/supervisord.conf start all
+  else
+    echo "Skipping tickle, firstboot hasn't run"
+  fi
+  echo
+}
+
+case "${1}" in
+
+  start)
+    start
+  ;;
+
+  stop)
+    stop
+  ;;
+
+  status)
+    status
+  ;;
+
+  restart)
+    restart
+  ;;
+
+  tickle)
+    tickle
+  ;;
+
+  *)
+    echo "Usage: ${0} {start|stop|restart|status|tickle}"
+  ;;
+
+esac

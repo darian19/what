@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <meta http-equiv="refresh" content="60; url=/">
+        <title>YOMP is loading</title>
+        <link rel="shortcut icon" href="/static/img/icon/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/global.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/pages/YOMP-stopped.css" />
+    </head>
+    <body>
+        <!-- header -->
+        <header class="navbar navbar-inverse" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">YOMP</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- main content -->
+        <div class="content-wrap">
+            <!-- actual content -->
+            <section id="content" class="YOMP-page container"></section>
+            <h1>YOMP is stopped.</h1>
+        </div>
+
+        <!-- full screen loading indicator throbbing animation -->
+        <div class="loading-throbber off">
+            <img src="/static/img/mark.svg" />
+            <div><span class="off"><!-- message --></span></div>
+        </div>
+
+        <!-- footer -->
+        <footer>
+            <div class="container text-muted text-center">
+                &copy; 2014 <a href="http://www.numenta.com/YOMP" target="_blank">YOMP</a>
+            </div>
+        </footer>
+
+        <!-- scripts -->
+        <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+        <script>
+            window.YOMPUI = {};
+        </script>
+        <script src="/static/js/lib/YOMP/utils.js"></script>
+    </body>
+</html>

@@ -1,0 +1,14 @@
+.YOMP-page form {
+    margin: 2em 0;
+}
+
+.YOMP-page label:after {
+    content: ':';
+}
+
+.YOMP-page #sender {
+    width: 30em;
+}
+.YOMP-page #region {
+    width: 25em;
+}

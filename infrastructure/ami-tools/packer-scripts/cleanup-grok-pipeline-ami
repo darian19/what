@@ -1,0 +1,156 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+#
+# Clean up a YOMP pipeline AMI
+# TODO: Rewrite in python per TAUR-755
+
+set -o errexit
+set -o pipefail
+
+source /home/ec2-user/.bashrc
+source /etc/YOMP/supervisord.vars
+
+NUMENTA_D=/opt/numenta
+PRODUCTS_D="${NUMENTA_D}/products"
+YOMP_HOME="${PRODUCTS_D}/YOMP"
+
+CONF_D="${YOMP_HOME}/conf"
+UPDATERS_D="${YOMP_HOME}/bin/updaters"
+RECEIPTS_D=/etc/YOMP/updater_statuses
+
+get_password(){
+  if [ -r $1 ]; then
+    echo $(<$1)  | xargs
+  fi
+}
+
+reset_mysql_and_rabbit_passwords() {
+  default_mysql_password=""
+  default_rabbit_password="guest"
+
+  echo "Retrieving passwords for mysql and rabbitmq"
+  mysql_password=$(get_password /etc/YOMP/mysql_password)
+  rabbit_password=$(get_password /etc/YOMP/rabbit_password)
+  echo mysql_password
+  if [ -n "${mysql_password}" ]; then
+    mysqladmin -u root -p"${mysql_password}" password "${default_mysql_password}"
+  else
+    mysqladmin -u root password "${default_mysql_password}"
+    if [ $? != 0 ]; then
+      echo "mysql password reset failed"
+      exit 1
+    fi
+  fi
+  sed -i.bak "s/passwd.*$/passwd\ =\ ${default_mysql_password}/g" "${CONF_D}/application.tpl"
+
+  echo "Resetting rabbitmq password for user guest"
+  rabbitmqctl change_password guest ${default_rabbit_password}
+  if [ $? != 0 ]; then
+    echo "rabbitmqctl change_password failed"
+    exit 1
+  fi
+
+  sed -i.bak "s/password.*$/password\ =\  ${default_rabbit_password}/g" "${PRODUCTS_D}/nta.utils/conf/rabbitmq.conf"
+
+  echo "Purging stale mysql_password and rabbit_password files post reset"
+  rm -f /etc/YOMP/mysql_password /etc/YOMP/rabbit_password
+}
+
+cleanup_YOMP_conf_files(){
+  echo "Cleaning up application conf files"
+  pushd "${YOMP_HOME}/conf"
+    for file in *.tpl
+    do
+      conf=${file%.*}.conf
+      if [ -r "${conf}" ]; then
+        echo "purging ${conf}"
+        rm -f "${conf}"
+      fi
+    done
+    echo "Purging conf overrides"
+    rm -rf overrides
+  popd
+}
+
+confirm_authorized_keys_removal(){
+  echo "Confirming authorized_keys removal"
+  find /home -name authorized_keys -print
+  find /home -iname '*.pub' -print
+  find /root -name authorized_keys -print
+  find /root -iname '*.pub' -print
+}
+
+cleanup_YOMP_logfiles() {
+  echo "**********"
+  echo "Cleaning rabbit logs"
+  rm -frv "${NUMENTA_D}"/logs/rabbitmq/*
+
+  echo "**********"
+  echo "Cleaning updater logs..."
+  rm -fv "${NUMENTA_D}"/updater/logs/*
+
+  echo "**********"
+  echo "Removing firstboot tag files"
+  rm -fv /etc/YOMP/firstboot.run /etc/YOMP/firstboot-root.run
+
+  echo "**********"
+  echo "Clearing YOMP uuid"
+  rm -vf "${CONF_D}/.YOMP_id"
+
+  # Fix MER-2120
+  if [ -d "${UPDATERS_D}" ]; then
+    echo "Marking all existing updaters as having been run"
+    for old_updater in "${UPDATERS_D}"/*
+    do
+      touch "${RECEIPTS_D}"/$(basename ${old_updater})
+    done
+  fi
+}
+
+echo
+echo "Cleaning instance for YOMP pipeline AMI bake"
+
+echo "Resetting mysql and rabbitmq passwords to default"
+reset_mysql_and_rabbit_passwords
+
+echo "Running python setup init for YOMP application cleanup"
+pushd "${YOMP_HOME}"
+  python setup.py init
+popd
+
+cleanup_YOMP_conf_files
+cleanup_YOMP_logfiles
+
+confirm_authorized_keys_removal
+
+# YOMP was originally code-named "Mercury". There are still legacy artifacts
+# on some older servers that include mercury in the package name, so we want to
+# continue to search for them.  If we see any "Mercury" packages, we should work
+# to remove them so we can drop the `-e "mercury-"` search from this list.
+echo "Numenta packages:"
+rpm -qa | \
+  grep -e YOMP -e "mercury-" -e nupic -e "nta-" -e salt | \
+  sort
+
+echo
+echo "Pip list:"
+pip list

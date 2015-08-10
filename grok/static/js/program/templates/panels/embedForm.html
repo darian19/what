@@ -1,0 +1,51 @@
+<div class="YOMP-embed-form YOMP-panel well">
+
+    <h3><%= msgs.title %></h3>
+
+    <p><%= msgs.subtitle %></p>
+    <ul>
+        <% msgs.notes.forEach(function(note) { %>
+            <li><%= note %></li>
+        <% }); %>
+    </ul>
+
+    <form id="form" class="form-horizontal">
+        <fieldset>
+            <div class="form-group">
+                <label for="domain" class="control-label col-sm-4"><%= msgs.form.labels.domain %></label>
+                <div class="col-sm-8">
+                    <input id="domain" name="domain" class="form-control" type="text" pattern="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$" placeholder="<%= msgs.form.defaults.domain %>" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="width" class="control-label col-sm-4"><%= msgs.form.labels.width %></label>
+                <div class="col-sm-8">
+                    <input id="width" min="540" type="number" step="1" name="width" class="form-control" type="text" value="<%= msgs.form.defaults.width %>" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="height" class="control-label col-sm-4"><%= msgs.form.labels.height %></label>
+                <div class="col-sm-8">
+                    <input id="height" min="200" type="number" step="1" name="height" class="form-control" type="text" value="<%= msgs.form.defaults.height %>" required/>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label for="code" class="control-label code"><%= msgs.form.labels.code %></label>
+                <textarea id="code" name="code" class="form-control" rows="4" type="text" disabled="disabled"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4">
+                <button id="copy" data-clipboard-target="code" type="submit" class="btn  btn-primary btn-copy">
+                    <%= msgs.form.buttons.copy %>
+                </button>
+            </div>
+            <div class="col-sm-8">
+                <label id="copied" class="copied"><%= msgs.form.labels.copied %></label>
+            </div>
+        </div>
+    </form>
+
+</div>

@@ -1,0 +1,31 @@
+{
+  "name": "bootstrap-switch",
+  "description": "Turn checkboxes and radio buttons in toggle switches.",
+  "version": "3.0.0",
+  "main": [
+    "dist/js/bootstrap-switch.js",
+    "dist/css/bootstrap3/bootstrap-switch.css"
+  ],
+  "ignore": [
+    "docs",
+    "test",
+    "CNAME",
+    "composer.json",
+    "CONTRIBUTING.md",
+    "gulpfile.js",
+    "index.html"
+  ],
+  "dependencies": {
+    "jquery": ">=1.9.0"
+  },
+  "homepage": "https://YOMPhub.com/nostalgiaz/bootstrap-switch",
+  "_release": "3.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.0.0",
+    "commit": "ce3f45f1ac256a9a9c6414d616a4f49fb0904883"
+  },
+  "_source": "YOMP://YOMPhub.com/nostalgiaz/bootstrap-switch.YOMP",
+  "_target": "3.0.0",
+  "_originalSource": "bootstrap-switch"
+}

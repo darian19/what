@@ -1,0 +1,36 @@
+.YOMP-instances-auto > div > div > ul {
+  margin-top: 1.5em;
+}
+
+.YOMP-instances-auto > div > div > form {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  margin-top: 1.5em;
+  padding: 2em;
+}
+.YOMP-instances-auto > div > div > form fieldset {
+  margin-bottom: -1.5em;
+
+}
+
+.YOMP-instances-auto form label:after {
+  content: ':';
+}
+
+.YOMP-instances-auto form .help-block {
+  color: #999;
+  font-size: 95%;
+}
+.YOMP-instances-auto form .help-block code {
+  background: #ddd;
+  display: block;
+  margin: 0.5em 0;
+}
+
+.YOMP-instances-auto #begin {
+  margin-top: 0.5em;
+}
+
+.YOMP-instances-auto #done {
+  margin-top: 1em;
+}

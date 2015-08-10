@@ -1,0 +1,62 @@
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".TutorialActivity" >
+
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_margin="0dp"
+        style="@style/Tutorial.Pager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+    </android.support.v4.view.ViewPager>
+
+    <Button
+            android:id="@+id/tutorial_button_left"
+            style="@style/Tutorial.Button"
+            android:layout_width="72dp"
+            android:layout_height="24dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="18dp"
+            android:layout_marginLeft="10dp"
+            android:onClick="onLeftButtonClick"
+            android:visibility="gone"
+            android:text="@string/tutorial_skip" />
+    <Button
+            android:id="@+id/tutorial_button_right"
+            style="@style/Tutorial.Button"
+            android:layout_width="72dp"
+            android:layout_height="24dp"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="18dp"
+            android:layout_marginRight="10dp"
+            android:onClick="onRightButtonClick"
+            android:text="@string/tutorial_start" />
+
+</merge>

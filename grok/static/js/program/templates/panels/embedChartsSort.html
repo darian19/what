@@ -1,0 +1,14 @@
+<div class="YOMP-embed-charts-sort YOMP-panel">
+  <span><%= msgs.label %></span>
+  <div class="btn-group">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+      <%= msgs.titles['days'] %>
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <% msgs.options.forEach(function(option) { %>
+        <li><a href="#"><%= option %></a></li>
+      <% }); %>
+    </ul>
+  </div>
+</div>

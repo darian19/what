@@ -1,0 +1,26 @@
+.YOMP-setup-progress-bar.panel {
+    background: #fafffa;
+    margin: 1em 0 2em 0;
+}
+.YOMP-setup-progress-bar.panel .panel-body {
+    padding: 0.33em 0.5em;
+}
+.YOMP-setup-progress-bar.panel .panel-body .lead {
+    left: 0.5em;
+    margin-bottom: 0;
+    margin-top: 0.75em;
+    opacity: 0.80;
+}
+.YOMP-setup-progress-bar.panel span {
+    font-size: 90%;
+}
+.YOMP-setup-progress-bar.panel .progress-bar-container {
+    margin: 0.66em;
+}
+.YOMP-setup-progress-bar.panel .progress {
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+}
+.YOMP-setup-progress-bar.panel .progress-bar {
+    opacity: 0.80;
+}

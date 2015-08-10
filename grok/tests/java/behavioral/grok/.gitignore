@@ -1,0 +1,4 @@
+#Generated or downloaded files.
+lib/*
+build/*
+results/*

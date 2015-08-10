@@ -1,0 +1,35 @@
+.YOMP-autostack form label:after {
+    content: ':';
+}
+
+.YOMP-autostack > div > form {
+    margin: 2em 0 5em 0;
+
+}
+
+.YOMP-autostack > div > form #name {
+    width: 30em;
+}
+.YOMP-autostack > div > form #region {
+    width: 24em;
+}
+.YOMP-autostack > div > form #tags {
+    width: 27em;
+}
+
+.YOMP-autostack > div > form .help-block {
+    color: #999;
+    font-size: 95%;
+    margin-left: 0.5em;
+    width: 66%;
+}
+.YOMP-autostack > div > form .help-block code {
+    display: inline-block;
+    margin-top: 0.33em;
+    word-wrap: break-word;
+}
+
+.YOMP-autostack > div > form button {
+    margin-top: -2em;
+}
+

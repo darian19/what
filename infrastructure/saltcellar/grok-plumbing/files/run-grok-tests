@@ -1,0 +1,45 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+
+# Run the YOMP tests and write the results into static/doublesecretprobation
+# so we can read the results remotely.
+
+YOMP_HOME=/opt/numenta/YOMP
+SECRET_D="${YOMP_HOME}/static/doublesecretprobation"
+TEST_RESULTS="${SECRET_D}/test_results.txt"
+AMI_TEST_RESULTS="${SECRET_D}/ami_test_results.txt"
+
+# We only need to run this once per boot
+if [ -f "${TEST_RESULTS}" ];then
+  exit 0
+fi
+
+logger -t YOMP "Writing YOMP py tests to file"
+
+source /opt/numenta/bashrc
+source /etc/YOMP/supervisord.vars
+
+mkdir -p "${SECRET_D}"
+
+cd "${YOMP_HOME}"
+"${YOMP_HOME}/run_tests.sh" -l py > "${TEST_RESULTS}"
+"${YOMP_HOME}/run_tests.sh" -l py --ami > "${AMI_TEST_RESULTS}"

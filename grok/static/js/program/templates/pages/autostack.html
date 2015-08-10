@@ -1,0 +1,70 @@
+<div class="YOMP-autostack YOMP-page">
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <section id="progress-bar-container"></section>
+        </div>
+    </div>
+
+    <h1>Select Autostacks</h1>
+    <ul>
+    <% msgs.notes.forEach(function(note) { %>
+        <li><%= note %></li>
+    <% }); %>
+    </ul>
+
+    <section class="row">
+        <div class="col-md-6 col-md-push-6">
+            <div id="instance-list"></div>
+        </div>
+        <div class="col-md-6 col-md-pull-6">
+            <h3><%= msgs.title %></h3>
+            <form class="form-horizontal">
+            <fieldset>
+                <div class="form-group">
+                    <label for="region" class="control-label col-sm-5"><%= msgs.form.labels.region %></label>
+                    <div class="col-sm-7">
+                        <select id="region" class="form-control" name="region" required="required">
+                            <option value=""><%= msgs.form.defaults.region %></option>
+                            <% Object.keys(regions).sort().forEach(function(region) { %>
+                                <option value="<%= region %>">
+                                    <%= region %>:
+                                    <%= regions[region] %>
+                                </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="name" class="control-label col-sm-5"><%= msgs.form.labels.name %></label>
+                    <div class="col-sm-7">
+                        <input id="name" name="name" class="form-control" type="text" placeholder="<%= msgs.form.defaults.name %>" required="required" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tags" class="control-label col-sm-5"><%= msgs.form.labels.tags %></label>
+                    <div class="col-sm-7">
+                        <input id="tags" class="form-control" name="tags" type="text" placeholder="<%= msgs.form.defaults.tags %>" required="required" />
+                        <span class="help-block"><%= msgs.form.help.tags %></span>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button id="begin" type="submit" class="btn btn-primary">
+                        <%= button.start %>
+                    </button>
+                </div>
+            </div>
+            </form>
+
+        </div>
+    </section>
+
+    <button id="done" type="submit" class="btn btn-primary">
+        <%= button.done %>
+    </button>
+
+</div>

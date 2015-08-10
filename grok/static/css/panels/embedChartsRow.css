@@ -1,0 +1,90 @@
+/**
+ * Rows - all 3 shared.
+ */
+
+.YOMP-embed-charts-row {
+  list-style-type: none;
+  margin: 0;
+  padding: 0.33em 0;
+  font-family: 'roboto', Arial, sans-serif;
+  font-weight: bold;
+}
+
+.YOMP-embed-charts-row .name {
+  margin-left: 0.5em;
+}
+
+.YOMP-embed-charts-row .unit {
+  margin-right: 0.5em;
+  display: none;
+  float: right;
+  font-family: 'roboto', Arial, sans-serif;
+  font-weight: normal;
+}
+
+.YOMP-embed-charts-row .charts {
+  cursor: pointer;
+}
+
+.YOMP-embed-charts-row .dygraph-axis-label-x {
+  font-size: 85%;
+}
+
+.YOMP-embed-charts-row .YOMP-embed-charts-label-bold {
+  color: #000;
+}
+
+/**
+ * Instance/Metric/Detail Row Differences
+ */
+
+/* Row: Instance */
+
+.YOMP-embed-charts-row-instance {
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+}
+.YOMP-embed-charts-row-instance:last-child {
+  border-bottom: 1px solid #ddd;
+}
+
+.YOMP-embed-charts-row-annotation {
+	background-color: transparent;
+	background-image: url('/static/img/flag.png');
+	background-size: cover;
+	border: 0px;
+	margin-left: 7px;
+}
+
+.YOMP-embed-charts-row-annotation-selected {
+	background-color: transparent;
+	background-image: url('/static/img/flag-selected.png');
+	background-size: cover;
+	border: 0px;
+	margin-left: 7px;
+}
+
+/* Row: Metric */
+
+.YOMP-embed-charts-row-metric {
+  background-color: #ccc;
+  border-top: 1px solid #aaa;
+}
+.YOMP-embed-charts-row-metric:last-child {
+  border-bottom: 1px solid #aaa;
+}
+
+/* Row: Metric Detail */
+
+.YOMP-embed-charts-row-metric-detail {
+  background-color: #000;
+  padding-top: 1em;
+  padding-bottom: 0.5em;
+}
+
+.YOMP-embed-charts-row-metric-detail .dygraph-axis-label-y {
+  padding-left: 0.2em;  
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.6);
+  font-size: 85%;
+  font-weight: normal;
+}

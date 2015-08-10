@@ -1,0 +1,49 @@
+<div class="YOMP-notify YOMP-page row">
+    <div class="col-md-8 col-md-offset-2">
+
+        <section id="progress-bar-container"></section>
+
+        <h1><%= msgs.title %></h1>
+        <p class="lead"><%= msgs.lead %></p>
+        <ul>
+            <% msgs.notes.forEach(function(note) { %>
+                <li><%= note %></li>
+            <% }); %>
+        </ul>
+
+        <form class="form-horizontal">
+            <fieldset>
+                <div class="form-group">
+                    <label for="sender" class="control-label col-sm-3"><%= msgs.form.labels.sender %></label>
+                    <div class="col-sm-9">
+                        <input id="sender" class="form-control" name="sender" type="email" value="<%= values.sender %>" placeholder="<%= msgs.form.placeholder.sender %>" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="region" class="control-label col-sm-3"><%= msgs.form.labels.region %></label>
+                    <div class="col-sm-9">
+                        <select id="region" class="form-control" name="region">
+                            <option><%= msgs.form.defaults.region %></option>
+                            <% Object.keys(regions).forEach(function(region) { %>
+                                <option value="<%= region %>"<% if(region === values.default_region) { %> selected="selected"<% } %>>
+                                    <%= region %>: <%= regions[region] %>
+                                </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button id="back" type="button" class="btn btn-default">
+                        <%= button.back %>
+                    </button>
+                    <button id="next" type="submit" class="btn btn-primary">
+                        <%= button.next %>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>

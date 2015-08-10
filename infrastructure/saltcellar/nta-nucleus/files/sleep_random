@@ -1,0 +1,15 @@
+#!/bin/bash
+
+LIMIT=600
+if [ ! -z "$1" ] ; then
+  LIMIT=$1
+fi
+
+if [ "$1" == "--help" ] ; then
+  echo "$0 [amount to sleep]"
+  echo "amount to sleep in seconds, defaults to ${LIMIT}"
+  echo "Will sleep between zero and ${LIMIT}"
+  exit 1
+fi
+
+sleep $(( RANDOM % $LIMIT ))

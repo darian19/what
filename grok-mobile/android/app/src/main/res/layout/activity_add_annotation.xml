@@ -1,0 +1,152 @@
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<RelativeLayout
+    style="@style/AddAnnotation"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context="com.YOMPsolutions.YOMP.mobile.annotation.AddAnnotationActivity">
+
+    <FrameLayout
+        android:id="@+id/header"
+        style="@style/AddAnnotation.Header">
+
+        <fragment
+            android:id="@+id/instance_anomaly_chart"
+            android:name="com.YOMPsolutions.YOMP.mobile.instance.InstanceAnomalyChartFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:showAnnotationList="false"
+            app:showAnnotationContextMenu="false"
+            tools:layout="@layout/fragment_instance_anomaly_chart"
+            tools:ignore="MissingId,MissingPrefix"/>
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/divider"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/header"
+        android:src="@drawable/ic_down_marker"
+        android:padding="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:scaleType="fitXY"/>
+
+    <GridLayout
+        android:id="@+id/grd_annotation_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="false"
+        android:layout_below="@+id/divider"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:useDefaultMargins="true">
+
+        <TextView
+            android:id="@+id/txt_time_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/annotation_time_label"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_gravity="bottom"/>
+
+        <TextView
+            style="@android:style/Widget.Holo.Light.Spinner"
+            android:id="@+id/txt_date"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:onClick="pickDateDialog"
+            android:layout_width="130dp"
+            android:gravity="end"
+            android:layout_gravity="bottom"/>
+
+        <TextView
+            style="@android:style/Widget.Holo.Light.Spinner"
+            android:id="@+id/txt_time"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:ems="10"
+            android:onClick="pickTimeDialog"
+            android:layout_width="100dp"
+            android:gravity="start"
+            android:layout_gravity="bottom"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/annotation_user_name_label"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:gravity="start"
+            android:layout_gravity="bottom"/>
+
+        <EditText
+            android:id="@+id/txt_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_columnSpan="2"
+            android:gravity="start"
+            android:inputType="textPersonName"
+            android:layout_gravity="bottom"/>
+
+
+        <Button
+            android:id="@+id/btn_save_annotation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="1"
+            android:layout_column="2"
+            android:text="@string/annotation_save_button"
+            android:onClick="saveAnnotation"
+            android:layout_gravity="right"
+            android:layout_margin="0dp"
+            android:padding="0dp"/>
+
+        <EditText
+            style="@style/AddAnnotation.Body"
+            android:id="@+id/txt_annotation_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine|textAutoComplete|textLongMessage|textAutoCorrect"
+            android:layout_row="3"
+            android:layout_columnSpan="3"
+            android:ems="10"
+            android:lines="5"
+            android:gravity="start"
+            android:layout_column="0"/>
+
+
+    </GridLayout>
+
+</RelativeLayout>

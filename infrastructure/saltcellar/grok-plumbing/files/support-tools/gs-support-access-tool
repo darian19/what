@@ -1,0 +1,191 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# Numenta Platform for Intelligent Computing (NuPIC)
+# Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+# Numenta, Inc. a separate commercial license for this software code, the
+# following terms and conditions apply:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see http://www.gnu.org/licenses.
+#
+# http://numenta.org/licenses/
+# ----------------------------------------------------------------------
+# TODO: Convert to python https://jira.numenta.com/browse/TAUR-635
+
+# Load/remove YOMP tech support public keys
+
+if [ $(/usr/bin/id -u) -ne 0 ]; then
+  echo "You are not root"
+  exit 1
+fi
+
+export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
+
+AWS_INSTANCE_KEY_URL="http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key"
+
+SAVED_KEYS_D=/etc/YOMP/sshkeys.d/originals
+SUPPORT_ENABLE_FLAG=/tmp/enable_support_access
+SUPPORT_KEYDIR=/etc/YOMP/sshkeys.d
+
+CUSTOMER_EC2USER_PUBKEYS="${SAVED_KEYS_D}/ec2-user.authorized_keys"
+CUSTOMER_ROOT_PUBKEYS="${SAVED_KEYS_D}/root.authorized_keys"
+YOMP_SUPPORT_PUBKEYS=/etc/YOMP/support_ssh_keys
+
+EC2USER_AUTHFILE=/home/ec2-user/.ssh/authorized_keys
+ROOT_AUTHFILE=/root/.ssh/authorized_keys
+
+# Download the keys used to start this instance from EC2 metadata
+function reload_keys_from_AWS() {
+  mkdir -p /home/ec2-user/.ssh
+  chown ec2-user:root /home/ec2-user/.ssh
+  chmod 700 /home/ec2-user/.ssh
+
+  mkdir -p /root/.ssh
+  chown root:root /root/.ssh
+  chmod 700 /root/.ssh
+
+  echo "Reloading keys from AWS"
+  if [ ! -f "${CUSTOMER_ROOT_PUBKEYS}" ]; then
+    echo "Reading root authorized key from AWS..."
+    logger -t gs-sshkeys "Reading root authorized key from AWS..."
+    curl --silent -f "${AWS_INSTANCE_KEY_URL}" > "${CUSTOMER_ROOT_PUBKEYS}"
+    chown root:root /root/.ssh/authorized_keys
+    chmod 600 /root/.ssh/authorized_keys
+  fi
+  if [ ! -f "${CUSTOMER_EC2USER_PUBKEYS}" ]; then
+    echo "Reading ec2-user authorized key from AWS..."
+    logger -t gs-sshkeys "Reading ec2-user authorized key from AWS..."
+    curl --silent -f "${AWS_INSTANCE_KEY_URL}" > "${CUSTOMER_EC2USER_PUBKEYS}"
+    chown ec2-user:root /home/ec2-user/.ssh/authorized_keys
+    chmod 644 /home/ec2-user/.ssh/authorized_keys
+  fi
+}
+
+# Fail fast if our pre-requisites are missing
+function perform_sanity_check() {
+  echo "Checking for ${SUPPORT_KEYDIR}..."
+  if [ ! -d "${SUPPORT_KEYDIR}" ]; then
+    echo "Could not find ${SUPPORT_KEYDIR}"
+    SANITY_FAIL=1
+  fi
+  echo "Checking ${EC2USER_AUTHFILE}..."
+  if [ ! -f "${EC2USER_AUTHFILE}" ]; then
+    echo "Could not find ${EC2USER_AUTHFILE}"
+    SANITY_FAIL=1
+  fi
+  echo "Checking ${ROOT_AUTHFILE}..."
+  if [ ! -f "${ROOT_AUTHFILE}" ]; then
+    echo "Could not find ${ROOT_AUTHFILE}"
+    SANITY_FAIL=1
+  fi
+  echo "Checking for ${CUSTOMER_EC2USER_PUBKEYS}..."
+  if [ ! -f "${CUSTOMER_EC2USER_PUBKEYS}" ]; then
+    echo "Could not find ${CUSTOMER_EC2USER_PUBKEYS}"
+    SANITY_FAIL=1
+  fi
+  echo "Checking for ${CUSTOMER_ROOT_PUBKEYS}..."
+  if [ ! -f "${CUSTOMER_ROOT_PUBKEYS}" ]; then
+    echo "Could not find ${CUSTOMER_ROOT_PUBKEYS}"
+    SANITY_FAIL=1
+  fi
+  if [ "${SANITY_FAIL}" == 1 ]; then
+    echo "Flunked sanity check..."
+    exit 1
+  fi
+  echo "Sanity check passed"
+}
+
+# Download the YOMP support keys from S3, but only if user has enabled
+# remote support
+function create_YOMP_keylist() {
+  if [ -f "${SUPPORT_ENABLE_FLAG}" ]; then
+    echo "Preparing YOMP support keys for import..."
+    TMPFILE=$(mktemp --tmpdir GetSSSHsupportkeys.XXXXX)
+    gs-get-support-keys > "${TMPFILE}"
+    if [ $? != 0 ]; then
+      logger -t gs-get-support-keys "Could not load YOMP support keys from s3."
+      echo "Could not load YOMP support keys from s3."
+      rm -rf "${TMPFILE}"
+      exit 1
+    fi
+    # Only actually do the replacement if there is something in there
+    if [ -s "${TMPFILE}" ]; then
+      cat "${TMPFILE}" > "${YOMP_SUPPORT_PUBKEYS}"
+      chmod 644 "${YOMP_SUPPORT_PUBKEYS}"
+    fi
+    rm -rf "${TMPFILE}"
+  fi
+}
+
+function update_ec2user_keys() {
+  # Copy the keys used to start the instance from EC2 metadata
+  TEMPKEYS=$(mktemp --tmpdir sshsupportkeys.XXXXX)
+  curl --silent -f "${AWS_INSTANCE_KEY_URL}" > "${TEMPKEYS}"
+  echo "AWS keypair stored"
+
+  # If support is enabled, add those keys to the the list of allowed keys
+  if [ -f "${SUPPORT_ENABLE_FLAG}" ]; then
+    echo "Enabling support access"
+    cat "${YOMP_SUPPORT_PUBKEYS}" >> "${TEMPKEYS}"
+  fi
+
+  # Check to see if we need to bother replacing the authorized_keys file
+  diff "${EC2USER_AUTHFILE}" "${TEMPKEYS}" > /dev/null
+  if [ $? != 0 ]; then
+    echo "Updating ${EC2USER_AUTHFILE}..."
+    cat "${TEMPKEYS}" > "${EC2USER_AUTHFILE}"
+    chown ec2-user:root "${EC2USER_AUTHFILE}"
+    chmod 644 "${EC2USER_AUTHFILE}"
+  else
+    echo "No update required for ec2-user"
+  fi
+  rm -fr "${TEMPKEYS}"
+}
+
+function update_root_keys() {
+  # Copy the keys used to start the instance from EC2 metadata
+  TEMPKEYS=$(mktemp --tmpdir sshsupportkeys.XXXXX)
+  curl --silent -f "${AWS_INSTANCE_KEY_URL}" > "${TEMPKEYS}"
+  echo "AWS keypair stored"
+
+  # If support is enabled, add those keys to the the list of allowed keys
+  if [ -f "${SUPPORT_ENABLE_FLAG}" ]; then
+    echo "Enabling support access"
+    cat "${YOMP_SUPPORT_PUBKEYS}" >> "${TEMPKEYS}"
+  fi
+
+  # Check to see if we need to bother replacing the authorized_keys file
+  diff "${ROOT_AUTHFILE}" "${TEMPKEYS}" > /dev/null
+  if [ $? != 0 ]; then
+    echo "Updating ${ROOT_AUTHFILE}..."
+    cat "${TEMPKEYS}" > "${ROOT_AUTHFILE}"
+    chown root:root "${ROOT_AUTHFILE}"
+    chmod 600 "${ROOT_AUTHFILE}"
+  else
+    echo "No update required for root..."
+  fi
+  rm -fr "${TEMPKEYS}"
+}
+
+# Don't leave the support keys lying around. We want to always get the latest
+# version of the keylist when a user enables support access.
+function purge_support_key_file() {
+  rm -f "${YOMP_SUPPORT_PUBKEYS}"
+}
+
+echo "Starting pubkey management"
+reload_keys_from_AWS
+perform_sanity_check
+create_YOMP_keylist
+update_ec2user_keys
+update_root_keys
+purge_support_key_file

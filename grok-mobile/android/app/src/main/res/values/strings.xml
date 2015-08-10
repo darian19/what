@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<resources>
+
+    <!-- Application -->
+    <string name="app_name">YOMP</string>
+
+    <!-- Action Bar -->
+    <string name="menu_settings">Settings</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_feedback">Feedback</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_notifications">Notifications</string>
+
+    <!-- Navigation Bar -->
+    <string name="title_tab_hour">Hour</string>
+    <string name="title_tab_day">Day</string>
+    <string name="title_tab_week">Week</string>
+
+    <!-- Sort Bar -->
+    <string name="sort_title">sorted by</string>
+    <string name="sort_anomalies">Anomalies</string>
+    <string name="sort_name">Name</string>
+
+    <!-- Settings Activity -->
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preferences -->
+    <string name="pref_version_category">Version</string>
+    <string name="pref_title_version">Server : Client</string>
+
+    <string name="pref_general_category">General</string>
+    <string name="pref_title_server_url">Server URL</string>
+    <string name="pref_data_refresh_rate">Refresh Rate</string>
+    <string name="pref_title_tutorial">Tutorial</string>
+    <string name="pref_summary_tutorial">Click here for a short tutorial</string>
+
+    <string name="pref_title_enable_notifications">Enable Android Notifications</string>
+    <string name="pref_title_enable_email_notifications">Enable Email Notifications</string>
+    <string name="pref_notification_category">Notifications</string>
+    <string name="pref_title_email_notification">Notification Email</string>
+    <string name="pref_summary_email_notification"/>
+    <string name="pref_title_notifications_frequency">Max Notifications Per Instance</string>
+    <string name="pref_summary_notifications_frequency">Max Notifications Per Instance</string>
+    <string name="pref_notification_frequency_default">3600</string>
+    <string name="error_invalid_email">Invalid Email Address</string>
+
+    <!-- Main Activity -->
+    <string name="title_share">Share</string>
+    <string name="title_feedback">Feedback</string>
+    <string name="feedback_email_subject">Feedback</string>
+    <string name="refresh_dialog_title">Unable to connect</string>
+    <string name="title_error_dialog">Error</string>
+    <string name="feedback_dialog_message">A current screen shot and log file may be attached to your feedback, bug report or feature request.</string>
+    <string name="title_feedback_dialog">Email YOMP Support</string>
+    <string name="loading_metrics_title_hours">Device not connected for %d hours\nData download in progress</string>
+    <string name="loading_metrics_title_hours_minutes">Device not connected for %1$d hours and %2$d minutes\nData download in progress</string>
+    <string name="new_instances_and_metrics_added">%1$d new instances and %2$d new metrics added</string>
+    <string name="new_metrics_added">%1$d new metrics added</string>
+    <string name="model_data_need_to_be_downloaded">Data from new models needs to be downloaded. The entire process can take from a few minutes to one hour.</string>
+
+    <!-- Login Activity -->
+    <string name="title_activity_login">Setup</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_server_url">Server URL</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="login_progress_signing_in">Signing in&#8230;</string>
+    <string name="error_login_failed_message">Invalid login credentials</string>
+    <string name="error_invalid_server_url">Invalid server URL</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_login_failed_title">Login Error</string>
+    <string name="error_server_unavailable">Unable to connect to server</string>
+    <string name="login_line_1">Connect to your server</string>
+    <string name="login_line_2">Enter the base URL of your YOMP server (e.g.: https://YOMP.domain.com)</string>
+
+    <!-- Notifications Activity -->
+    <string name="title_notification_activity">Activity Log</string>
+    <string name="action_dismiss_all_notifications">Dismiss All</string>
+    <string name="confirm_dismiss_all">Delete all stored log entries?</string>
+    <string name="confirm_dismiss_notification">Delete this entry?</string>
+    <string name="notification_expired">This log entry has expired or the underlying metric has been deleted.</string>
+    <string name="action_close_notifications">Close</string>
+    <string name="no_notifications_text">No Activities</string>
+
+
+    <!-- Notification Detail -->
+    <!-- OS Notifications -->
+    <string name="title_os_notification_grouped">new anomaly notifications.</string>
+
+    <!-- Generic Dialog -->
+    <string name="confirm_dialog_positive">Yes</string>
+    <string name="confirm_dialog_negative">No</string>
+
+    <!-- Notification Service -->
+    <!-- Formatted Notification description: $1=metric.instance, $2=metric.name, $3=metric_data.value, $4=metric.unit -->
+    <string name="notification_description_template">%1$s: %2$s: %3$.2f: %4$s</string>
+
+    <string name="title_activity_tutorial">Tutorial</string>
+
+    <!-- Tutorial -->
+    <string name="skip_tutorial">Skip Tutorial</string>
+    <string name="tutorial_done">Exit Tutorial</string>
+    <string name="tutorial_message">To view this tutorial again, go to the "Settings" page and select the "Tutorial" option</string>
+
+    <!-- Chart -->
+    <string name="date_format_chart">c M/d</string>
+
+    <!-- Annotation Activity -->
+    <string name="title_activity_annotation_list">Annotations</string>
+    <string name="error_delete_annotation_failed">Failed to delete annotation</string>
+    <string name="title_delete_annotation">Delete Annotation</string>
+    <string name="title_activity_annotation_create">Add Annotation</string>
+    <string name="annotation_time_label">Time:</string>
+    <string name="annotation_user_name_label">Name:</string>
+    <string name="annotation_save_button">Save</string>
+    <string name="menu_add_annotation">Add Annotation</string>
+    <string name="error_missing_user_name">Missing user name</string>
+    <string name="error_empty_message">Message cannot be empty</string>
+    <string name="error_failed_to_add_annotation">Failed to add annotation</string>
+
+    <!-- Date Format -->
+
+</resources>

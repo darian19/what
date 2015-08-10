@@ -1,0 +1,49 @@
+.YOMP-page > .row:first-child {
+    margin-bottom: -1em;
+}
+
+.YOMP-page h3 + p {
+    border: 1px solid #ccc;
+    border-bottom: 0;
+    border-radius: 0.25em;
+    margin: 0 2em 0 0;
+    padding: 0.66em;
+}
+
+#network-tree {
+    border: 1px solid #ccc;
+    border-radius: 0.25em;
+    height: 30em;
+    margin: 0 2em 2em 0;
+    padding: 0.5em;
+    overflow: auto;
+}
+#network-tree a,
+#network-tree a:link {
+    text-decoration: none;
+}
+#network-tree li {
+    margin-left: 1em;
+}
+#network-tree li .jqtree-title {
+    display: block;
+    padding: 0.25em 0.5em;
+}
+#network-tree ul.jqtree-tree li.jqtree-selected > .jqtree-element {
+    background: #29aae2;
+}
+#network-tree ul.jqtree-tree li.jqtree-selected .jqtree-title {
+    color: white;
+    text-shadow: none;
+}
+#network-tree ul.jqtree-tree li li li .jqtree-title:hover {
+    background: #29aae2;
+    color: #fff;
+}
+#network-tree ul.jqtree-tree li li li .jqtree-title:hover:after,
+#network-tree ul.jqtree-tree li.jqtree-selected .jqtree-title:after {
+    content: '►';
+    margin: 0 0.25em;
+    position: absolute;
+    right: 0;
+}

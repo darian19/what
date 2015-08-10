@@ -1,0 +1,17 @@
+<div class="YOMP-alert-update YOMP-panel row">
+    <div class="col-md-3">
+        <h2><%= msgs.title %></h2>
+    </div>
+    <div class="col-md-6">
+        <ul>
+            <% msgs.list.forEach(function(item) { %>
+                <li><%= item %></li>
+            <% }) %>
+        </ul>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary btn-lg" type="button">
+            <%= msgs.button %>
+        </button>
+    </div>
+</div>

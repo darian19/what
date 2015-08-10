@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Numenta Platform for Intelligent Computing (NuPIC)
+  ~ Copyright (C) 2015, Numenta, Inc.  Unless you have purchased from
+  ~ Numenta, Inc. a separate commercial license for this software code, the
+  ~ following terms and conditions apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License version 3 as
+  ~ published by the Free Software Foundation.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see http://www.gnu.org/licenses.
+  ~
+  ~ http://numenta.org/licenses/
+  ~
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="fill_parent">
+    <LinearLayout android:id="@+id/group_header_anomaly"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:paddingLeft="5dp"
+                  android:paddingRight="5dp"
+                  android:paddingTop="2dp"
+                  android:visibility="gone"
+                  android:paddingBottom="2dp"
+                  android:background="#c0c0c0">
+
+        <TextView android:id="@+id/title"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="left|center_vertical"
+                  android:textStyle="bold"
+                  android:textAppearance="@android:style/TextAppearance.Holo.Small"/>
+    </LinearLayout>
+
+    <FrameLayout
+                 android:id="@+id/instance_anomaly_chart"
+                 style="@style/InstanceAnomalyChart"
+                 android:layout_height="40dp"
+                 android:clickable="false"
+                 android:focusable="false"
+                 android:orientation="vertical">
+
+        <com.numenta.taurus.chart.AnomalyChartView
+                android:layout_marginTop="9dp"
+                android:id="@+id/anomaly_chart_view"
+                app:barLabelHeight="0sp"
+                android:layout_height="30dp"
+                style="@style/InstanceAnomalyChart.Chart"/>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:weightSum="1"
+                style="@style/InstanceAnomalyChart.Title">
+
+            <TextView
+                    android:id="@+id/ticker"
+                    android:layout_width="70sp"
+                    android:layout_height="match_parent"
+
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:gravity="left"
+
+                    style="@style/InstanceAnomalyChart.Ticker"/>
+
+            <TextView
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+
+                    android:layout_weight="1"
+                    android:gravity="left|center_vertical"
+
+                    android:singleLine="true"
+                    android:ellipsize="end"
+
+                    style="@style/InstanceAnomalyChart.Name"/>
+
+            <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:visibility="gone"
+
+                    android:ellipsize="none"
+                    android:singleLine="true"
+                    android:gravity="right|center_vertical"
+                    android:textStyle="normal"/>
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+</LinearLayout>
